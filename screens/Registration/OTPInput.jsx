@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import {View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import  {styles} from './styles/otpStyles'
+import SideBar from "../../components/SideBar/SideBar";
 
-export default function  OTPInputScreen ()  {
+
+export default function OTPInputScreen() {
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState(30);
 
@@ -15,39 +17,42 @@ export default function  OTPInputScreen ()  {
         return () => clearInterval(countdown);
     }, []);
 
-    const handleInputChange = (text, index) => {
-        const newOtp = otp.split('');
-        newOtp[index] = text;
-        setOtp(newOtp.join(''));
+    const handleInputChange = (text) => {
+        const cleanedText = text.replace(/[^0-9]/g, ''); // Remove non-numeric characters
+        if (cleanedText.length <= 6) {
+            setOtp(cleanedText);
+        }
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={() => {}}>
-                    <Ionicons name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.closeButton} onPress={() => {}}>
-                    <Ionicons name="close" size={24} color="black" />
-                </TouchableOpacity>
-            </View>
+        <KeyboardAvoidingView style={styles.container}>
+        <SideBar/>
             <View style={styles.content}>
                 <Text style={styles.headerText}>Введите код из сообщения</Text>
                 <View style={styles.otpContainer}>
-                    {Array(4).fill().map((_, index) => (
-                        <TextInput
-                            key={index}
-                            style={styles.otpInput}
-                            keyboardType="number-pad"
-                            maxLength={1}
-                            value={otp[index] || ''}
-                            onChangeText={(text) => handleInputChange(text, index)}
-                            autoFocus={index === 0}
-                        />
-                    ))}
+                    <TextInput
+                        style={styles.otpInput}
+                        keyboardType="number-pad"
+                        maxLength={6}
+                        value={otp}
+                        onChangeText={handleInputChange}
+                        autoFocus
+                    />
+                    <View style={styles.otpMask}>
+                        {Array(6).fill().map((_, index) => (
+                            <View key={index} style={styles.otpMaskItem}>
+                                <Text style={styles.otpMaskText}>{otp[index] || ''}</Text>
+                            </View>
+                        ))}
+                    </View>
                 </View>
+            </View>
+
+            <View style={styles.timerContainer}>
                 <Text style={styles.timerText}>Повторно через {timer}с</Text>
             </View>
+        </KeyboardAvoidingView>
         </SafeAreaView>
     );
-};
+}

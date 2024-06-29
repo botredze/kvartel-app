@@ -1,4 +1,5 @@
 import {StyleSheet} from "react-native";
+import {colors} from "../../../constants/constants";
 
 export const styles = StyleSheet.create({
     container: {
@@ -34,17 +35,21 @@ export const styles = StyleSheet.create({
     },
     label: {
         marginBottom: 8,
-        color: 'gray',
+        color: colors.mainGrey,
         textTransform: 'uppercase',
+        fontWeight: '500',
+        fontSize: 16
     },
     input: {
-        borderBottomWidth: 1,
-        borderBottomColor: 'gray',
+        borderBottomWidth: 1.5,
+        borderBottomColor: colors.mainGrey,
         paddingVertical: 8,
         fontSize: 16,
+        fontWeight: '500',
+        color: 'black'
     },
     saveButton: {
-        backgroundColor: 'purple',
+        backgroundColor: colors.mainPurple,
         padding: 16,
         borderRadius: 8,
         alignItems: 'center',

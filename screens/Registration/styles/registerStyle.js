@@ -1,4 +1,5 @@
 import {StyleSheet} from "react-native";
+import {colors} from "../../../constants/constants";
 
  export const styles = StyleSheet.create({
      container: {
@@ -34,23 +35,28 @@ import {StyleSheet} from "react-native";
      phoneInputContainer: {
          flexDirection: 'row',
          marginTop: 20,
-         alignItems: 'center',
          justifyContent: 'center',
-         width: '80%',
+         width: '70%',
+     },
+     countryCodeContainer: {
+         flexDirection: 'row',
+         alignItems: 'center',
      },
      countryCode: {
          fontSize: 24,
-         marginRight: 8,
-         textDecorationLine: 'underline',
-         textDecorationColor: 'purple',
      },
-
+     underline: {
+         height: 1,
+         backgroundColor: '#fff',
+         flex: 1,
+         marginLeft: 8,
+         marginBottom: 4,
+     },
      phoneInput: {
          borderBottomWidth: 1,
-         borderBottomColor: '#000',
+         borderBottomColor: '#fff',
          fontSize: 24,
          flex: 1,
-         textAlign: 'center',
      },
      mainContainer: {
          display: "flex",
@@ -59,6 +65,24 @@ import {StyleSheet} from "react-native";
          marginTop: 50,
          gap: 50,
          alignItems: "center",
+     },
+
+     sendCodeButton: {
+         backgroundColor: colors.mainPurple,
+         padding: 16,
+         borderRadius: 12,
+         alignItems: 'center',
+     },
+     sendCodeButtonText: {
+         color: '#fff',
+         fontSize: 18,
+     },
+     sendCodeButtonContainer: {
+         position: 'absolute',
+         bottom: 10,
+         left: 20,
+         right: 20,
      }
+
 
  });

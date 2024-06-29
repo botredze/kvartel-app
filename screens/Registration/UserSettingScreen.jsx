@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, Button } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import  {styles} from './styles/settingsStyles'
+import SideBar from "../../components/SideBar/SideBar";
 
-export default function () {
+export default function UserSettingScreen () {
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [middleName, setMiddleName] = useState('');
@@ -11,15 +12,7 @@ export default function () {
 
     return (
         <SafeAreaView style={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={() => {/* Handle back action */}}>
-                    <Ionicons name="arrow-back" size={24} color="black" />
-                </TouchableOpacity>
-                <Text style={styles.headerText}>Настройки</Text>
-                <TouchableOpacity style={styles.closeButton} onPress={() => {/* Handle close action */}}>
-                    <Ionicons name="close" size={24} color="black" />
-                </TouchableOpacity>
-            </View>
+          <SideBar title='Настройки'/>
             <View style={styles.content}>
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>ИМЯ</Text>
@@ -59,7 +52,7 @@ export default function () {
                     />
                 </View>
             </View>
-            <TouchableOpacity style={styles.saveButton} onPress={() => {/* Handle save action */}}>
+            <TouchableOpacity style={styles.saveButton} onPress={() => {}}>
                 <Text style={styles.saveButtonText}>Сохранить</Text>
             </TouchableOpacity>
         </SafeAreaView>

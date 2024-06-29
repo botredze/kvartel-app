@@ -9,43 +9,69 @@ export const styles = StyleSheet.create({
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
     },
     backButton: {
-        flex: 1,
-        alignItems: 'flex-start',
+        padding: 8,
     },
     closeButton: {
-        flex: 1,
-        alignItems: 'flex-end',
+        padding: 8,
     },
     content: {
-        flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        paddingHorizontal: 16,
+        height: '50%',
+        display: "flex",
+        gap: 60,
     },
     headerText: {
-        fontSize: 20,
-        textAlign: 'center',
-        marginBottom: 40,
+        width: '70%',
+        textAlign:'center',
+        fontSize: 32,
+        fontWeight: '600',
+        marginBottom: 16,
     },
     otpContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '80%',
+        position: 'relative',
+        width: '70%',
     },
     otpInput: {
-        borderBottomWidth: 2,
-        borderColor: '#000',
+        position: 'absolute',
+        opacity: 0,
+        width: '100%',
+        height: 60,
+        fontSize: 29,
         textAlign: 'center',
-        fontSize: 24,
-        padding: 8,
-        width: 40,
+        letterSpacing: 8,
+    },
+    otpMask: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    otpMaskItem: {
+        borderBottomWidth: 2,
+        borderBottomColor: '#9A9A9A',
+        width: '12%', // Adjust as needed
+        alignItems: 'center',
+        padding: 4,
+    },
+    otpMaskText: {
+        fontSize: 26,
     },
     timerText: {
-        marginTop: 20,
+        marginTop: 16,
         fontSize: 16,
         color: 'gray',
     },
+    timerContainer: {
+        position: 'absolute',
+        bottom: 10,
+        left: 20,
+        right: 20,
+        display: "flex",
+        alignItems: 'center'
+    }
+
 });
