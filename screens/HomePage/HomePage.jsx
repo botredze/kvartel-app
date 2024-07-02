@@ -7,6 +7,7 @@ import ApartmentCard from "../../components/ApartmentCard/ApartmentCard";
 import {Searchbar, TextInput} from 'react-native-paper';
 import Recomendation from "../../components/Recomendation/Recomendation";
 import Filters from "../../components/Filters/Filters";
+import Details from "../../components/Details/Details";
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -235,48 +236,50 @@ export default function HomePage() {
 
     return (
         <SafeAreaView style={styles.container}>
-            <Maps/>
-            <BottomSheet
-                snapPoints={snapPoints}
-                enableContentPanningGesture={false}
-                enableHandlePanningGesture={true}
-            >
-                <View style={styles.searchContainer}>
-                    <Searchbar
-                        ref={inputRef}
-                        style={styles.searchInput}
-                        placeholder="Поиск по адресу"
-                        value={searchQuery}
-                        onChangeText={setSearchQuery}
-                        onFocus={handleFocusSearch}
-                        onSubmitEditing={handleSearchSubmit}
-                        icon="magnify"
-                        clearIcon= 'close'
-                        onClearIconPress={handleClearSearch}
-                    />
-                    <TouchableOpacity style={styles.filterButton} onPress={toggleFilters}>
-                        <Text style={styles.filterButtonText}>Фильтры</Text>
-                    </TouchableOpacity>
-                </View>
+            {/*<Maps/>*/}
+            {/*<BottomSheet*/}
+            {/*    snapPoints={snapPoints}*/}
+            {/*    enableContentPanningGesture={false}*/}
+            {/*    enableHandlePanningGesture={true}*/}
+            {/*>*/}
+            {/*    <View style={styles.searchContainer}>*/}
+            {/*        <Searchbar*/}
+            {/*            ref={inputRef}*/}
+            {/*            style={styles.searchInput}*/}
+            {/*            placeholder="Поиск по адресу"*/}
+            {/*            value={searchQuery}*/}
+            {/*            onChangeText={setSearchQuery}*/}
+            {/*            onFocus={handleFocusSearch}*/}
+            {/*            onSubmitEditing={handleSearchSubmit}*/}
+            {/*            icon="magnify"*/}
+            {/*            clearIcon= 'close'*/}
+            {/*            onClearIconPress={handleClearSearch}*/}
+            {/*        />*/}
+            {/*        <TouchableOpacity style={styles.filterButton} onPress={toggleFilters}>*/}
+            {/*            <Text style={styles.filterButtonText}>Фильтры</Text>*/}
+            {/*        </TouchableOpacity>*/}
+            {/*    </View>*/}
 
 
-                {showRecommendations && (
-                    <BottomSheetFlatList
-                        data={recommendations}
-                        renderItem={({item}) => <Recomendation item={item}/>}
-                        keyExtractor={(item, index) => index.toString()}
-                        style={styles.recommendationList}
-                    />
-                )}
-                    <BottomSheetFlatList
-                        data={apartments}
-                        renderItem={({item}) => <ApartmentCard apartment={item}/>}
-                        keyExtractor={(item) => item.id}
-                        style={styles.apartmentList}
-                    />
-            </BottomSheet>
+            {/*    {showRecommendations && (*/}
+            {/*        <BottomSheetFlatList*/}
+            {/*            data={recommendations}*/}
+            {/*            renderItem={({item}) => <Recomendation item={item}/>}*/}
+            {/*            keyExtractor={(item, index) => index.toString()}*/}
+            {/*            style={styles.recommendationList}*/}
+            {/*        />*/}
+            {/*    )}*/}
+            {/*        <BottomSheetFlatList*/}
+            {/*            data={apartments}*/}
+            {/*            renderItem={({item}) => <ApartmentCard apartment={item}/>}*/}
+            {/*            keyExtractor={(item) => item.id}*/}
+            {/*            style={styles.apartmentList}*/}
+            {/*        />*/}
+            {/*</BottomSheet>*/}
 
-            {showFilters && <Filters  toggleFilters={toggleFilters}/>}
+            {/*{showFilters && <Filters  toggleFilters={toggleFilters}/>}*/}
+
+            <Details />
         </SafeAreaView>
     );
 }

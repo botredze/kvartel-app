@@ -19,38 +19,38 @@ export const Navigation = () => {
         <NavigationContainer>
             <Preloader />
             <Stack.Navigator
-                initialRouteName="ChatScreen"
+                initialRouteName="HomePage"
                 screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}
             >
-                <Stack.Screen
-                    name="Creeting"
-                    component={Creeting}
-                    options={{ headerShown: false }}
-                />
+                {/*<Stack.Screen*/}
+                {/*    name="Creeting"*/}
+                {/*    component={Creeting}*/}
+                {/*    options={{ headerShown: false }}*/}
+                {/*/>*/}
 
-                <Stack.Screen
-                name='Register'
-                component={Register}
-                options={{headerShown: false}}
-                />
+                {/*<Stack.Screen*/}
+                {/*name='Register'*/}
+                {/*component={Register}*/}
+                {/*options={{headerShown: false}}*/}
+                {/*/>*/}
 
-                <Stack.Screen
-                    name='OTP'
-                    component={OTPInputScreen}
-                    options={{headerShown: false}}
-                />
+                {/*<Stack.Screen*/}
+                {/*    name='OTP'*/}
+                {/*    component={OTPInputScreen}*/}
+                {/*    options={{headerShown: false}}*/}
+                {/*/>*/}
 
-                <Stack.Screen
-                    name='UserSettingScreen'
-                    component={UserSettingScreen}
-                    options={{headerShown: false}}
-                />
+                {/*<Stack.Screen*/}
+                {/*    name='UserSettingScreen'*/}
+                {/*    component={UserSettingScreen}*/}
+                {/*    options={{headerShown: false}}*/}
+                {/*/>*/}
 
-                <Stack.Screen
-                    name='ChatScreen'
-                    component={ChatScreen}
-                    options={{headerShown: false}}
-                />
+                {/*<Stack.Screen*/}
+                {/*    name='ChatScreen'*/}
+                {/*    component={ChatScreen}*/}
+                {/*    options={{headerShown: false}}*/}
+                {/*/>*/}
 
                 <Stack.Screen
                     name='HomePage'

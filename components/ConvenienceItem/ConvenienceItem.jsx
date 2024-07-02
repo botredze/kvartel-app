@@ -4,6 +4,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 
 const ConvenienceItem = ({ item, onSelect, isSelected }) => {
+    console.log(item, onSelect, isSelected )
     return (
         <TouchableOpacity
             style={[styles.itemContainer, isSelected && styles.selectedItem]}
