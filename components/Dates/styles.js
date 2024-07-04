@@ -1,0 +1,38 @@
+import {StyleSheet} from "react-native";
+
+export const styles = StyleSheet.create({
+    selectDateButton: {
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: 'center',
+        width: 60,
+        height: 60,
+        borderRadius: 23,
+        borderWidth: 2,
+        borderColor: '#ccc',
+    },
+
+    selectDateTitle: {
+        fontSize: 18,
+        textTransform: 'uppercase',
+        fontWeight: '500'
+    },
+
+    dateContainer:{
+        marginRight: 30,
+        alignItems: "center",
+        justifyContent: 'center',
+        gap: 15,
+        flex: 1
+    },
+    dateTitle: {
+        fontSize: 16,
+        color: '#ccc',
+        textTransform: 'uppercase'
+    },
+    outActive: {
+        fontSize: 10,
+        fontWeight: '400'
+    }
+
+})

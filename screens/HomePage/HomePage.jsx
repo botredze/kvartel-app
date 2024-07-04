@@ -8,6 +8,11 @@ import {Searchbar, TextInput} from 'react-native-paper';
 import Recomendation from "../../components/Recomendation/Recomendation";
 import Filters from "../../components/Filters/Filters";
 import Details from "../../components/Details/Details";
+import PreviewBottiomSheet from "../../components/PreviewBottiomSheet/PreviewBottiomSheet";
+import Booking from "../../components/Booking/Booking";
+import FaqBottomSheet from "../../components/FaqBottomSheet/FaqBottomSheet";
+import Favorites from "../../components/Favorites/Favorites";
+import Support from "../../components/Support/Support";
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -19,7 +24,7 @@ export default function HomePage() {
         setShowFilters(!showFilters);
     };
 
-    const [apartments, setApartments] = useState([  {
+    const [apartments, setApartments] = useState([{
         id: '1',
         name: 'Апартаменты',
         price: '3021 ',
@@ -72,8 +77,30 @@ export default function HomePage() {
             ]
         },
     ]);
+
     const snapPoints = useMemo(() => ['10%', '96%'], [])
     const inputRef = useRef(null);
+
+    const apartament = {
+        id: '1',
+        name: 'Апартаменты',
+        price: '3021 ',
+        address: 'г.Бишкек ул.Кудыкины горы и ',
+        closedDate: "03 июля",
+        entryTime: '14-00',
+        outTime: '12-00',
+        images: [
+            {
+                imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg',
+            },
+            {
+                imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg',
+            },
+            {
+                imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg',
+            }
+        ]
+    }
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -279,7 +306,14 @@ export default function HomePage() {
 
             {/*{showFilters && <Filters  toggleFilters={toggleFilters}/>}*/}
 
-            <Details />
+            {/*<Details />*/}
+
+            {/*<PreviewBottiomSheet item={apartament}/>*/}
+            {/*<Booking  item={apartament}/>*/}
+
+            {/*<FaqBottomSheet/>*/}
+            {/*<Favorites/>*/}
+            <Support/>
         </SafeAreaView>
     );
 }

@@ -2,7 +2,7 @@ import React from "react";
 import {View, Text, Image} from "react-native";
 import {styles} from "./style";
 import Swiper from 'react-native-swiper';
-import {FontAwesome5} from "@expo/vector-icons";
+import {AntDesign, FontAwesome5} from "@expo/vector-icons";
 
 export default function ApartmentCard({apartment}) {
     return (
@@ -22,6 +22,18 @@ export default function ApartmentCard({apartment}) {
 
                 <View style={styles.priceContainer}>
                     <Text style={styles.price}>{apartment?.price}сом сутки</Text>
+                </View>
+
+                <View style={styles.favoriteHeart}>
+                    {apartment.favorites ? (
+                        <View>
+                            <AntDesign name="heart" size={30} color="#FF5244" />
+                        </View>
+                    ): (
+                        <View>
+                            <AntDesign name="hearto" size={30} color="black" />
+                        </View>
+                    )}
                 </View>
             </View>
             <Text style={styles.name}>{apartment?.name}</Text>

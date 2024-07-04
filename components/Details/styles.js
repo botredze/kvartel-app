@@ -6,7 +6,6 @@ export const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 5,
         paddingHorizontal: 15,
-        marginBottom: 30
     },
 
     flatListContainer: {
@@ -130,12 +129,20 @@ export const styles = StyleSheet.create({
         marginTop: 20,
         flex: 1,
     },
+
+    recomendationContainer: {
+        marginTop: 20,
+        flex: 1,
+        marginBottom: 50,
+    },
+
+
     contentTitle: {
         fontSize: 16,
         fontWeight: '400',
-        marginBottom: 8,
+        marginBottom: 10,
         color: '#ccc',
-        textTransform: 'uppercase'
+        textTransform: 'uppercase',
     },
 
     watchMoreText: {
@@ -156,7 +163,38 @@ export const styles = StyleSheet.create({
     },
 
     recomendated: {
+        display: "flex",
+        flexDirection: 'row',
+    },
 
+    selectDateContainer: {
+        display: "flex",
+        flexDirection: 'row',
+        alignItems: "center",
+        width: '100%',
+        backgroundColor: '#fff',
+        height: 90,
+        paddingHorizontal: 18,
+        justifyContent: "space-between",
+        gap: 5
+    },
+
+    selectDateBtn: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: "space-between",
+        alignItems: "center",
+        alignSelf: "center",
+        width: '88%',
+        height: 50,
+        backgroundColor: '#5127FF',
+        borderRadius: 30,
+        paddingHorizontal: 15,
+
+    },
+    selectDateBtnText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: colors.mainWhite
     }
-
 })

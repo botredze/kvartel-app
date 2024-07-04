@@ -164,16 +164,16 @@ export const rules = [
 
 
 export const dates = [
-    {id: 1, name: 'Пт', date: 28},
-    {id: 2, name: 'сб', date: 29},
-    {id: 3, name: 'вс', date: 30},
-    {id: 4, name: 'пн', date: 1},
-    {id: 5, name: 'вт', date: 2},
-    {id: 6, name: 'ср', date: 3},
-    {id: 7, name: 'чт', date: 4},
-    {id: 8, name: 'пт', date: 5},
-    {id: 9, name: 'сб', date: 6},
-    {id: 10, name: 'вс', date: 7},
-    {id: 11, name: 'пн', date: 8},
-    {id: 12, name: 'вт', date: 9},
+    {id: 1, name: 'Пт', date: 28, output: false},
+    {id: 2, name: 'сб', date: 29, output: false},
+    {id: 3, name: 'вс', date: 30, output: true},
+    {id: 4, name: 'пн', date: 1, output: false},
+    {id: 5, name: 'вт', date: 2, output: false},
+    {id: 6, name: 'ср', date: 3, output: false},
+    {id: 7, name: 'чт', date: 4, output: false},
+    {id: 8, name: 'пт', date: 5, output: false},
+    {id: 9, name: 'сб', date: 6, output: false},
+    {id: 10, name: 'вс', date: 7, output: false},
+    {id: 11, name: 'пн', date: 8, output: false},
+    {id: 12, name: 'вт', date: 9, output: false},
 ]

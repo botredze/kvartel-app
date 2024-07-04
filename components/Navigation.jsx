@@ -9,6 +9,7 @@ import OTPInputScreen from "../screens/Registration/OTPInput";
 import UserSettingScreen from "../screens/Registration/UserSettingScreen";
 import ChatScreen from "../screens/Registration/ChatScreen";
 import HomePage from "../screens/HomePage/HomePage";
+import BurgerMenu from "../screens/BurgerMenu/BurgerMenu";
 
 const Stack = createNativeStackNavigator();
 
@@ -55,6 +56,12 @@ export const Navigation = () => {
                 <Stack.Screen
                     name='HomePage'
                     component={HomePage}
+                    options={{headerShown: false}}
+                />
+
+                <Stack.Screen
+                    name='BurgerMenu'
+                    component={BurgerMenu}
                     options={{headerShown: false}}
                 />
             </Stack.Navigator>

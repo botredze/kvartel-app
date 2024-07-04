@@ -51,6 +51,12 @@ export const styles = StyleSheet.create({
         left: 17,
         bottom: 20
     },
+
+    favoriteHeart: {
+        position: 'absolute',
+        right: 20,
+        top: 20
+    },
     gapContainer: {
         display: "flex",
         flexDirection: 'row',
@@ -67,7 +73,8 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
         color: '#666666'
-    }
+    },
+
 
 
 });

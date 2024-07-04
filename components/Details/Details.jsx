@@ -1,13 +1,15 @@
 import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
 import React, {useMemo, useState} from "react";
-import {View, Text, TouchableOpacity, Image} from "react-native";
+import {View, Text, TouchableOpacity, Image, ScrollView} from "react-native";
 import {styles} from './styles'
-import {Feather, FontAwesome5, FontAwesome6, Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
+import {Entypo, Feather, FontAwesome5, FontAwesome6, Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
 import Swiper from "react-native-swiper";
 import {colors, convenience, rules} from "../../constants/constants";
 import ConvenienceItem from "../ConvenienceItem/ConvenienceItem";
 import ConvenienceViewItem from "../ConvenienceItem/ConveninceViewItem";
 import Rules from "../Rules/Rules";
+import ApartmentCard from "../ApartmentCard/ApartmentCard";
+import RecomendationsCard from "../RecomendationsCard/RecomendationsCard";
 
 export default function Details() {
     const snapPoints = useMemo(() => ['100%'], []);
@@ -38,45 +40,40 @@ export default function Details() {
             {id: 3},
             {id: 4},
         ],
+        price: 1432,
 
         othersNearby: [
             {
                 id: 1,
                 name: 'Двухкомнатная квартира',
                 address: 'Кудыкины горы',
-                photos: [
+                price: 2519,
+                images: [
                     {
-                        photosUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    },
-                    {
-                        photosUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    },
+                        imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
+                    }
                 ]
             },
             {
                 id: 2,
                 name: 'Однакомнатная комната где то там',
                 address: 'Кудыкины горы',
-                photos: [
+                price: 2519,
+                images: [
                     {
-                        photosUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    },
-                    {
-                        photosUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    },
+                        imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
+                    }
                 ]
             },
             {
                 id: 3,
                 name: 'Трешка в центре, элитка',
                 address: 'Кудыкины горы',
-                photos: [
+                price: 2519,
+                images: [
                     {
-                        photosUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    },
-                    {
-                        photosUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    },
+                        imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
+                    }
                 ]
             }
         ]
@@ -186,13 +183,30 @@ export default function Details() {
                     </TouchableOpacity>
                 </BottomSheetView>
 
-                <BottomSheetScrollView style={styles.convenienceContainer}>
+                <BottomSheetScrollView
+                    style={styles.recomendationContainer}
+                >
                     <Text style={styles.contentTitle}>Другие дома рядом</Text>
-
-                    <View style={styles.recomendated}></View>
+                    <BottomSheetScrollView
+                        style={styles.recomendated}
+                         horizontal={true}
+                         showsHorizontalScrollIndicator={false}
+                    >{apartomentDetails.othersNearby.map((item)=> (
+                          <RecomendationsCard apartment={item} key={item.id}/>
+                    ))}</BottomSheetScrollView>
                 </BottomSheetScrollView>
-
             </BottomSheetScrollView >
+
+            <BottomSheetView style={styles.selectDateContainer}>
+                <TouchableOpacity style={styles.selectDateBtn}>
+                    <Text style={styles.selectDateBtnText}>Выбрать дату</Text>
+                    <Text style={styles.selectDateBtnText}>{apartomentDetails.price} сутки</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.closeButton}>
+                    <Entypo name="dots-three-horizontal" size={22} color="#666666" />
+                </TouchableOpacity>
+            </BottomSheetView>
         </BottomSheet>
     )
 }
