@@ -1,16 +1,27 @@
 import BottomSheet, {BottomSheetView} from "@gorhom/bottom-sheet";
-import React, {useMemo} from "react";
+import React, {useCallback, useMemo} from "react";
 import {Text, TouchableOpacity, StyleSheet, Image, View} from "react-native";
 import {Entypo, Ionicons} from "@expo/vector-icons";
 import {colors} from "../../constants/constants";
 
 
-export default function PreviewBottiomSheet({item}) {
+export default function PreviewBottiomSheet({item, previewButton, booking}) {
     const snapPoints = useMemo(() => ['17%'], []);
+
+    const handleClosePreview = () => {
+        previewButton.current?.close();
+    };
+
+    const handleClickBooking = useCallback((index) => {
+        booking.current?.snapToIndex(index);
+    }, []);
 
     return (
         <BottomSheet
+            ref={previewButton}
             snapPoints={snapPoints}
+            index ={-1}
+            enablePanDownToClose={true}
             enableContentPanningGesture={false}
             enableHandlePanningGesture={true}
         >
@@ -26,15 +37,16 @@ export default function PreviewBottiomSheet({item}) {
                         <Text style={styles.adressText}>{item.address}</Text>
                     </View>
                 </View>
-                <TouchableOpacity onPress={() => {
-                    console.log('CLick')
-                }} style={styles.closeButton}>
+                <TouchableOpacity onPress={() => {handleClosePreview()}} style={styles.closeButton}>
                     <Ionicons name="close" size={24} color="white"/>
                 </TouchableOpacity>
             </BottomSheetView>
 
             <BottomSheetView style={styles.selectDateContainer}>
-                <TouchableOpacity style={styles.selectDateBtn}>
+                <TouchableOpacity
+                    style={styles.selectDateBtn}
+                    onPress={() => {handleClickBooking(0)}}
+                >
                     <Text style={styles.selectDateBtnText}>Выбрать дату</Text>
                     <Text style={styles.selectDateBtnText}>{item.price} сутки</Text>
                 </TouchableOpacity>

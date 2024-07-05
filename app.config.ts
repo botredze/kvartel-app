@@ -9,6 +9,8 @@ const config: ExpoConfig = {
     icon: "./assets/icon.png",
     userInterfaceStyle: "light",
     plugins: [
+        '@config-plugins/react-native-blob-util',
+        "@config-plugins/react-native-pdf",
         [
             "expo-camera",
             {

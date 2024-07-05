@@ -1,12 +1,33 @@
-import React from "react";
-import {View, Text, Image} from "react-native";
+import React, {useCallback} from "react";
+import {View, Text, Image, TouchableOpacity} from "react-native";
 import {styles} from "./style";
 import Swiper from 'react-native-swiper';
 import {AntDesign, FontAwesome5} from "@expo/vector-icons";
 
-export default function ApartmentCard({apartment}) {
+export default function ApartmentCard({apartment, detailsRef}) {
+
+    function handlePressFavirites(action) {
+        switch (action) {
+            case 1:
+                break;
+            case 2:
+                break;
+            default:
+                console.log("Action Not FOUND");
+        }
+    }
+
+    const handleSelectApartment = useCallback((index) => {
+        detailsRef.current?.snapToIndex(index);
+    }, []);
+
+
     return (
-        <View style={styles.card}>
+        <TouchableOpacity
+            onPress={() => {handleSelectApartment(0)}}
+            style={styles.card}
+            activeOpacity={0.7}
+        >
             <View style={styles.wrapperContainer}>
                 <Swiper style={styles.wrapper} showsButtons loop={false}>
                     {apartment?.images?.map((item, index) => (
@@ -26,13 +47,13 @@ export default function ApartmentCard({apartment}) {
 
                 <View style={styles.favoriteHeart}>
                     {apartment.favorites ? (
-                        <View>
-                            <AntDesign name="heart" size={30} color="#FF5244" />
-                        </View>
+                        <TouchableOpacity onPress={() => {handlePressFavirites(1)}}>
+                            <AntDesign name="heart" size={25} color="#FF5244" />
+                        </TouchableOpacity>
                     ): (
-                        <View>
-                            <AntDesign name="hearto" size={30} color="black" />
-                        </View>
+                        <TouchableOpacity onPress={() => {handlePressFavirites(2)}}>
+                            <AntDesign name="hearto" size={25} color="white" />
+                        </TouchableOpacity>
                     )}
                 </View>
             </View>
@@ -43,6 +64,6 @@ export default function ApartmentCard({apartment}) {
                 <Text style={styles.gapTextTime}>(0 мин.)</Text>
             </View>
             <Text style={styles.address}>{apartment?.address}</Text>
-        </View>
+        </TouchableOpacity>
     );
 }

@@ -7,7 +7,7 @@ import {colors, convenience, dates} from "../../constants/constants";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import ConvenienceItem from "../ConvenienceItem/ConvenienceItem";
 
-export default function Filters({toggleFilters}) {
+export default function Filters({ filterRef}) {
     const snapPoints = useMemo(() => ['96%'], []);
     const [selectDate, setSelectDate] = useState(false)
     const [countGuest, setCountGuest] = useState(0);
@@ -60,11 +60,20 @@ export default function Filters({toggleFilters}) {
             }
         });
     };
+
+    const toggleFilters = () => {
+        filterRef.current?.close();
+    };
+
     return (
         <BottomSheet
             snapPoints={snapPoints}
+            index={-1}
+            ref={filterRef}
             enableContentPanningGesture={false}
+            enablePanDownToClose={true}
             enableHandlePanningGesture={true}
+            onClose={toggleFilters}
         >
             <BottomSheetScrollView style={styles.sheetContent}>
 

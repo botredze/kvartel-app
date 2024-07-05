@@ -1,23 +1,51 @@
 import {Image, Text, TouchableOpacity, View} from "react-native";
-import BottomSheet, {BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
+import BottomSheet, {BottomSheetBackdrop, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
 import {styles} from './styles'
-import React, {useMemo} from "react";
+import React, {useCallback, useMemo} from "react";
 import {Ionicons} from "@expo/vector-icons";
 import {dates} from "../../constants/constants";
 import Dates from "../Dates/Dates";
+import {useNavigation} from "@react-navigation/native";
 
-export default function Booking({item}) {
+export default function Booking({item, booking}) {
     const snapPoints = useMemo(() => ['57%'], []);
+    const navigation = useNavigation();
 
     const prepaymentPercentage = 15;
     const prepaymentAmount = Math.round((item?.price * prepaymentPercentage) / 100);
     const remainingAmount = Math.round(item?.price - prepaymentAmount);
 
+    const closeBooking = () => {
+        booking.current?.close()
+    };
+    // navigation.navigate('PaymentMethods')
+    const shadowBlock = useCallback(
+        (props) => (
+            <BottomSheetBackdrop
+                opacity={0.8}
+                appearsOnIndex={1}
+                disappearsOnIndex={-1}
+                {...props}
+            ></BottomSheetBackdrop>
+        ),
+        []
+    );
+
+    const handleStartPayment = () => {
+         navigation.navigate('PaymentMethods')
+    };
+
     return (
         <BottomSheet
+            ref={booking}
             snapPoints={snapPoints}
+            index={-1}
+            backdropComponent={shadowBlock}
+            enablePanDownToClose={true}
             enableContentPanningGesture={false}
-            enableHandlePanningGesture={true}>
+            enableHandlePanningGesture={true}
+            onClose={closeBooking}
+        >
             <BottomSheetView style={styles.container}>
                 <BottomSheetView style={styles.contentContainer}>
                     <View style={styles.imageAndAdress}>
@@ -25,15 +53,12 @@ export default function Booking({item}) {
                             source={{uri: item?.images[0]?.imageUrl}}
                             style={styles.image}
                         />
-
                         <View>
                             <Text style={styles.nameText}>{item.name}</Text>
                             <Text style={styles.adressText}>{item.address}</Text>
                         </View>
                     </View>
-                    <TouchableOpacity onPress={() => {
-                        console.log('CLick')
-                    }} style={styles.closeButton}>
+                    <TouchableOpacity onPress={() => {closeBooking()}} style={styles.closeButton}>
                         <Ionicons name="close" size={24} color="white"/>
                     </TouchableOpacity>
                 </BottomSheetView>
@@ -68,7 +93,10 @@ export default function Booking({item}) {
                     </View>
                 </BottomSheetView>
 
-                <TouchableOpacity style={styles.buyButton}>
+                <TouchableOpacity
+                    onPress={() => handleStartPayment()}
+                    style={styles.buyButton}
+                >
                     <Text style={{fontSize: 17, fontWeight: '500', color: '#fff'}}>Внести предоплату {prepaymentAmount} сом ({prepaymentPercentage}%)</Text>
                 </TouchableOpacity>
             </BottomSheetView>

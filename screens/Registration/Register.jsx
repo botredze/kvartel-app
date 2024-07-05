@@ -3,14 +3,20 @@ import {SafeAreaView, Text, View, TextInput, StyleSheet, Platform, TouchableOpac
 import {styles} from './styles/registerStyle'
 import { Ionicons } from '@expo/vector-icons';
 import MaskInput from "react-native-mask-input/src/MaskInput";
+import {useNavigation} from "@react-navigation/native";
 
 export default function Register() {
     const [phone, setPhone] = useState('');
     const [isPhoneValid, setIsPhoneValid] = useState(false);
+    const navigation = useNavigation();
 
     const handlePhoneChange = (masked, unmasked) => {
         setPhone(masked);
         setIsPhoneValid(masked.length === 15);
+    };
+
+    const handleSendSMS = () => {
+        navigation.navigate('OTP')
     };
 
     return (
@@ -48,7 +54,7 @@ export default function Register() {
 
                 <View style={styles.sendCodeButtonContainer}>
                     {isPhoneValid && (
-                        <TouchableOpacity style={styles.sendCodeButton} onPress={() => { }}>
+                        <TouchableOpacity style={styles.sendCodeButton} onPress={() => {handleSendSMS()}}>
                             <Text style={styles.sendCodeButtonText}>Отправить код СМС</Text>
                         </TouchableOpacity>
                     )}

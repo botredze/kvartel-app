@@ -6,6 +6,11 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
+    errorText: {
+        color: 'red',
+        fontSize: 14,
+        marginTop: 5,
+    },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',

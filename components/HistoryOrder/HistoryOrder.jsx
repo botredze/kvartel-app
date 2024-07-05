@@ -1,17 +1,18 @@
-import React, {useCallback, useMemo} from "react";
 import BottomSheet, {BottomSheetBackdrop, BottomSheetFlatList} from "@gorhom/bottom-sheet";
+import React, {useCallback, useMemo} from "react";
 import BottomSheetSideBar from "../BottomSheetSideBar/BottomSheetSideBar";
-import ApartmentCard from "../ApartmentCard/ApartmentCard";
-import { apartament } from "../../constants/apartaments";
+import {styles} from './style'
+import {faqData} from "../../constants/faqData";
+import FaqCard from "../FaqCards/FaqCards";
+import {Text} from 'react-native'
 
-export default function Favorites({favorites}) {
-    const snapPoints = useMemo(() => ['95%'], []);
+export default function HistoryOrder({history}) {
+    const snapPoints = useMemo(() => ['96%'], []);
 
     const handleBack = () => {
-        favorites.current?.close()
+        history.current?.close()
     }
 
-    const favoritesCard = apartament.filter(item => item.favorites);
     const shadowBlock = useCallback(
         (props) => (
             <BottomSheetBackdrop
@@ -23,22 +24,18 @@ export default function Favorites({favorites}) {
         ),
         []
     );
+
     return (
         <BottomSheet
-            ref={favorites}
+            ref={history}
             index={-1}
             enablePanDownToClose={true}
             backdropComponent={shadowBlock}
             onClose={handleBack}
             snapPoints={snapPoints}
         >
-            <BottomSheetSideBar handleClickBack={handleBack} title='Избранные'/>
-
-            <BottomSheetFlatList
-                data={favoritesCard}
-                renderItem={({ item }) => <ApartmentCard apartment={item} />}
-                keyExtractor={item => item.id}
-            />
+            <BottomSheetSideBar handleClickBack={handleBack} title='История аренды'/>
+            <Text>Пока данных нет</Text>
         </BottomSheet>
     )
 }

@@ -1,16 +1,29 @@
-import BottomSheet, {BottomSheetFlatList} from "@gorhom/bottom-sheet";
+import BottomSheet, {BottomSheetBackdrop, BottomSheetFlatList} from "@gorhom/bottom-sheet";
 
-import React, {useMemo} from "react";
+import React, {useCallback, useMemo} from "react";
 import {Text, TouchableOpacity, View} from "react-native";
 import {styles} from "./style";
 import {FontAwesome5, Ionicons} from "@expo/vector-icons";
 
 
-export default function Support(){
+export default function Support({support}){
     const snapPoints = useMemo(() => ['47%'], []);
+
     const handleBack = () => {
-        console.log('ХУЙХУЙ')
+        support.current?.close()
     }
+
+    const shadowBlock = useCallback(
+        (props) => (
+            <BottomSheetBackdrop
+                opacity={0.7}
+                appearsOnIndex={1}
+                disappearsOnIndex={-1}
+                {...props}
+            ></BottomSheetBackdrop>
+        ),
+        []
+    );
 
     const contactType = [
         {id: 1, name: 'Написать E-mail', iconName: 'heart'},
@@ -20,15 +33,18 @@ export default function Support(){
     ]
     return (
         <BottomSheet
+            ref={support}
+            index={-1}
+            enablePanDownToClose={true}
+            backdropComponent={shadowBlock}
+            onClose={handleBack}
             snapPoints={snapPoints}
-            enableContentPanningGesture={false}
-            enableHandlePanningGesture={true}
         >
             <View style={styles.sidebarContainer}>
                 <View style={styles.sidebarTitleContainer}>
                 <Text style={styles.sidebarTitle}>Выберите удобный для вас способ связи</Text>
                 </View>
-                <TouchableOpacity onPress={() => {}} style={styles.closeButton}>
+                <TouchableOpacity onPress={() => {handleBack()}} style={styles.closeButton}>
                     <Ionicons name="close" size={24} color="white" />
                 </TouchableOpacity>
             </View>

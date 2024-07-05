@@ -1,19 +1,25 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import { View, StyleSheet, PermissionsAndroid, Platform, Text} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import supercluster from 'supercluster';
-import {colors} from "../../constants/constants";
 import {Fontisto} from "@expo/vector-icons";
+import PreviewBottiomSheet from "../PreviewBottiomSheet/PreviewBottiomSheet";
 
-export default function Maps() {
+export default function Maps({previewButton}) {
     const [markers, setMarkers] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
+
     const [region, setRegion] = useState({
         latitude: 42.880103935651995,
         longitude: 74.58154184284606,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0922,
     });
+
+
+    const previewButtonHandle = useCallback((index) => {
+        previewButton.current?.snapToIndex(index);
+    }, []);
 
     useEffect(() => {
         const requestLocationPermission = async () => {
@@ -79,7 +85,9 @@ export default function Maps() {
 
     const handleMarkerPress = (id) => {
         setSelectedMarker(id);
+        previewButtonHandle(0)
     };
+
     return (
         <View style={styles.container}>
             <MapView
@@ -127,6 +135,7 @@ export default function Maps() {
                     )
                 )}
             </MapView>
+
         </View>
     );
 }

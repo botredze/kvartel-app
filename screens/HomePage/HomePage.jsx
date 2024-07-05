@@ -2,7 +2,7 @@ import {SafeAreaView, View, Text, FlatList, TouchableOpacity} from "react-native
 import {styles} from './style'
 import Maps from "../../components/Maps/Maps";
 import BottomSheet, {BottomSheetFlatList} from "@gorhom/bottom-sheet";
-import {useEffect, useMemo, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import ApartmentCard from "../../components/ApartmentCard/ApartmentCard";
 import {Searchbar, TextInput} from 'react-native-paper';
 import Recomendation from "../../components/Recomendation/Recomendation";
@@ -10,19 +10,25 @@ import Filters from "../../components/Filters/Filters";
 import Details from "../../components/Details/Details";
 import PreviewBottiomSheet from "../../components/PreviewBottiomSheet/PreviewBottiomSheet";
 import Booking from "../../components/Booking/Booking";
-import FaqBottomSheet from "../../components/FaqBottomSheet/FaqBottomSheet";
-import Favorites from "../../components/Favorites/Favorites";
-import Support from "../../components/Support/Support";
+import {FontAwesome6} from "@expo/vector-icons";
+import {useNavigation} from "@react-navigation/native";
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
     const [recommendations, setRecommendations] = useState([]);
     const [showRecommendations, setShowRecommendations] = useState(false);
-    const [showFilters, setShowFilters] = useState(false);
 
-    const toggleFilters = () => {
-        setShowFilters(!showFilters);
-    };
+    const navigation = useNavigation();
+    const filterRef = useRef(null)
+    const detailsRef = useRef(null)
+    const previewButton = useRef(null)
+    const booking = useRef(null)
+
+    const snapPoints = useMemo(() => ['10%', '96%'], [])
+
+    const toggleFilters = useCallback((index) => {
+        filterRef.current?.snapToIndex(index);
+    }, []);
 
     const [apartments, setApartments] = useState([{
         id: '1',
@@ -58,7 +64,6 @@ export default function HomePage() {
                 }
             ]
         },
-
         {
             id: '2',
             name: 'Харомы',
@@ -78,7 +83,6 @@ export default function HomePage() {
         },
     ]);
 
-    const snapPoints = useMemo(() => ['10%', '96%'], [])
     const inputRef = useRef(null);
 
     const apartament = {
@@ -261,59 +265,69 @@ export default function HomePage() {
         setApartments([])
     };
 
+    const handlePressBurgerButton = () => {
+        navigation.navigate('BurgerMenu');
+    };
+
     return (
         <SafeAreaView style={styles.container}>
-            {/*<Maps/>*/}
-            {/*<BottomSheet*/}
-            {/*    snapPoints={snapPoints}*/}
-            {/*    enableContentPanningGesture={false}*/}
-            {/*    enableHandlePanningGesture={true}*/}
-            {/*>*/}
-            {/*    <View style={styles.searchContainer}>*/}
-            {/*        <Searchbar*/}
-            {/*            ref={inputRef}*/}
-            {/*            style={styles.searchInput}*/}
-            {/*            placeholder="Поиск по адресу"*/}
-            {/*            value={searchQuery}*/}
-            {/*            onChangeText={setSearchQuery}*/}
-            {/*            onFocus={handleFocusSearch}*/}
-            {/*            onSubmitEditing={handleSearchSubmit}*/}
-            {/*            icon="magnify"*/}
-            {/*            clearIcon= 'close'*/}
-            {/*            onClearIconPress={handleClearSearch}*/}
-            {/*        />*/}
-            {/*        <TouchableOpacity style={styles.filterButton} onPress={toggleFilters}>*/}
-            {/*            <Text style={styles.filterButtonText}>Фильтры</Text>*/}
-            {/*        </TouchableOpacity>*/}
-            {/*    </View>*/}
+            <Maps previewButton = {previewButton}/>
 
+            <View style={styles.butgerMenuButtonContainer}>
+                <TouchableOpacity
+                    style={styles.burgerMenuButton}
+                    onPress={() => {handlePressBurgerButton()}}
+                >
+                    <FontAwesome6 name="grip-lines" size={28} color="#613DDC" />
+                </TouchableOpacity>
+            </View>
 
-            {/*    {showRecommendations && (*/}
-            {/*        <BottomSheetFlatList*/}
-            {/*            data={recommendations}*/}
-            {/*            renderItem={({item}) => <Recomendation item={item}/>}*/}
-            {/*            keyExtractor={(item, index) => index.toString()}*/}
-            {/*            style={styles.recommendationList}*/}
-            {/*        />*/}
-            {/*    )}*/}
-            {/*        <BottomSheetFlatList*/}
-            {/*            data={apartments}*/}
-            {/*            renderItem={({item}) => <ApartmentCard apartment={item}/>}*/}
-            {/*            keyExtractor={(item) => item.id}*/}
-            {/*            style={styles.apartmentList}*/}
-            {/*        />*/}
-            {/*</BottomSheet>*/}
+            <BottomSheet
+                snapPoints={snapPoints}
+                enableContentPanningGesture={false}
+                enableHandlePanningGesture={true}
+            >
 
-            {/*{showFilters && <Filters  toggleFilters={toggleFilters}/>}*/}
+                <View style={styles.searchContainer}>
+                    <Searchbar
+                        ref={inputRef}
+                        style={styles.searchInput}
+                        placeholder="Поиск по адресу"
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        onFocus={handleFocusSearch}
+                        onSubmitEditing={handleSearchSubmit}
+                        icon="magnify"
+                        clearIcon= 'close'
+                        onClearIconPress={handleClearSearch}
+                    />
+                    <TouchableOpacity style={styles.filterButton} onPress={() =>toggleFilters(0)}>
+                        <Text style={styles.filterButtonText}>Фильтры</Text>
+                    </TouchableOpacity>
+                </View>
 
-            {/*<Details />*/}
+                {showRecommendations && (
+                    <BottomSheetFlatList
+                        data={recommendations}
+                        renderItem={({item}) => <Recomendation item={item}/>}
+                        keyExtractor={(item, index) => index.toString()}
+                        style={styles.recommendationList}
+                    />
+                )}
+                    <BottomSheetFlatList
+                        data={apartments}
+                        renderItem={({item}) => <ApartmentCard apartment={item} detailsRef={detailsRef}/>}
+                        keyExtractor={(item) => item.id}
+                        style={styles.apartmentList}
+                    />
+            </BottomSheet>
 
-            {/*<PreviewBottiomSheet item={apartament}/>*/}
-            {/*<Booking  item={apartament}/>*/}
+             <Filters filterRef={filterRef}/>
+            <PreviewBottiomSheet item={apartament} previewButton = {previewButton} booking={booking}/>
 
-            {/*<FaqBottomSheet/>*/}
-            {/*<Favorites/>*/}
-            <Support/>
+            <Details detailsRef={detailsRef} booking = {booking}/>
+            <Booking  item={apartament} booking = {booking} />
+
         </SafeAreaView>
     );
 }

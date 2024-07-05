@@ -1,5 +1,5 @@
 import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
-import React, {useMemo, useState} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {View, Text, TouchableOpacity, Image, ScrollView} from "react-native";
 import {styles} from './styles'
 import {Entypo, Feather, FontAwesome5, FontAwesome6, Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
@@ -11,7 +11,7 @@ import Rules from "../Rules/Rules";
 import ApartmentCard from "../ApartmentCard/ApartmentCard";
 import RecomendationsCard from "../RecomendationsCard/RecomendationsCard";
 
-export default function Details() {
+export default function Details({detailsRef, booking}) {
     const snapPoints = useMemo(() => ['100%'], []);
     const apartomentDetails = {
         name: 'Студия №3',
@@ -83,19 +83,28 @@ export default function Details() {
 
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
 
+    const closeDetailButtomSheet = () => {
+        detailsRef.current?.close();
+    }
+
+    const handleClickBooking = useCallback((index) => {
+        booking.current?.snapToIndex(index);
+    }, []);
+
 
     return (
         <BottomSheet
+            ref={detailsRef}
             snapPoints={snapPoints}
             enableContentPanningGesture={false}
             enableHandlePanningGesture={true}
+            index={-1}
+            onClose={closeDetailButtomSheet}
         >
             <BottomSheetScrollView  style={styles.container}>
                 <View style={styles.sidebar}>
                     <Text style={styles.mainTitleText}>{apartomentDetails.name}</Text>
-                    <TouchableOpacity onPress={() => {
-                        console.log('CLick')
-                    }} style={styles.closeButton}>
+                    <TouchableOpacity onPress={() => {closeDetailButtomSheet()}} style={styles.closeButton}>
                         <Ionicons name="close" size={24} color="white"/>
                     </TouchableOpacity>
                 </View>
@@ -198,7 +207,9 @@ export default function Details() {
             </BottomSheetScrollView >
 
             <BottomSheetView style={styles.selectDateContainer}>
-                <TouchableOpacity style={styles.selectDateBtn}>
+                <TouchableOpacity style={styles.selectDateBtn}
+                                  onPress={() => {handleClickBooking(0)}}
+                >
                     <Text style={styles.selectDateBtnText}>Выбрать дату</Text>
                     <Text style={styles.selectDateBtnText}>{apartomentDetails.price} сутки</Text>
                 </TouchableOpacity>

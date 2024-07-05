@@ -29,7 +29,7 @@ import {colors} from "../../../constants/constants";
      },
      headerText: {
          fontSize: 32,
-         fontWeight: 'bold',
+         fontWeight: '500',
          textAlign: "center"
      },
      phoneInputContainer: {
@@ -62,13 +62,14 @@ import {colors} from "../../../constants/constants";
          display: "flex",
          height: "40%",
          padding: 15,
-         marginTop: 50,
+         marginTop: 20,
          gap: 50,
          alignItems: "center",
      },
 
      sendCodeButton: {
          backgroundColor: colors.mainPurple,
+         width: '100%',
          padding: 16,
          borderRadius: 12,
          alignItems: 'center',

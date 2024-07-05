@@ -10,6 +10,9 @@ import UserSettingScreen from "../screens/Registration/UserSettingScreen";
 import ChatScreen from "../screens/Registration/ChatScreen";
 import HomePage from "../screens/HomePage/HomePage";
 import BurgerMenu from "../screens/BurgerMenu/BurgerMenu";
+import PaymentMethods from "../screens/PaymentMethods/PaymentMethods";
+import DocsView from "../screens/DocsView/DocsView";
+import AddCardWebView from "../screens/AddCardWebView/AddCardWebView";
 
 const Stack = createNativeStackNavigator();
 
@@ -23,35 +26,35 @@ export const Navigation = () => {
                 initialRouteName="HomePage"
                 screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}
             >
-                {/*<Stack.Screen*/}
-                {/*    name="Creeting"*/}
-                {/*    component={Creeting}*/}
-                {/*    options={{ headerShown: false }}*/}
-                {/*/>*/}
+                <Stack.Screen
+                    name="Creeting"
+                    component={Creeting}
+                    options={{ headerShown: false }}
+                />
 
-                {/*<Stack.Screen*/}
-                {/*name='Register'*/}
-                {/*component={Register}*/}
-                {/*options={{headerShown: false}}*/}
-                {/*/>*/}
+                <Stack.Screen
+                name='Register'
+                component={Register}
+                options={{headerShown: false}}
+                />
 
-                {/*<Stack.Screen*/}
-                {/*    name='OTP'*/}
-                {/*    component={OTPInputScreen}*/}
-                {/*    options={{headerShown: false}}*/}
-                {/*/>*/}
+                <Stack.Screen
+                    name='OTP'
+                    component={OTPInputScreen}
+                    options={{headerShown: false}}
+                />
 
-                {/*<Stack.Screen*/}
-                {/*    name='UserSettingScreen'*/}
-                {/*    component={UserSettingScreen}*/}
-                {/*    options={{headerShown: false}}*/}
-                {/*/>*/}
+                <Stack.Screen
+                    name='UserSettingScreen'
+                    component={UserSettingScreen}
+                    options={{headerShown: false}}
+                />
 
-                {/*<Stack.Screen*/}
-                {/*    name='ChatScreen'*/}
-                {/*    component={ChatScreen}*/}
-                {/*    options={{headerShown: false}}*/}
-                {/*/>*/}
+                <Stack.Screen
+                    name='ChatScreen'
+                    component={ChatScreen}
+                    options={{headerShown: false}}
+                />
 
                 <Stack.Screen
                     name='HomePage'
@@ -64,6 +67,25 @@ export const Navigation = () => {
                     component={BurgerMenu}
                     options={{headerShown: false}}
                 />
+
+                <Stack.Screen
+                    name='PaymentMethods'
+                    component={PaymentMethods}
+                    options={{headerShown: false}}
+                />
+
+                <Stack.Screen
+                    name='DocsView'
+                    component={DocsView}
+                    options={{headerShown: false}}
+                />
+
+                <Stack.Screen
+                    name='AddCardWebView'
+                    component={AddCardWebView}
+                    options={{headerShown: false}}
+                />
+
             </Stack.Navigator>
             <StatusBar theme="auto" backgroundColor="rgba(47, 71, 190, 0.287)" />
         </NavigationContainer>

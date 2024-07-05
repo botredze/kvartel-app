@@ -5,6 +5,7 @@ import { Feather } from '@expo/vector-icons';
 import SideBar from '../../components/SideBar/SideBar';
 import { styles } from './styles/chatStyles';
 import { Camera } from 'expo-camera/legacy';
+import {useNavigation} from "@react-navigation/native";
 
 const steps = [
     [
@@ -65,15 +66,12 @@ export default function ChatScreen() {
     const [isCameraActive, setIsCameraActive] = useState(false);
     const [photoUri, setPhotoUri] = useState(null);
     const [permission, requestPermission] = useCameraPermissions();
-
+    const navigation = useNavigation();
     const handleOpenLink = (link) => {
         Linking.openURL(link);
     };
 
     const handleSendMessage = async () => {
-        console.log('steps', steps.length)
-        console.log('currentStep',currentStep)
-        console.log('currentStep <=  steps.length', currentStep <=  steps.length)
         if (currentStep < steps.length + 1) {
             const userMessage = {
                 id: `${chatMessages.length + 1}_${Date.now()}`,
@@ -84,11 +82,15 @@ export default function ChatScreen() {
                 ...msg,
                 id: `${msg.id}_${Date.now()}`
             }))]);
+
+            console.log(currentStep, 'currentStep')
+            if(currentStep === 7) {
+                navigation.navigate('HomePage');
+            }
+
             setCurrentStep(currentStep + 1);
 
-            console.log('currentStep >= 5 && currentStep < 8', currentStep >= 5 && currentStep < 8)
             if (+currentStep > 4 && +currentStep < 8) {
-                console.log('ХУЙХХЙХУ')
                 setIsCameraActive(true);
             } else {
                 setIsCameraActive(false);

@@ -72,6 +72,15 @@ export const styles = StyleSheet.create({
         right: 20,
         display: "flex",
         alignItems: 'center'
+    },
+    otpError: {
+        fontSize: 16,
+        color: 'red'
+    },
+    otpErrorCode: {
+        alignSelf: "center",
+        alignItems: "center",
+        marginTop: 20
     }
 
 });
