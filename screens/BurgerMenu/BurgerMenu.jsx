@@ -79,7 +79,6 @@ export default function BurgerMenu() {
         navigation.navigate('HomePage')
     }
 
-
     const handleShowDogovor = (item) => {
         console.log(item)
         navigation.navigate("DocsView", { item });

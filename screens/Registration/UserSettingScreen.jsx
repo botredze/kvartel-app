@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import  {styles} from './styles/settingsStyles'
+import { styles } from './styles/settingsStyles';
 import SideBar from "../../components/SideBar/SideBar";
-import {useNavigation} from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 
 export default function UserSettingScreen() {
     const [firstName, setFirstName] = useState('');
@@ -23,13 +23,19 @@ export default function UserSettingScreen() {
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
-            navigation.navigate('ChatScreen');
+            const documents = [
+                { id: 1, name: 'Договор аренды', documentUrl: 'http://mttp-renaissance.333.kg/files/w4mZFGm1BwNHBX5lvTeJvGIUi.pdf' },
+                { id: 2, name: 'Лицензионное соглашения', documentUrl: 'http://mttp-renaissance.333.kg/files/kmfVTfdgAmoQihzVMfDGihHLE.pdf' },
+                { id: 3, name: 'Условия использования', documentUrl: 'http://broker.data.kg/files/dogovor.pdf' },
+            ];
+
+            navigation.navigate('ViewRegistrationDogovor', { item: documents[0], step: 0, documents });
         }
     };
 
     return (
         <SafeAreaView style={styles.container}>
-            <SideBar title='Настройки'/>
+            <SideBar title='Настройки' />
             <View style={styles.content}>
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>ИМЯ</Text>

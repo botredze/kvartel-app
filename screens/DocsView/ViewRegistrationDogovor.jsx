@@ -4,7 +4,7 @@ import {Ionicons} from "@expo/vector-icons";
 import React, {useState} from "react";
 import {useNavigation} from "@react-navigation/native";
 
-export default function DocsView({route}) {
+export default function ViewRegistrationDogovor({route}) {
     const {item, step, documents} = route.params;
     const [showButton, setShowButton] = useState(false);
     const navigation = useNavigation();

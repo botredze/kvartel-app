@@ -13,6 +13,8 @@ import BurgerMenu from "../screens/BurgerMenu/BurgerMenu";
 import PaymentMethods from "../screens/PaymentMethods/PaymentMethods";
 import DocsView from "../screens/DocsView/DocsView";
 import AddCardWebView from "../screens/AddCardWebView/AddCardWebView";
+import ViewRegistrationDogovor from "../screens/DocsView/ViewRegistrationDogovor";
+import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos";
 
 const Stack = createNativeStackNavigator();
 
@@ -83,6 +85,20 @@ export const Navigation = () => {
                 <Stack.Screen
                     name='AddCardWebView'
                     component={AddCardWebView}
+                    options={{headerShown: false}}
+                />
+
+
+
+                <Stack.Screen
+                    name='ViewRegistrationDogovor'
+                    component={ViewRegistrationDogovor}
+                    options={{headerShown: false}}
+                />
+                
+                <Stack.Screen
+                    name='LoadPassportPhotos'
+                    component={LoadPassportPhotos}
                     options={{headerShown: false}}
                 />
 
