@@ -1,13 +1,16 @@
-import {Text, TouchableOpacity, View} from "react-native";
-import {styles} from './styles'
 import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { styles } from './styles';
 
-const Dates = ({itemDate}) => {
+const Dates = ({ itemDate, isSelected, onPress }) => {
     return (
         <View style={styles.dateContainer}>
             <Text style={styles.dateTitle}>{itemDate?.name}</Text>
-            <TouchableOpacity style={styles.selectDateButton}>
-                <Text style={styles.selectDateTitle}>
+            <TouchableOpacity
+                style={[styles.selectDateButton, isSelected && styles.activeDateButton]}
+                onPress={onPress}
+            >
+                <Text style={[styles.selectDateTitle, isSelected && styles.activeDateTitle]}>
                     {itemDate?.date}
                 </Text>
 
@@ -16,7 +19,7 @@ const Dates = ({itemDate}) => {
                 )}
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
-export default Dates
+export default Dates;

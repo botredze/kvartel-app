@@ -25,7 +25,7 @@ export default function Creeting() {
             >
                 <View style={styles.overlay}>
                     <View style={{display: 'flex', alignItems: "center"}}>
-                        <Text style={styles.title}>kvartel</Text>
+                        <Text style={styles.title}>MIG Apartment</Text>
                     </View>
                     <View style={{display: 'flex', alignItems: "center"}}>
                         <Text style={styles.subtitle}>

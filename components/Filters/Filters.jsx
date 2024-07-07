@@ -1,11 +1,12 @@
 import React, {useCallback, useMemo, useState} from "react";
 import {View, Text, TextInput, Switch, Button, ScrollView, TouchableOpacity, Modal} from "react-native";
-import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView} from "@gorhom/bottom-sheet";
+import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
 import {styles} from './style';
 import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import {colors, convenience, dates} from "../../constants/constants";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import ConvenienceItem from "../ConvenienceItem/ConvenienceItem";
+import Dates from "../Dates/Dates";
 
 export default function Filters({ filterRef}) {
     const snapPoints = useMemo(() => ['96%'], []);
@@ -18,15 +19,32 @@ export default function Filters({ filterRef}) {
     const [sliderValues, setSliderValues] = useState([0, 14069]);
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItems, setSelectedItems] = useState([]);
+    const [selectedRooms, setSelectedRooms] = useState([]);
+    const [activeNow, setActiveNow] = useState(false);
+    const [activeTomorrow, setActiveTomorrow] = useState(false);
+    const [activeDate, setActiveDate] = useState(false);
+    const [activeRoom, setActiveRoom] = useState('');
+    const [activeBronType, setActiveBronType] = useState('all');
+    const [selectedDates, setSelectedDates] = useState([]);
 
     const handleIncrement = (setter, value) => {
         setter(prev => prev + value);
     };
 
+    const handleDatePress = (date) => {
+        setSelectedDates((prevSelected) => {
+            if (prevSelected.includes(date)) {
+                return prevSelected.filter((item) => item !== date);
+            } else {
+                return [...prevSelected, date];
+            }
+        });
+    };
+
+
     const handleDecrement = (setter, value) => {
         setter(prev => (prev > 0 ? prev - value : 0));
     };
-
 
     const handleModalClose = () => {
         setModalVisible(false);
@@ -49,7 +67,40 @@ export default function Filters({ filterRef}) {
         setSliderValues([minPrice, newMaxPrice]);
     };
 
+    const handleNowPress = () => {
+        setActiveNow(true);
+        setActiveTomorrow(false);
+        setActiveDate(false);
+        setSelectDate(false)
+    };
 
+    const handleTomorrowPress = () => {
+        setActiveNow(false);
+        setActiveTomorrow(true);
+        setActiveDate(false);
+        setSelectDate(false)
+    };
+
+    const handleSelectDatePress = () => {
+        setActiveNow(false);
+        setActiveTomorrow(false);
+        setActiveDate(true);
+        setSelectDate(true)
+    };
+
+    const handleRoomPress = (room) => {
+        setSelectedRooms((prevSelected) => {
+            if (prevSelected.includes(room)) {
+                return prevSelected.filter((item) => item !== room);
+            } else {
+                return [...prevSelected, room];
+            }
+        });
+    };
+
+    const handleBronTypePress = (type) => {
+        setActiveBronType(type);
+    };
 
     const handleSelect = (id) => {
         setSelectedItems((prevSelected) => {
@@ -87,85 +138,108 @@ export default function Filters({ filterRef}) {
                 <View style={styles.section}>
                     <Text style={styles.subtitle}>КВАРТИРЫ ДОСТУПНЫЕ</Text>
                     <View style={styles.row}>
-                        <TouchableOpacity onPress={() => {}} style={styles.bigBtn}>
-                            <Text style={styles.bigBtnTitle}>Сейчас</Text>
+                        <TouchableOpacity
+                            onPress={handleNowPress}
+                            style={[styles.bigBtn, activeNow && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, activeNow && styles.activeBtnTitle]}>Сейчас</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => {}} style={styles.bigBtn}>
-                            <Text style={styles.bigBtnTitle}>Завтра</Text>
+                        <TouchableOpacity
+                            onPress={handleTomorrowPress}
+                            style={[styles.bigBtn, activeTomorrow && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, activeTomorrow && styles.activeBtnTitle]}>Завтра</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => {}} style={styles.selectDateBigBtn}>
-                            <Text style={styles.bigBtnTitle}>Выбрать дату</Text>
+                        <TouchableOpacity
+                            onPress={handleSelectDatePress}
+                            style={[styles.selectDateBigBtn, activeDate && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать дату</Text>
                         </TouchableOpacity>
+
                     </View>
                 </View>
 
                 {selectDate && (
-                    <View style={styles.selectDateContainer}>
-                        <View style={styles.selectDateSidebar}>
-                            <Text>Июнь</Text>
-                            <TouchableOpacity onPress={() => {
-                            }} style={styles.resetDate}>
-                                <Text>Сбросить даты</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <BottomSheetView style={styles.selectDateContainer}>
+                        <Text style={styles.nameText}>Июль</Text>
 
-                        <View style={styles.selectDateInnerContainer}>
-                            <BottomSheetScrollView style={styles.scrollPanelContainer}>
-                                {dates.map((item) => (
-                                    <View key={item.id} style={styles.dateContent}>
-                                        <Text>{item.name}</Text>
-                                        <TouchableOpacity style={styles.dateBtn}>
-                                            <Text>{item.date}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                ))}
-                            </BottomSheetScrollView>
-                        </View>
-
-                    </View>
+                        <BottomSheetScrollView
+                            style={styles.selectDates}
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                        >
+                            {dates.map((data) => (
+                                <Dates
+                                    itemDate={data}
+                                    key={data?.id}
+                                    isSelected={selectedDates.includes(data?.id)}
+                                    onPress={() => handleDatePress(data?.id)}
+                                />
+                            ))}
+                        </BottomSheetScrollView>
+                    </BottomSheetView>
                 )}
 
                 <View style={styles.section}>
                     <Text style={styles.subtitle}>Количество комнат</Text>
-                    <View style={{...styles.row, justifyContent: "flex-start"}}>
-                        <TouchableOpacity onPress={() => {}} style={{ ...styles.selectDateSmallBtn, width: 90}}>
-                            <Text style={styles.bigBtnTitle}>Студия</Text>
+                    <View style={{ ...styles.row, justifyContent: "flex-start" }}>
+                        <TouchableOpacity
+                            onPress={() => handleRoomPress('studio')}
+                            style={[styles.selectCountBtn, selectedRooms.includes('studio') && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, selectedRooms.includes('studio') && styles.activeBtnTitle]}>Студия</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {}} style={styles.selectDateSmallBtn}>
-                            <Text style={styles.bigBtnTitle}>1</Text>
+
+                        <TouchableOpacity
+                            onPress={() => handleRoomPress('1')}
+                            style={[styles.selectDateSmallBtn, selectedRooms.includes('1') && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, selectedRooms.includes('1') && styles.activeBtnTitle]}>1</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {}} style={styles.selectDateSmallBtn}>
-                            <Text style={styles.bigBtnTitle}>2</Text>
+
+                        <TouchableOpacity
+                            onPress={() => handleRoomPress('2')}
+                            style={[styles.selectDateSmallBtn, selectedRooms.includes('2') && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, selectedRooms.includes('2') && styles.activeBtnTitle]}>2</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {}} style={styles.selectDateSmallBtn}>
-                            <Text style={styles.bigBtnTitle}>3</Text>
+
+                        <TouchableOpacity
+                            onPress={() => handleRoomPress('3')}
+                            style={[styles.selectDateSmallBtn, selectedRooms.includes('3') && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, selectedRooms.includes('3') && styles.activeBtnTitle]}>3</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity onPress={() => {}} style={styles.selectDateSmallBtn}>
-                            <Text style={styles.bigBtnTitle}>4+ </Text>
+
+                        <TouchableOpacity
+                            onPress={() => handleRoomPress('4+')}
+                            style={[styles.selectDateSmallBtn, selectedRooms.includes('4+') && styles.activeBtn]}>
+                            <Text style={[styles.bigBtnTitle, selectedRooms.includes('4+') && styles.activeBtnTitle]}>4+</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
+
 
                 <View style={styles.section}>
                     <Text style={styles.subtitle}>Тип брони</Text>
 
                     <View style={{...styles.row, gap: 5, justifyContent: 'flex-start'}}>
-                        <TouchableOpacity onPress={() => {}} style={{...styles.selectBronBtn, width: 70}}>
-                            <Text style={styles.typeBron}>Все</Text>
-                        </TouchableOpacity>
+                        <TouchableOpacity
+                        onPress={() => handleBronTypePress('all')}
+                        style={[styles.selectBronBtn, activeBronType === 'all' && styles.activeBronBtn]}>
+                        <Text style={[styles.typeBron, activeBronType === 'all' && styles.activeTypeBron]}>Все</Text>
+                    </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => {}} style={{...styles.selectBronBtn, flexDirection: 'row', gap: 2, alignItems: 'center'}}>
-                             <Text style={styles.typeBron}>Бесконтактная аренда</Text>
-                            <TouchableOpacity onPress={()=> setModalVisible(true)}>
-                             <Feather name="info" size={20} color='#7250FF'/>
-                            </TouchableOpacity>
-                         </TouchableOpacity>
-
-                        <TouchableOpacity onPress={() => {}} style={styles.selectBronBtn}>
-                            <Text style={styles.typeBron}>Классическая аренда</Text>
+                    <TouchableOpacity
+                        onPress={() => handleBronTypePress('contactless')}
+                        style={[styles.selectNotContactBtn, activeBronType === 'contactless' && styles.activeBronBtn]}>
+                        <Text style={[styles.typeBron, activeBronType === 'contactless' && styles.activeTypeBron]}>Бесконтактная аренда</Text>
+                        <TouchableOpacity onPress={() => setModalVisible(true)}>
+                            <Feather name="info" size={20} color='#7250FF'/>
                         </TouchableOpacity>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        onPress={() => handleBronTypePress('classic')}
+                        style={[styles.selectBronBtn, activeBronType === 'classic' && styles.activeBronBtn]}>
+                        <Text style={[styles.typeBron, activeBronType === 'classic' && styles.activeTypeBron]}>Классическая аренда</Text>
+                    </TouchableOpacity>
                     </View>
                 </View>
 

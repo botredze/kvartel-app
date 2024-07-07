@@ -1,5 +1,5 @@
-import { type ExpoConfig } from "@expo/config-types";
-import { withAppDelegate, type ConfigPlugin } from "expo/config-plugins";
+import { ExpoConfig } from "@expo/config-types";
+import { withAppDelegate, ConfigPlugin } from "expo/config-plugins";
 
 const config: ExpoConfig = {
     name: "kvartel-app",
@@ -44,7 +44,10 @@ const config: ExpoConfig = {
     },
     extra: {
         mapKitApiKey: "b2fe601a-73de-4f8b-ae9e-dee03b2f1e56",
-    },
+        eas: {
+            projectId: "6fd3f86b-7497-4ef8-9494-e25b591136b0"
+        }
+    }
 };
 
 const withYandexMaps: ConfigPlugin = (config) => {
@@ -78,6 +81,5 @@ const withYandexMaps: ConfigPlugin = (config) => {
         return config;
     });
 };
-
 
 export default withYandexMaps(config);

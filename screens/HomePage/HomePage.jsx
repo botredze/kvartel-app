@@ -323,7 +323,7 @@ export default function HomePage() {
             </BottomSheet>
 
              <Filters filterRef={filterRef}/>
-            <PreviewBottiomSheet item={apartament} previewButton = {previewButton} booking={booking}/>
+            <PreviewBottiomSheet item={apartament} previewButton = {previewButton} booking={booking} details={detailsRef}/>
 
             <Details detailsRef={detailsRef} booking = {booking}/>
             <Booking  item={apartament} booking = {booking} />

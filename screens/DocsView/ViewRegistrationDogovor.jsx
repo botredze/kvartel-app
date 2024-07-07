@@ -15,9 +15,9 @@ export default function ViewRegistrationDogovor({route}) {
 
     const handleAccept = () => {
         if (step < documents.length - 1) {
-            navigation.navigate('DocsView', { item: documents[step + 1], step: step + 1, documents });
+            navigation.navigate('ViewRegistrationDogovor', { item: documents[step + 1], step: step + 1, documents });
         } else {
-            navigation.navigate('NextPage'); 
+            navigation.navigate('LoadPassportPhotos');
         }
     };
 
@@ -25,22 +25,20 @@ export default function ViewRegistrationDogovor({route}) {
         <View style={styles.container}>
             <View style={styles.topBarContainer}>
                 <Text style={styles.titleNameText}>{item?.name}</Text>
-                <TouchableOpacity onPress={handleClickCloseDogovor} style={styles.closeButton}>
-                    <Ionicons name="close" size={24} color="black"/>
-                </TouchableOpacity>
+                {/*<TouchableOpacity onPress={handleClickCloseDogovor} style={styles.closeButton}>*/}
+                {/*    <Ionicons name="close" size={24} color="black"/>*/}
+                {/*</TouchableOpacity>*/}
             </View>
 
             <View style={styles.pdfContainer}>
                 <PDFView item={item.documentUrl}/>
             </View>
 
-            {showButton &&
                 <View style={styles.bottomButtonConier}>
                     <TouchableOpacity style={styles.accessDogovorButton} onPress={handleAccept}>
                         <Text style={styles.accesBottonText}>Я принимаю условия договора</Text>
                     </TouchableOpacity>
                 </View>
-            }
         </View>
     );
 }

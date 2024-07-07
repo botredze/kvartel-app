@@ -5,7 +5,7 @@ import {Entypo, Ionicons} from "@expo/vector-icons";
 import {colors} from "../../constants/constants";
 
 
-export default function PreviewBottiomSheet({item, previewButton, booking}) {
+export default function PreviewBottiomSheet({item, previewButton, booking, details}) {
     const snapPoints = useMemo(() => ['17%'], []);
 
     const handleClosePreview = () => {
@@ -14,6 +14,10 @@ export default function PreviewBottiomSheet({item, previewButton, booking}) {
 
     const handleClickBooking = useCallback((index) => {
         booking.current?.snapToIndex(index);
+    }, []);
+
+    const handleClickDetailsClick = useCallback((index) => {
+        details.current?.snapToIndex(index);
     }, []);
 
     return (
@@ -26,7 +30,8 @@ export default function PreviewBottiomSheet({item, previewButton, booking}) {
             enableHandlePanningGesture={true}
         >
             <BottomSheetView style={styles.contentContainer}>
-                <View style={styles.imageAndAdress}>
+                <TouchableOpacity style={styles.imageAndAdress}
+                onPress={() => {handleClickDetailsClick(0)}}>
                     <Image
                         source={{uri: item?.images[0]?.imageUrl}}
                         style={styles.image}
@@ -36,7 +41,7 @@ export default function PreviewBottiomSheet({item, previewButton, booking}) {
                         <Text style={styles.nameText}>{item.name}</Text>
                         <Text style={styles.adressText}>{item.address}</Text>
                     </View>
-                </View>
+                </TouchableOpacity>
                 <TouchableOpacity onPress={() => {handleClosePreview()}} style={styles.closeButton}>
                     <Ionicons name="close" size={24} color="white"/>
                 </TouchableOpacity>

@@ -84,6 +84,10 @@ export default function BurgerMenu() {
         navigation.navigate("DocsView", { item });
     };
 
+    function handleClickLogout() {
+        navigation.replace('Creeting')
+    }
+
     return (
         <View style={styles.container}>
             <View>
@@ -113,7 +117,7 @@ export default function BurgerMenu() {
 
             <View style={styles.bottomButtonsGroup}>
                 <View style={styles.appVersionContainer}>
-                    <Text style={styles.appVersionText}>kvartel</Text>
+                    <Text style={styles.appVersionText}>MIG Apartment</Text>
                     <Text style={styles.versionTitle}> * Версия (1.0.0)</Text>
                 </View>
 
@@ -127,8 +131,9 @@ export default function BurgerMenu() {
                         </TouchableOpacity>
                     ))}
                 </View>
-                <TouchableOpacity>
-                    <Text style={styles.logoutButton}>Удалить аккаунт</Text>
+                <TouchableOpacity
+                onPress={() => {handleClickLogout()}}>
+                    <Text style={styles.logoutButton}>Выйти</Text>
                 </TouchableOpacity>
             </View>
 

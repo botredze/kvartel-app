@@ -1,4 +1,5 @@
-import {StyleSheet} from "react-native";
+import { StyleSheet } from "react-native";
+import { colors } from "../../constants/constants";
 
 export const styles = StyleSheet.create({
     selectDateButton: {
@@ -33,6 +34,12 @@ export const styles = StyleSheet.create({
     outActive: {
         fontSize: 10,
         fontWeight: '400'
+    },
+    activeDateButton: {
+        borderColor: colors.mainPurple,
+        backgroundColor: colors.mainPurpleLight,
+    },
+    activeDateTitle: {
+        color: colors.mainPurple,
     }
-
-})
+});

@@ -25,7 +25,7 @@ export const Navigation = () => {
         <NavigationContainer>
             <Preloader />
             <Stack.Navigator
-                initialRouteName="HomePage"
+                initialRouteName="Creeting"
                 screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}
             >
                 <Stack.Screen
@@ -95,7 +95,7 @@ export const Navigation = () => {
                     component={ViewRegistrationDogovor}
                     options={{headerShown: false}}
                 />
-                
+
                 <Stack.Screen
                     name='LoadPassportPhotos'
                     component={LoadPassportPhotos}

@@ -94,6 +94,17 @@ export const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
 
+    selectCountBtn: {
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: 90,
+        height: 50,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#ccc',
+    },
+
     resetDate: undefined,
 
     priceInputsContainer: {
@@ -135,6 +146,19 @@ export const styles = StyleSheet.create({
         borderColor: '#ccc',
     },
 
+    selectNotContactBtn:{
+        display: "flex",
+        justifyContent: "center",
+        height: 50,
+        borderRadius: 10,
+        borderWidth: 2,
+        padding: 9,
+        borderColor: '#ccc',
+        flexDirection: 'row',
+        gap: 3,
+        alignItems: 'center'
+    },
+
     typeBron: {
         fontSize: 13,
     },
@@ -148,12 +172,14 @@ export const styles = StyleSheet.create({
         width: '100%',
     },
 
-    selectDateContainer: undefined,
-    selectDateSidebar: undefined,
-    selectDateInnerContainer: undefined,
-    scrollPanelContainer: undefined,
-    dateContent: undefined,
-    dateBtn: undefined,
+    selectDateContainer: {
+        height: 170,
+        marginBottom: 20,
+    },
+    nameText: {
+        fontSize: 18,
+        fontWeight: '500',
+    },
 
     counter: {
         display: "flex",
@@ -242,4 +268,18 @@ export const styles = StyleSheet.create({
         backgroundColor: colors.mainPurple,
         height: 3,
     },
+
+    //
+    activeBtn: {
+        borderColor: colors.mainPurple,
+    },
+    activeBtnTitle: {
+        color: colors.mainPurple,
+    },
+    activeBronBtn: {
+        borderColor: colors.mainPurple,
+    },
+    activeTypeBron: {
+        color: colors.mainPurple,
+    }
 });
