@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    dataLogin: { login: "", password: "" },
-
+    dataLogin: { login: "", otpCode: "" },
 };
 
 const stateSlice = createSlice({
@@ -13,7 +12,7 @@ const stateSlice = createSlice({
             state.dataLogin = action.payload;
         },
         clearLogin: (state) => {
-            state.dataLogin = { login: "", password: "" };
+            state.dataLogin = { login: "", otpCode: "" };
         },
     }
 });
