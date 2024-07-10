@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles/settingsStyles';
 import SideBar from "../../components/SideBar/SideBar";
 import { useNavigation } from "@react-navigation/native";
+import {useDispatch} from "react-redux";
+import {changePassportVerifyData} from "../../store/reducers/stateSlice";
 
 export default function UserSettingScreen() {
     const [firstName, setFirstName] = useState('');
@@ -12,6 +14,7 @@ export default function UserSettingScreen() {
     const [email, setEmail] = useState('');
     const [errors, setErrors] = useState({});
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     const handlePressSaveUserData = () => {
         const newErrors = {};
@@ -19,10 +22,11 @@ export default function UserSettingScreen() {
         if (!lastName) newErrors.lastName = 'Фамилия не может быть пустой';
         if (!middleName) newErrors.middleName = 'Отчество не может быть пустым';
         if (!email) newErrors.email = 'E-mail не может быть пустым';
-
         setErrors(newErrors);
 
         if (Object.keys(newErrors).length === 0) {
+
+            dispatch(changePassportVerifyData({email, firstName, lastName, middleName}))
             const documents = [
                 { id: 1, name: 'Договор аренды', documentUrl: 'http://mttp-renaissance.333.kg/files/w4mZFGm1BwNHBX5lvTeJvGIUi.pdf' },
                 { id: 2, name: 'Лицензионное соглашения', documentUrl: 'http://mttp-renaissance.333.kg/files/kmfVTfdgAmoQihzVMfDGihHLE.pdf' },

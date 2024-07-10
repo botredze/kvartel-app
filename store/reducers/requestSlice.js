@@ -1,6 +1,10 @@
 import { API } from "../../env";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
+import {changeAwaitedCode, changeRegistrationModalVisible} from "./stateSlice";
+import {changeLocalData} from "./saveDataSlice";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {getLocalDataUser} from "../../helpers/returnDataUser";
 
 
 const initialState  = {
@@ -31,16 +35,18 @@ export const getApartaments = createAsyncThunk(
 export const passportVerification = createAsyncThunk("passportVerification",
     async function(formData,{dispatch, rejectWithValue}) {
     try {
-        const response = await axios({
-            method: 'POST',
-            url: `${API}/passport_verfication`,
-            formData
-        })
-        if (response.status >= 200 && response.status < 300) {
-            return response?.data;
-        } else {
-            throw Error(`Error: ${response.status}`);
-        }
+        console.log(formData)
+        // const response = await axios({
+        //     method: 'POST',
+        //     url: `${API}/passport_verfication`,
+        //     formData
+        // })
+        // if (response.status >= 200 && response.status < 300) {
+             dispatch(changeRegistrationModalVisible(true));
+        //     return response?.data;
+        // } else {
+        //     throw Error(`Error: ${response.status}`);
+        // }
     }catch (error){
         return rejectWithValue(error.message)
     }
@@ -63,16 +69,24 @@ export const getApartamentDetails = createAsyncThunk("getApartamentDetails",
         }
     })
 
-export const login = createAsyncThunk("login",
-    async function(data, {dispatch, rejectWithValue}){
+export const login = createAsyncThunk(
+    "login",
+    async function(props, {dispatch, rejectWithValue}){
+        const  {phoneNumber, navigation} = props
         try {
             const response = await axios({
                 method: 'POST',
                 url: `${API}/login`,
-                data
+                data: phoneNumber
             })
             if (response.status >= 200 && response.status < 300) {
-                return response?.data;
+                // console.log(response.data)
+                // const {userId, code} = response?.data
+                // if(code && userId) {
+                    // dispatch(changeAwaitedCode({code: code, phone: phoneNumber}))
+                    dispatch(changeAwaitedCode({code: '556464', phone: phoneNumber.phone}))
+                    await navigation.navigate('OTP')
+                // }
             } else {
                 throw Error(`Error: ${response.status}`);
             }
@@ -82,18 +96,29 @@ export const login = createAsyncThunk("login",
     })
 
 export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
-    async function(data, {dispatch, rejectWithValue}){
+    async function(props, {dispatch, rejectWithValue}){
+        console.log(props)
+        const {navigation, loginData, data} = props
+
         try {
-            const response = await axios({
-                method: 'POST',
-                url: `${API}/verifyOtpCode`,
-                data
-            })
-            if (response.status >= 200 && response.status < 300) {
-                return response?.data;
-            } else {
-                throw Error(`Error: ${response.status}`);
-            }
+            console.log(loginData)
+            // const response = await axios({
+            //     method: 'POST',
+            //     url: `${API}/verifyOtpCode`,
+            //     data: loginData
+            // })
+            // if (response.status >= 200 && response.status < 300) {
+            //     const {fio, name, userId } = response?.data
+            //     await AsyncStorage.setItem("userId", userId);
+            //     await AsyncStorage.setItem("fio", fio);
+            //     await AsyncStorage.setItem("name", name);
+            //     await getLocalDataUser({ changeLocalData, dispatch });
+            //     return response?.data;
+            //}  else if (response.status == 401) {
+                navigation.navigate('UserSettingScreen');
+            // }else {
+            //     throw Error(`Error: ${response.status}`);
+            // }
         }catch (error){
             return rejectWithValue(error.message)
         }
@@ -239,3 +264,9 @@ const requestSlice = createSlice({
 
     },
 });
+
+export const {
+} = requestSlice.actions;
+
+export default requestSlice.reducer;
+

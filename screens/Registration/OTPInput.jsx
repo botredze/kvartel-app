@@ -4,12 +4,16 @@ import {Ionicons} from '@expo/vector-icons';
 import {styles} from './styles/otpStyles'
 import SideBar from "../../components/SideBar/SideBar";
 import {useNavigation} from "@react-navigation/native";
+import {useDispatch, useSelector} from "react-redux";
+import {verifyOtpCode} from "../../store/reducers/requestSlice";
 
 export default function OTPInputScreen() {
     const navigation = useNavigation();
     const [otp, setOtp] = useState('');
     const [timer, setTimer] = useState(30);
     const [otpValid, setOtpValid] = useState(false);
+    const dispatch = useDispatch();
+    const { data } = useSelector((state) => state.saveDataSlice);
 
     useEffect(() => {
         const countdown = setInterval(() => {
@@ -19,10 +23,14 @@ export default function OTPInputScreen() {
         return () => clearInterval(countdown);
     }, []);
 
+    const {loginData} = useSelector((state)=> state.stateSlice)
+
     useEffect(() => {
         if (otp.length === 6) {
-            if (otp === '556464') {
-                navigation.navigate('UserSettingScreen');
+            console.log(loginData)
+            if (otp === loginData?.code) {
+                console.log(otp === loginData?.code)
+                dispatch(verifyOtpCode({navigation, loginData, data}))
             } else {
                 setOtpValid(true);
             }

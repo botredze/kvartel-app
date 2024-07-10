@@ -6,7 +6,7 @@ import {colors} from "../../constants/constants";
 
 
 export default function PreviewBottiomSheet({item, previewButton, booking, details}) {
-    const snapPoints = useMemo(() => ['17%'], []);
+    const snapPoints = useMemo(() => ['20%'], []);
 
     const handleClosePreview = () => {
         previewButton.current?.close();

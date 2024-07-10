@@ -1,9 +1,9 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
-import { View, StyleSheet, PermissionsAndroid, Platform, Text} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import { View, PermissionsAndroid, Platform, Text} from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import supercluster from 'supercluster';
 import {Fontisto} from "@expo/vector-icons";
-import PreviewBottiomSheet from "../PreviewBottiomSheet/PreviewBottiomSheet";
+import {styles} from './styles'
 
 export default function Maps({previewButton}) {
     const [markers, setMarkers] = useState([]);
@@ -47,7 +47,6 @@ export default function Maps({previewButton}) {
         ];
 
         const clusters = createClusters(data, region);
-        console.log(clusters, 'clusters')
         setMarkers(clusters);
     }, [region]);
 
@@ -140,68 +139,3 @@ export default function Maps({previewButton}) {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    map: {
-        width: '100%',
-        height: '100%',
-    },
-    cluster: {
-        backgroundColor: '#7250FF',
-        padding: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 50,
-        height: 50,
-        borderRadius: 30,
-        borderWidth: 4,
-        borderColor: 'rgba(255,255,255,0.6)'
-    },
-    clusterText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16
-    },
-
-    marker: {
-        backgroundColor: '#7250FF',
-        padding: 5,
-        width: 40,
-        height: 40,
-        borderRadius: 30,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-
-    selectedMarker: {
-        backgroundColor: '#5127FF',
-        padding: 5,
-        width: 40,
-        height: 40,
-        borderRadius: 30,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    markerText: {
-        color: 'white',
-        fontWeight: 'bold',
-    },
-    innerMarker: {
-        backgroundColor: '#fff',
-        padding: 5,
-        width: 15,
-        height: 15,
-        borderRadius: 30,
-    },
-
-    selectedInnerMarker: {
-        backgroundColor: 'red',
-        padding: 5,
-        width: 15,
-        height: 15,
-        borderRadius: 30,
-    }
-
-});

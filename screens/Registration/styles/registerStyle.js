@@ -36,7 +36,7 @@ import {colors} from "../../../constants/constants";
          flexDirection: 'row',
          marginTop: 20,
          justifyContent: 'center',
-         width: '70%',
+         width: '80%',
      },
      countryCodeContainer: {
          flexDirection: 'row',
@@ -56,7 +56,6 @@ import {colors} from "../../../constants/constants";
          borderBottomWidth: 1,
          borderBottomColor: '#fff',
          fontSize: 24,
-         flex: 1,
      },
      mainContainer: {
          display: "flex",

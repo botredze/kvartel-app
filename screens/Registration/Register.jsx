@@ -4,19 +4,27 @@ import {styles} from './styles/registerStyle'
 import { Ionicons } from '@expo/vector-icons';
 import MaskInput from "react-native-mask-input/src/MaskInput";
 import {useNavigation} from "@react-navigation/native";
+import {useDispatch, useSelector} from "react-redux";
+import {changePhoneNumber} from "../../store/reducers/stateSlice";
+import {login} from "../../store/reducers/requestSlice";
 
 export default function Register() {
     const [phone, setPhone] = useState('');
     const [isPhoneValid, setIsPhoneValid] = useState(false);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
+    const {phoneNumber} = useSelector((state)=> state.stateSlice)
 
     const handlePhoneChange = (masked, unmasked) => {
+        dispatch(changePhoneNumber({phone: phone}))
         setPhone(masked);
         setIsPhoneValid(masked.length === 15);
     };
 
     const handleSendSMS = () => {
-        navigation.navigate('OTP')
+        if(phone && isPhoneValid) {
+            dispatch(login({phoneNumber, navigation}))
+        }
     };
 
     return (

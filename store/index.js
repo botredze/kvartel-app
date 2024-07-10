@@ -1,10 +1,12 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import stateSlice from "./reducers/stateSlice";
-import bottomSheetSlices from "./reducers/bottomSheetSlices";
+import requestSlice from "./reducers/requestSlice";
+import saveDataSlice from "./reducers/saveDataSlice";
 
 const reducer = combineReducers({
     stateSlice,
-    bottomSheetSlices
+    requestSlice,
+    saveDataSlice
 });
 export const store = configureStore({
     reducer,

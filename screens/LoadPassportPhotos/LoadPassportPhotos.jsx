@@ -7,6 +7,9 @@ import {useNavigation} from "@react-navigation/native";
 import front from '../../assets/front.png'
 import selfie from '../../assets/selfie.png'
 import back from '../../assets/back.png'
+import {useDispatch, useSelector} from "react-redux";
+import {changeRegistrationModalVisible} from "../../store/reducers/stateSlice";
+import {passportVerification} from "../../store/reducers/requestSlice";
 
 export default function LoadPassportPhotos() {
     const [hasPermission, requestPermission] = useCameraPermissions();
@@ -14,13 +17,15 @@ export default function LoadPassportPhotos() {
     const [isCameraVisible, setIsCameraVisible] = useState(false);
     const [photos, setPhotos] = useState({ front: null, back: null, selfie: null });
     const [currentStep, setCurrentStep] = useState(null);
-    const [modalVisible, setModalVisible] = useState(false);
     const navigation = useNavigation();
+    const dispatch = useDispatch();
 
     const cameraRef = useRef(null);
+    const { passportVerifyData, registrationModalVisible } = useSelector((state) => state.stateSlice);
+    const { data } = useSelector((state) => state.saveDataSlice);
 
     const handleModalClose = () => {
-        setModalVisible(false);
+        dispatch(changeRegistrationModalVisible(false));
         navigation.navigate('HomePage')
     };
 
@@ -54,8 +59,33 @@ export default function LoadPassportPhotos() {
     const canCompleteVerification = Object.values(photos).every((photo) => photo !== null);
 
 
-    const handleComppleteVerification = () => {
-        setModalVisible(true)
+    const handleCompleteVerification = async () => {
+        const formData = new FormData();
+        formData.append('photos[0].type', '1');
+        formData.append('photos[0].file', {
+            uri: photos.front,
+            type: 'image/jpeg',
+            name: 'photo_front.jpg',
+        });
+        formData.append('photos[1].type', '2');
+        formData.append('photos[1].file', {
+            uri: photos.back,
+            type: 'image/jpeg',
+            name: 'photo_back.jpg',
+        });
+        formData.append('photos[2].type', '3');
+        formData.append('photos[2].file', {
+            uri: photos.selfie,
+            type: 'image/jpeg',
+            name: 'photo_selfie.jpg',
+        });
+        formData.append('name', passportVerifyData?.firstName);
+        formData.append('lastName', passportVerifyData?.lastName);
+        formData.append('middleName', passportVerifyData?.middleName);
+        formData.append('email', passportVerifyData?.email);
+        formData.append('userId', data.userId);
+
+        dispatch(passportVerification(formData))
     };
 
     const handleSkippRegister = () => {
@@ -116,7 +146,7 @@ export default function LoadPassportPhotos() {
                     <TouchableOpacity
                         style={[styles.actionButtonActive, canCompleteVerification ? {} : styles.disabledButton]}
                         disabled={!canCompleteVerification}
-                        onPress={() => {handleComppleteVerification()}}
+                        onPress={() => {handleCompleteVerification()}}
                     >
                         <Text style={styles.actionButtonText}>Завершить верификацию</Text>
                     </TouchableOpacity>
@@ -146,7 +176,7 @@ export default function LoadPassportPhotos() {
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={modalVisible}
+                visible={registrationModalVisible}
                 onRequestClose={handleModalClose}
             >
                 <View style={styles.modalOverlay}>
