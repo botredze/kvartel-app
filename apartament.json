@@ -1,0 +1,310 @@
+// Детальный
+{
+  "codeid": 1,
+  "apartament_name": "Студия такая то, уютное гнездышко",
+  "address": "Бишкек, улица Зигмунта Леваневского",
+  //Если занято
+  "booked": true,
+  "booked_days_from": "12-06-2024",//date
+  "booked_days_to": "14-06-2024",//date
+  "floor": "88",
+  "num_rooms": "88",
+  "num_bathroom": "88",
+  "num_guests": "88",
+  "max_guest": "",
+  //Удобства
+  "conversions": [
+    {
+      "codeid": 1
+     },
+    {
+      "codeid": 2
+    },
+    {
+      "codeid": 3
+    },
+    {
+      "codeid": 4
+    },
+    {
+      "codeid": 5
+    },
+    {
+      "codeid": 6
+    }
+  ],
+  //правило типа не шуметь не музыка и так далее
+  "rules": [
+    {
+      "codeid": 1
+    },
+
+    {
+      "codeid": 2
+    },
+    {
+      "codeid": 3
+    }
+  ],
+  //Как я понял описание или что то
+  "additional_information": "uploadedImagesuploadedImagesuploadedImagesuploadedImagesuploadedImages",
+  "dolgota": 42.859662,
+  "shirota": 74.567706,
+  "price": 88,
+  "photos": [{
+    "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+    },
+    {
+      "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+    },
+    {
+      "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+    }
+  ],
+  //количество комнат,
+  "roomCounts": 1,
+  // Тип бронирования, классическая, безконтактная
+  "bookingType": 1,
+  //Другие рядом
+  "othersHere": [
+    {
+      "codeid": 4,
+      "apartament_name": "Студия такая то, уютное гнездышко",
+      "address": "Бишкек, улица Зигмунта Леваневского",
+      "floor": "88",
+      //Как я понял описание или что то
+      "additional_information": "uploadedImagesuploadedImagesuploadedImagesuploadedImagesuploadedImages",
+      "dolgota": 42.859662,
+      "shirota": 74.567706,
+      "price": 88,
+      "photos": [{
+        "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+      },
+        {
+          "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+        },
+        {
+          "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+        }
+      ],
+      //количество комнат,
+      "roomCounts": 1,
+      // Тип бронирования, классическая, безконтактная
+      "bookingType": 1
+      //Другие рядом
+    },
+
+    {
+      "codeid": 2,
+      "apartament_name": "Студия такая то, уютное гнездышко",
+      "address": "Бишкек, улица Зигмунта Леваневского",
+      "floor": "88",
+      //Как я понял описание или что то
+      "additional_information": "uploadedImagesuploadedImagesuploadedImagesuploadedImagesuploadedImages",
+      "dolgota": 42.859662,
+      "shirota": 74.567706,
+      "price": 88,
+      "photos": [{
+        "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+      },
+        {
+          "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+        },
+        {
+          "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+        }
+      ],
+      //количество комнат,
+      "roomCounts": 1,
+      // Тип бронирования, классическая, безконтактная
+      "bookingType": 1
+      //Другие рядом
+    }
+  ]
+}
+
+
+// для показа
+{
+  "codeid": 1,
+  "apartament_name": "Студия такая то, уютное гнездышко",
+  "address": "Бишкек, улица Зигмунта Леваневского",
+  "floor": "88",
+  //Как я понял описание или что то
+  "additional_information": "uploadedImagesuploadedImagesuploadedImagesuploadedImagesuploadedImages",
+  "dolgota": 42.859662,
+  "shirota": 74.567706,
+  "price": 88,
+  "photos": [{
+    "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+  },
+    {
+      "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+    },
+    {
+      "pathUrl": "http://admin-kvartel.ibm.kg/kvartel_FtzN8DR1ZhDdqq7HNF1Yd67aequ5Ir.png"
+    }
+  ],
+  //количество комнат,
+  "roomCounts": 1,
+  // Тип бронирования, классическая, безконтактная
+  "bookingType": 1,
+  //Другие рядом
+}
+
+//типа описанные у меня
+export const convenience = [
+  {
+    id: 1,
+    name: 'Холодильник',
+    icon: 'fridge'
+  },
+  {
+    id: 2,
+    name: 'Мебель в комнатах',
+    icon: 'table-furniture'
+  },
+  {
+    id: 3,
+    name: 'Телевизор',
+    icon: 'youtube-tv'
+  },
+  {
+    id: 4,
+    name: 'Душевая кабина',
+    icon: 'shower'
+  },
+  {
+    id: 5,
+    name: 'Посудомоечная машина',
+    icon: 'dishwasher'
+  },
+  {
+    id: 6,
+    name: 'Мебель на кухне',
+    icon: 'table-furniture'
+  },
+  {
+    id: 7,
+    name: 'Интернет',
+    icon: 'wifi'
+  },
+  {
+    id: 8,
+    name: 'Стиральная машина',
+    icon: 'washing-machine'
+  },
+  {
+    id: 9,
+    name: 'Кондиционер',
+    icon: 'air-conditioner'
+  },
+  {
+    id: 10,
+    name: 'Ванная',
+    icon: 'bathtub'
+  },
+  {
+    id: 11,
+    name: 'Можно с животными',
+    icon: 'dog-side-off'
+  },
+  {
+    id: 12,
+    name: 'Балкон',
+    icon: 'balcony'
+  },
+  {
+    id: 13,
+    name: 'Можно с детьми',
+    icon: 'baby'
+  },
+  {
+    id: 14,
+    name: 'Для мероприятий',
+    icon: 'party-popper'
+  },
+  {
+    id: 15,
+    name: 'Утюг с гладильной доской',
+    icon: 'iron'
+  },
+  {
+    id: 16,
+    name: 'Джакузи',
+    icon: 'bathtub-outline'
+  },
+  {
+    id: 17,
+    name: 'Кабельное тв',
+    icon: 'satellite-uplink'
+  },
+  {
+    id: 18,
+    name: 'Кухонная плита',
+    icon: 'stove'
+  },
+  {
+    id: 19,
+    name: 'Консьерж',
+    icon: 'human-greeting-variant'
+  },
+  {
+    id: 20,
+    name: 'Лифт',
+    icon: 'elevator'
+  },
+  {
+    id: 21,
+    name: 'Музыкальный центр',
+    icon: 'music'
+  },
+  {
+    id: 22,
+    name: 'Парковка',
+    icon: 'car'
+  },
+  {
+    id: 23,
+    name: 'Телефон',
+    icon: 'phone'
+  },
+  {
+    id: 24,
+    name: 'Для романтических встреч',
+    icon: 'heart'
+  },
+  {
+    id: 25,
+    name: 'Сейф',
+    icon: 'safe'
+  },
+  {
+    id: 26,
+    name: 'Можно курить',
+    icon: 'smoking'
+  },
+  {
+    id: 27,
+    name: 'СВЧ печь',
+    icon: 'microwave'
+  },
+  {
+    id: 28,
+    name: 'Ванные принадлежности',
+    icon: 'toothbrush-paste'
+  },
+  {
+    id: 29,
+    name: 'Водонагреватель',
+    icon: 'thermometer-plus'
+  }
+];
+
+export const rules = [
+{ id: 1, name: 'курение запрещено', emoji: '🚭' },
+{ id: 2, name: 'не устраивать шумные вечеринки', emoji: '🎉' },
+{ id: 3, name: 'не шуметь после 23-00', emoji: '🔇' },
+{ id: 4, name: 'не оставлять мусор в квартире', emoji: '🗑️' },
+{ id: 5, name: 'нельзя с питомцами', emoji: '🐶' }
+];

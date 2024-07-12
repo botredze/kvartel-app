@@ -1,15 +1,17 @@
 import React, { useState, useRef } from 'react';
-import {View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, Modal} from 'react-native';
-import {Feather, Ionicons} from '@expo/vector-icons';
-import  {styles} from './styles'
-import {CameraView, useCameraPermissions} from "expo-camera";
-import {useNavigation} from "@react-navigation/native";
-import front from '../../assets/front.png'
-import selfie from '../../assets/selfie.png'
-import back from '../../assets/back.png'
-import {useDispatch, useSelector} from "react-redux";
-import {changeRegistrationModalVisible} from "../../store/reducers/stateSlice";
-import {passportVerification} from "../../store/reducers/requestSlice";
+import { View, Text, TouchableOpacity, Image, StyleSheet, ScrollView, Modal } from 'react-native';
+import { Feather, Ionicons } from '@expo/vector-icons';
+import { styles } from './styles';
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useNavigation } from "@react-navigation/native";
+import front from '../../assets/front.png';
+import selfie from '../../assets/selfie.png';
+import back from '../../assets/back.png';
+import { useDispatch, useSelector } from "react-redux";
+import { changeRegistrationModalVisible, changePassportVerifyData } from "../../store/reducers/stateSlice";
+import { passportVerification } from "../../store/reducers/requestSlice";
+import * as FileSystem from 'expo-file-system';
+import SideBar from "../../components/SideBar/SideBar";
 
 export default function LoadPassportPhotos() {
     const [hasPermission, requestPermission] = useCameraPermissions();
@@ -23,26 +25,42 @@ export default function LoadPassportPhotos() {
     const cameraRef = useRef(null);
     const { passportVerifyData, registrationModalVisible } = useSelector((state) => state.stateSlice);
     const { data } = useSelector((state) => state.saveDataSlice);
+    console.log(data)
 
     const handleModalClose = () => {
         dispatch(changeRegistrationModalVisible(false));
-        navigation.navigate('HomePage')
+        navigation.navigate('HomePage');
     };
 
-
     const handleOpenCamera = (step) => {
-        if(!hasPermission.granted) {
-            requestPermission()
+        if (!hasPermission.granted) {
+            requestPermission();
         }
         setCurrentStep(step);
         setIsCameraVisible(true);
     };
 
+    const convertToBase64 = async (uri) => {
+        const base64 = await FileSystem.readAsStringAsync(uri, {
+         encoding: FileSystem?.EncodingType?.Base64
+        });
+        return base64;
+    };
+
     const handleTakePhoto = async () => {
         if (cameraRef.current) {
             const photo = await cameraRef.current.takePictureAsync();
+            const base64 = await convertToBase64(photo.uri);
             setPhotos((prevPhotos) => ({ ...prevPhotos, [currentStep]: photo.uri }));
             setIsCameraVisible(false);
+            dispatch(changePassportVerifyData({
+                ...passportVerifyData,
+                [`photo${currentStep === 'front' ? '1' : currentStep === 'back' ? '2' : '3'}`]: {
+                    base64,
+                    type: 'image/jpeg',
+                    orig_name: `${currentStep}.jpg`
+                }
+            }));
         }
     };
 
@@ -52,52 +70,35 @@ export default function LoadPassportPhotos() {
 
     const handleResetPhoto = (step) => {
         setPhotos((prevPhotos) => ({ ...prevPhotos, [step]: null }));
+        dispatch(changePassportVerifyData({
+            ...passportVerifyData,
+            [`photo${step === 'front' ? '1' : step === 'back' ? '2' : '3'}`]: {
+                base64: '',
+                type: '',
+                orig_name: ''
+            }
+        }));
     };
 
     const isStepCompleted = (step) => photos[step] !== null;
 
     const canCompleteVerification = Object.values(photos).every((photo) => photo !== null);
 
-
     const handleCompleteVerification = async () => {
-        const formData = new FormData();
-        formData.append('photos[0].type', '1');
-        formData.append('photos[0].file', {
-            uri: photos.front,
-            type: 'image/jpeg',
-            name: 'photo_front.jpg',
-        });
-        formData.append('photos[1].type', '2');
-        formData.append('photos[1].file', {
-            uri: photos.back,
-            type: 'image/jpeg',
-            name: 'photo_back.jpg',
-        });
-        formData.append('photos[2].type', '3');
-        formData.append('photos[2].file', {
-            uri: photos.selfie,
-            type: 'image/jpeg',
-            name: 'photo_selfie.jpg',
-        });
-        formData.append('name', passportVerifyData?.firstName);
-        formData.append('lastName', passportVerifyData?.lastName);
-        formData.append('middleName', passportVerifyData?.middleName);
-        formData.append('email', passportVerifyData?.email);
-        formData.append('userId', data.userId);
-
-        dispatch(passportVerification(formData))
+        dispatch(changePassportVerifyData({...passportVerifyData, codeid: data.userId}))
+        dispatch(passportVerification({...passportVerifyData, codeid: data.userId}))
     };
 
     const handleSkippRegister = () => {
-        navigation.replace('HomePage')
+        navigation.replace('HomePage');
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Загрузите фотографии паспорта</Text>
+            <SideBar title='Потверждение личности' navigateTo='UserSettingScreen' />
             <ScrollView style={styles.photoContainer}>
                 {['front', 'back', 'selfie'].map((step, index) => (
-                    <View key={step} style={{...styles.photoWrapper, marginTop: step ==='front' ? 0 : 20}}>
+                    <View key={step} style={{ ...styles.photoWrapper, marginTop: step === 'front' ? 0 : 20 }}>
                         <Text style={styles.photoLabel}>
                             {step === 'front'
                                 ? 'Лицевая часть паспорта'
@@ -107,16 +108,16 @@ export default function LoadPassportPhotos() {
                         </Text>
                         {photos[step] ? (
                             <Image source={{ uri: photos[step] }} style={styles.photo} />
-                        ) : ( step === 'front' ?
-                            <View style={styles.photoPlaceholder}>
-                               <Image source={front} style={styles.photoPlaceGolder}/>
-                            </View>
+                        ) : (step === 'front' ?
+                                <View style={styles.photoPlaceholder}>
+                                    <Image source={front} style={styles.photoPlaceGolder} />
+                                </View>
                                 : step === 'back' ?
                                     <View style={styles.photoPlaceholder}>
-                                        <Image source={back} style={styles.photoPlaceGolder}/>
+                                        <Image source={back} style={styles.photoPlaceGolder} />
                                     </View> :
                                     <View style={styles.photoPlaceholder}>
-                                        <Image source={selfie} style={styles.photoPlaceGolder}/>
+                                        <Image source={selfie} style={styles.photoPlaceGolder} />
                                     </View>
                         )}
                         <TouchableOpacity
@@ -131,7 +132,7 @@ export default function LoadPassportPhotos() {
                             ]}
                             disabled={!isStepCompleted(step) && index !== 0 && !isStepCompleted(['front', 'back'][index - 1])}
                         >
-                            <Feather name="camera" size={22} color="white"/>
+                            <Feather name="camera" size={22} color="white" />
                             <Text style={styles.cameraButtonText}>Включить камеру</Text>
                         </TouchableOpacity>
                         {photos[step] && (
@@ -146,13 +147,13 @@ export default function LoadPassportPhotos() {
                     <TouchableOpacity
                         style={[styles.actionButtonActive, canCompleteVerification ? {} : styles.disabledButton]}
                         disabled={!canCompleteVerification}
-                        onPress={() => {handleCompleteVerification()}}
+                        onPress={handleCompleteVerification}
                     >
                         <Text style={styles.actionButtonText}>Завершить верификацию</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                         style={styles.actionButton}
-                        onPress={() => handleSkippRegister()}
+                        onPress={handleSkippRegister}
                     >
                         <Text style={styles.actionButtonText}>Пропустить</Text>
                     </TouchableOpacity>
@@ -185,7 +186,7 @@ export default function LoadPassportPhotos() {
                             Ваши данные успешно сохранены
                         </Text>
                         <Text style={styles.modalText}>
-                            {'Мы получили ваши данные, наши администраторы проверят в скором времени и верифицируют вас.\n\nПо завершению верификации вы получите уведомление об этом и доступ в приложение и всем его функциям,'},
+                            {'Мы получили ваши данные, наши администраторы проверят в скором времени и верифицируют вас.\n\nПо завершению верификации вы получите уведомление об этом и доступ в приложение и всем его функциям,'}
                         </Text>
                         <TouchableOpacity style={styles.closeButtonModal} onPress={handleModalClose}>
                             <Text style={styles.closeButtonText}>ПОНЯТНО</Text>
@@ -196,5 +197,3 @@ export default function LoadPassportPhotos() {
         </View>
     );
 }
-
-

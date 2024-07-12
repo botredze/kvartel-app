@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    data: { userId: "", name: "", fio: "" },
+    data: { userId: "", fio: "" },
 };
 
 const saveDataSlice = createSlice({
@@ -14,7 +14,6 @@ const saveDataSlice = createSlice({
         clearLocalData: (state, action) => {
             state.data = {
                 userId: "",
-                name: "",
                 fio: "",
             };
         },

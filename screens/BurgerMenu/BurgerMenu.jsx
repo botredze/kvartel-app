@@ -70,9 +70,9 @@ export default function BurgerMenu() {
 
 
     const documents = [
-        {id: 1, name: 'Договор аренды', documentUrl: 'http://mttp-renaissance.333.kg/files/w4mZFGm1BwNHBX5lvTeJvGIUi.pdf'},
-        {id: 2, name: 'Лицензионное соглашения', documentUrl: 'http://mttp-renaissance.333.kg/files/kmfVTfdgAmoQihzVMfDGihHLE.pdf'},
-        {id: 3, name: 'Условия использования', documentUrl: 'http://broker.data.kg/files/dogovor.pdf'},
+        { id: 1, name: 'Договор оферты', documentUrl: 'http://admin-kvartel.ibm.kg/files/dogovorArend.pdf' },
+        { id: 2, name: 'Правила бронирования', documentUrl: 'http://admin-kvartel.ibm.kg/files/praviloBron.pdf' },
+        { id: 3, name: 'Согласие на обработку персональных данных', documentUrl: 'http://admin-kvartel.ibm.kg/files/soglasie.pdf' },
     ]
 
     function handleBack() {

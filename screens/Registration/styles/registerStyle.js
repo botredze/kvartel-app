@@ -5,7 +5,7 @@ import {colors} from "../../../constants/constants";
      container: {
          flex: 1,
          backgroundColor: '#FFFFFF',
-         padding: 16,
+         padding: 5,
      },
      topBar: {
          flexDirection: 'row',

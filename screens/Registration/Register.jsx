@@ -6,7 +6,8 @@ import MaskInput from "react-native-mask-input/src/MaskInput";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {changePhoneNumber} from "../../store/reducers/stateSlice";
-import {login} from "../../store/reducers/requestSlice";
+import {login_ver} from "../../store/reducers/requestSlice";
+import SideBar from "../../components/SideBar/SideBar";
 
 export default function Register() {
     const [phone, setPhone] = useState('');
@@ -16,14 +17,14 @@ export default function Register() {
     const {phoneNumber} = useSelector((state)=> state.stateSlice)
 
     const handlePhoneChange = (masked, unmasked) => {
-        dispatch(changePhoneNumber({phone: phone}))
+        dispatch(changePhoneNumber({phone_number: `996${unmasked}`}))
         setPhone(masked);
         setIsPhoneValid(masked.length === 15);
     };
 
     const handleSendSMS = () => {
         if(phone && isPhoneValid) {
-            dispatch(login({phoneNumber, navigation}))
+            dispatch(login_ver({phoneNumber, navigation}))
         }
     };
 
@@ -33,14 +34,7 @@ export default function Register() {
                 style={styles.container}
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
             >
-                <View style={styles.topBar}>
-                    <TouchableOpacity onPress={() => {}}>
-                        <Ionicons name="chevron-back" size={24} color="black" />
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {}} style={styles.closeButton}>
-                        <Ionicons name="close" size={24} color="white" />
-                    </TouchableOpacity>
-                </View>
+                <SideBar navigateTo='Creeting'/>
                 <View style={styles.mainContainer}>
                     <View style={styles.headerContainer}>
                         <Text style={styles.headerText}>Введите номер телефона</Text>

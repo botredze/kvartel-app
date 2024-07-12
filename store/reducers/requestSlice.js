@@ -5,6 +5,7 @@ import {changeAwaitedCode, changeRegistrationModalVisible} from "./stateSlice";
 import {changeLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {getLocalDataUser} from "../../helpers/returnDataUser";
+import {Alert} from "react-native";
 
 
 const initialState  = {
@@ -35,19 +36,24 @@ export const getApartaments = createAsyncThunk(
 export const passportVerification = createAsyncThunk("passportVerification",
     async function(formData,{dispatch, rejectWithValue}) {
     try {
-        console.log(formData)
-        // const response = await axios({
-        //     method: 'POST',
-        //     url: `${API}/passport_verfication`,
-        //     formData
-        // })
-        // if (response.status >= 200 && response.status < 300) {
-             dispatch(changeRegistrationModalVisible(true));
-        //     return response?.data;
-        // } else {
-        //     throw Error(`Error: ${response.status}`);
-        // }
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/passport_verfication`,
+            data: formData
+        })
+        console.log(response.status, 'response.status')
+        console.log(response.data, ' response.data')
+        if (response.status >= 200 && response.status < 300) {
+            if(response?.data.status == 0) {
+                dispatch(changeRegistrationModalVisible(true));
+            }else {
+                Alert.alert('При попытке сделать запрос произошла ошибка, попробуйте чуть позже')
+            }
+        } else {
+            throw Error(`Error: ${response.status}`);
+        }
     }catch (error){
+        console.log(error)
         return rejectWithValue(error.message)
     }
 })
@@ -69,24 +75,26 @@ export const getApartamentDetails = createAsyncThunk("getApartamentDetails",
         }
     })
 
-export const login = createAsyncThunk(
-    "login",
+export const login_ver = createAsyncThunk(
+    "login_ver",
     async function(props, {dispatch, rejectWithValue}){
         const  {phoneNumber, navigation} = props
+        console.log(phoneNumber, 'phoneNumber')
         try {
             const response = await axios({
                 method: 'POST',
-                url: `${API}/login`,
+                url: `${API}/login_ver`,
                 data: phoneNumber
             })
             if (response.status >= 200 && response.status < 300) {
-                // console.log(response.data)
-                // const {userId, code} = response?.data
-                // if(code && userId) {
-                    // dispatch(changeAwaitedCode({code: code, phone: phoneNumber}))
-                    dispatch(changeAwaitedCode({code: '556464', phone: phoneNumber.phone}))
-                    await navigation.navigate('OTP')
-                // }
+                const {code} = response?.data
+                if(code) {
+                    console.log(code)
+                    dispatch(changeAwaitedCode({code: code, phone_number: phoneNumber?.phone_number}))
+                    if (navigation) {
+                        await navigation.navigate('OTP')
+                    }
+                 }
             } else {
                 throw Error(`Error: ${response.status}`);
             }
@@ -101,24 +109,33 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
         const {navigation, loginData, data} = props
 
         try {
-            console.log(loginData)
-            // const response = await axios({
-            //     method: 'POST',
-            //     url: `${API}/verifyOtpCode`,
-            //     data: loginData
-            // })
-            // if (response.status >= 200 && response.status < 300) {
-            //     const {fio, name, userId } = response?.data
-            //     await AsyncStorage.setItem("userId", userId);
-            //     await AsyncStorage.setItem("fio", fio);
-            //     await AsyncStorage.setItem("name", name);
-            //     await getLocalDataUser({ changeLocalData, dispatch });
-            //     return response?.data;
-            //}  else if (response.status == 401) {
-                navigation.navigate('UserSettingScreen');
-            // }else {
-            //     throw Error(`Error: ${response.status}`);
-            // }
+            const response = await axios({
+                method: 'POST',
+                url: `${API}/confirm_reg`,
+                data: loginData
+            })
+            if (response.status >= 200 && response.status < 300) {
+                const {result, codeid, fio} = response?.data
+
+                console.log(codeid, fio)
+                if(result == 0) {
+                    await navigation.navigate('HomePage');
+                    await AsyncStorage.setItem("userId", codeid);
+                    await AsyncStorage.setItem("fio", fio);
+                    await getLocalDataUser({ changeLocalData, dispatch });
+                }else if (result == 1) {
+                    await AsyncStorage.setItem("userId", codeid);
+                    await navigation.navigate('UserSettingScreen');
+                    await getLocalDataUser({ changeLocalData, dispatch });
+                }else if(result == 3) {
+                    dispatch(login_ver({phoneNumber: loginData}))
+                    Alert.alert('Ваш код устарел, мы отправили вам код еще раз, пожалуйста дождитесь и введите код еще раз')
+                }else if (result == 4) {
+                    Alert.alert('Номер телефона не верный, пожалуйста проверьте номер и попробуйте еще раз')
+                }
+            }else {
+                throw Error(`Error: ${response.status}`);
+            }
         }catch (error){
             return rejectWithValue(error.message)
         }

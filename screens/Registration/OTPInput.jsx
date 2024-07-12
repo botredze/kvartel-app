@@ -6,6 +6,7 @@ import SideBar from "../../components/SideBar/SideBar";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {verifyOtpCode} from "../../store/reducers/requestSlice";
+import Register from "./Register";
 
 export default function OTPInputScreen() {
     const navigation = useNavigation();
@@ -27,8 +28,8 @@ export default function OTPInputScreen() {
 
     useEffect(() => {
         if (otp.length === 6) {
-            console.log(loginData)
-            if (otp === loginData?.code) {
+            console.log(loginData, 'loginData')
+            if (otp == loginData?.code) {
                 console.log(otp === loginData?.code)
                 dispatch(verifyOtpCode({navigation, loginData, data}))
             } else {
@@ -49,7 +50,7 @@ export default function OTPInputScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView style={styles.container}>
-                <SideBar/>
+                <SideBar navigateTo='Register'/>
                 <View style={styles.content}>
                     <Text style={styles.headerText}>Введите код из сообщения</Text>
                     <View style={styles.otpContainer}>

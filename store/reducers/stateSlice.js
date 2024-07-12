@@ -1,16 +1,30 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    phoneNumber: {phone: ''},
+    phoneNumber: {phone_number: ''},
     otpCodeValid: false,
-    loginData: {code: '', phone: ""},
+    loginData: {code: '', phone_number: ""},
     passportVerifyData: {
         email: '',
-        firstName: "",
-        lastName: "",
-        middleName: "",
+        fio: '',
+        photo1: {
+            base64: '',
+            type: '',
+            orig_name: ""
+        },
+        photo2: {
+            base64: '',
+            type: '',
+            orig_name: ""
+        },
+        photo3: {
+            base64: '',
+            type: '',
+            orig_name: ""
+        },
+        codeid: ''
     },
-    registrationModalVisible: "false"
+    registrationModalVisible: false
 };
 
 const stateSlice = createSlice({
@@ -22,7 +36,7 @@ const stateSlice = createSlice({
         },
 
         clearPhone: (state, action) => {
-            state.phoneNumber = {phone: ''};
+            state.phoneNumber = {phone_number: ''};
         },
         changeAwaitedCode: (state, action) => {
             state.loginData = action.payload
@@ -37,7 +51,26 @@ const stateSlice = createSlice({
         },
 
         clearPassportVerifyData: (state, action) => {
-            state.passportVerifyData = {email: '', firstName: "", lastName: "", middleName: "",}
+            state.passportVerifyData = {
+                email: '',
+                fio: '',
+                photo1: {
+                    base64: '',
+                    type: '',
+                    orig_name: ""
+                },
+                photo2: {
+                    base64: '',
+                    type: '',
+                    orig_name: ""
+                },
+                photo3: {
+                    base64: '',
+                    type: '',
+                    orig_name: ""
+                },
+                codeid: ''
+            }
         },
 
         changeRegistrationModalVisible: (state, action) => {
