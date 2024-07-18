@@ -1,7 +1,7 @@
 import { API } from "../../env";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import {changeAwaitedCode, changeRegistrationModalVisible} from "./stateSlice";
+import {changeAwaitedCode, changeFavorites, changeRegistrationModalVisible} from "./stateSlice";
 import {changeLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {getLocalDataUser} from "../../helpers/returnDataUser";
@@ -9,20 +9,67 @@ import {Alert} from "react-native";
 
 
 const initialState  = {
-    listApartaments: [],
+    listApartments: [
+        {
+            dolgota: '',
+            favourite: false,
+            shirota: "",
+            codeid: '',
+            apartament_name: '',
+
+        }
+    ],
+
+    favoritesList: [
+        {
+            dolgota: '',
+            favourite: false,
+            shirota: "",
+            codeid: '',
+            apartament_name: '',
+
+        }
+    ],
+
+    filtredApartaments: [
+        {
+        dolgota: '',
+            favourite: false,
+        shirota: "",
+        codeid: '',
+        apartament_name: '',
+    }],
     preloader: false,
+    bottomSheetPreloader: false,
     session: null,
+    apartmentDetail: {
+        conversions: [],
+        photos: [{pathUrl: ''}],
+        othersHere: [],
+        rules: [],
+        floor: "88",                                                     //этаж
+        num_rooms: "88",                                                 //количество комнат
+        num_bathroom: "88",                                              //количество ванныч
+        num_guests: "88",                                                //количество спальных мест
+        max_guest: "",
+    }
 }
 
-export const getApartaments = createAsyncThunk(
-    "getApartaments",
-    async function ({rejectWithValue }) {
+export const getApartments = createAsyncThunk(
+    "getApartments",
+    async function ( status,{ dispatch,rejectWithValue }) {
+        console.log('хуйххйху',status)
         try {
             const response = await axios({
                 method: "POST",
-                url: `${API}/getApartaments`,
+                url: `${API}/get_apartments`,
+                data: status
             });
+
             if (response.status >= 200 && response.status < 300) {
+                const newData = response?.data
+                const filteredApartments = newData?.filter(item => item?.favourite !== true);
+                dispatch(changeFavorites(filteredApartments));
                 return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
@@ -63,10 +110,10 @@ export const getApartamentDetails = createAsyncThunk("getApartamentDetails",
         try {
             const response = await axios({
                 method: 'GET',
-                url: `${API}/getDetails/${codeid}`,
+                url: `${API}/get_details?codeid_apartment=${codeid}`,
             })
             if (response.status >= 200 && response.status < 300) {
-                return response?.data;
+                return response?.data[0];
             } else {
                 throw Error(`Error: ${response.status}`);
             }
@@ -99,6 +146,7 @@ export const login_ver = createAsyncThunk(
                 throw Error(`Error: ${response.status}`);
             }
         }catch (error){
+            console.log(error, 'error')
             return rejectWithValue(error.message)
         }
     })
@@ -122,8 +170,13 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
                     await navigation.navigate('HomePage');
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio);
+
+                    await AsyncStorage.setItem("verificated", "false");
+                    await AsyncStorage.setItem("rejectRegistration", "false");
                     await getLocalDataUser({ changeLocalData, dispatch });
                 }else if (result == 1) {
+                    await AsyncStorage.setItem("verificated", "false");
+                    await AsyncStorage.setItem("rejectRegistration", "false");
                     await AsyncStorage.setItem("userId", codeid);
                     await navigation.navigate('UserSettingScreen');
                     await getLocalDataUser({ changeLocalData, dispatch });
@@ -133,6 +186,7 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
                 }else if (result == 4) {
                     Alert.alert('Номер телефона не верный, пожалуйста проверьте номер и попробуйте еще раз')
                 }
+                dispatch(checkUserVerify({codeid: codeid}))
             }else {
                 throw Error(`Error: ${response.status}`);
             }
@@ -146,11 +200,11 @@ export const apartamentFilters = createAsyncThunk("apartamentFilters",
         try {
             const response = await axios({
                 method: 'POST',
-                url: `${API}/apartamentFilters`,
+                url: `${API}/get_apartments_filters`,
                 data
             })
             if (response.status >= 200 && response.status < 300) {
-                return response?.data;
+                return response?.data.recordset;
             } else {
                 throw Error(`Error: ${response.status}`);
             }
@@ -158,7 +212,6 @@ export const apartamentFilters = createAsyncThunk("apartamentFilters",
             return rejectWithValue(error.message)
         }
     })
-
 
 export const createBooking = createAsyncThunk("createBooking",
     async function(data, {dispatch, rejectWithValue}){
@@ -197,7 +250,7 @@ export const userBookingList = createAsyncThunk("userBookingList",
         }
     })
 
-export const userFavoritesApartaments = createAsyncThunk("userFavoritesApartaments",
+export const userFavoritesApartments = createAsyncThunk("userFavoritesApartments",
     async function(data, {dispatch, rejectWithValue}){
         try {
             const response = await axios({
@@ -206,6 +259,7 @@ export const userFavoritesApartaments = createAsyncThunk("userFavoritesApartamen
                 data
             })
             if (response.status >= 200 && response.status < 300) {
+                //dispatch(updateListApartmentsAndDetail());
                 return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
@@ -214,6 +268,28 @@ export const userFavoritesApartaments = createAsyncThunk("userFavoritesApartamen
             return rejectWithValue(error.message)
         }
     })
+
+export const addOrDeleteFavorites = createAsyncThunk('addOrDeleteFavorites' ,
+    async function(data, {dispatch, rejectWithValue}){
+        try {
+            console.log(data)
+            const {action, userId, apartamentId} = data
+            const response = await axios({
+                method: 'POST',
+                url: `${API}/addFavoritesList`,
+                data: {status: action, userId: userId, apartamentId: apartamentId}
+            })
+            if (response.status >= 200 && response.status < 300) {
+                dispatch(getApartments({status: 1, codeid_client: userId}))
+                return response?.data;
+            } else {
+                throw Error(`Error: ${response.status}`);
+            }
+        }catch (error){
+            return rejectWithValue(error.message)
+        }
+    })
+
 
 export const getUserCardData = createAsyncThunk("getUserCardData",
     async function(data, {dispatch, rejectWithValue}){
@@ -234,22 +310,73 @@ export const getUserCardData = createAsyncThunk("getUserCardData",
     })
 
 
+export const checkUserVerify = createAsyncThunk('checkUserVerify',
+    async function(data, {dispatch, rejectWithValue}){
+        try {
+            console.log(data, 'verify-data-check')
+            const response = await axios({
+                method: 'POST',
+                url: `${API}/passport_check`,
+                data
+            })
+
+            console.log(response?.data, 'status')
+            if (response.status >= 200 && response.status < 300) {
+                const {status} = response?.data
+                if(status == 0) {
+                    await AsyncStorage.setItem("rejectRegistration", 'true');
+                    await AsyncStorage.setItem("verificated", 'false');
+                }else if (status == 1) {
+                    await AsyncStorage.setItem("verificated", 'true');
+                }else if (status ==2) {
+                    await AsyncStorage.setItem("verificated", 'false');
+                }
+                await getLocalDataUser({ changeLocalData, dispatch });
+                return response?.data;
+            } else {
+                throw Error(`Error: ${response.status}`);
+            }
+        }catch (error){
+            return rejectWithValue(error.message)
+        }
+    })
+
+
 const requestSlice = createSlice({
     name: "requestSlice",
     initialState,
-    extraReducers: (builder) => {
 
+    reducers: {
+        checkFavorites: (state, action) => {
+            state.loginData = action.payload
+        },
+
+        updateListApartmentsAndDetail: (state) => {
+            const favoritesCodeIds = state.favoritesList.map(fav => fav.codeid);
+            state.listApartments = state.listApartments.map(apartment => ({
+                ...apartment,
+                favorites: favoritesCodeIds.includes(apartment.codeid)
+            }));
+
+            state.apartmentDetail = {
+                ...state.apartmentDetail,
+                favorites: favoritesCodeIds.includes(state.apartmentDetail.codeid)
+            };
+        },
+
+    },
+    extraReducers: (builder) => {
         ///// getApartaments
-        builder.addCase(getApartaments.fulfilled, (state, action) => {
-            // state.preloader = false;
-           // state.balance = action.payload;
+        builder.addCase(getApartments.fulfilled, (state, action) => {
+            state.preloader = false;
+           state.listApartments = action.payload;
         });
-        builder.addCase(getApartaments.rejected, (state, action) => {
+        builder.addCase(getApartments.rejected, (state, action) => {
             state.error = action.payload;
-            // state.preloader = false;
+             state.preloader = false;
         });
-        builder.addCase(getApartaments.pending, (state, action) => {
-            // state.preloader = true;
+        builder.addCase(getApartments.pending, (state, action) => {
+            state.preloader = false;
         });
 
 
@@ -268,22 +395,48 @@ const requestSlice = createSlice({
 
         //getApartamentDetails
         builder.addCase(getApartamentDetails.fulfilled, (state, action) => {
-            // state.preloader = false;
-            // state.balance = action.payload;
+            state.bottomSheetPreloader = false;
+            state.apartmentDetail = action.payload;
         });
         builder.addCase(getApartamentDetails.rejected, (state, action) => {
-            // state.error = action.payload;
-            // state.preloader = false;
+            state.error = action.payload;
+            state.bottomSheetPreloader = false;
         });
         builder.addCase(getApartamentDetails.pending, (state, action) => {
-            // state.preloader = true;
+            state.bottomSheetPreloader = true;
+        });
+
+        //userFavoritesApartments
+        builder.addCase(userFavoritesApartments.fulfilled, (state, action) => {
+            state.bottomSheetPreloader = false;
+            state.favoritesList = action.payload;
+        });
+        builder.addCase(userFavoritesApartments.rejected, (state, action) => {
+            state.error = action.payload;
+            state.bottomSheetPreloader = false;
+        });
+        builder.addCase(userFavoritesApartments.pending, (state, action) => {
+            state.bottomSheetPreloader = true;
+        });
+
+        //apartamentFilters
+        builder.addCase(apartamentFilters.fulfilled, (state, action) => {
+            state.bottomSheetPreloader = false;
+            state.filtredApartaments = action.payload;
+        });
+        builder.addCase(apartamentFilters.rejected, (state, action) => {
+            state.error = action.payload;
+            state.bottomSheetPreloader = false;
+        });
+        builder.addCase(apartamentFilters.pending, (state, action) => {
+            state.bottomSheetPreloader = true;
         });
 
     },
 });
 
-export const {
-} = requestSlice.actions;
+export const {updateListApartmentsAndDetail} = requestSlice.actions;
+
 
 export default requestSlice.reducer;
 

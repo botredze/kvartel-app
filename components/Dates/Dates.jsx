@@ -2,7 +2,7 @@ import React from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { styles } from './styles';
 
-const Dates = ({ itemDate, isSelected, onPress }) => {
+const Dates = ({ itemDate, isSelected, onPress, isNextSelected }) => {
     return (
         <View style={styles.dateContainer}>
             <Text style={styles.dateTitle}>{itemDate?.name}</Text>
@@ -18,8 +18,9 @@ const Dates = ({ itemDate, isSelected, onPress }) => {
                     <Text style={styles.outActive}>только выезд</Text>
                 )}
             </TouchableOpacity>
+            {isSelected && isNextSelected && <View style={styles.connectionLine} />}
         </View>
     );
 };
 
-export default Dates;
+export default Dates

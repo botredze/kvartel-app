@@ -15,17 +15,33 @@ import DocsView from "../screens/DocsView/DocsView";
 import AddCardWebView from "../screens/AddCardWebView/AddCardWebView";
 import ViewRegistrationDogovor from "../screens/DocsView/ViewRegistrationDogovor";
 import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos";
+import {checkUserVerify, getApartments, userFavoritesApartments} from "../store/reducers/requestSlice";
+import {useEffect} from "react";
 
 const Stack = createNativeStackNavigator();
 
 export const Navigation = () => {
     const dispatch = useDispatch();
+    const {data} = useSelector((state) => state.saveDataSlice)
+
+    useEffect(() => {
+        //dispatch(getApartments({status: 1, codeid_client: data.userId}))
+        dispatch(getApartments({status: 1, codeid_client: 1}))
+    }, [data]);
+
+    useEffect(() => {
+        console.log(!data.verificated, 'data.verificated === false')
+        if(!data.verificated) {
+            console.log(!'data.verificated === false')
+            dispatch(checkUserVerify({codeid: data.userId}));
+        }
+    }, [dispatch]);
 
     return (
         <NavigationContainer>
             <Preloader />
             <Stack.Navigator
-                initialRouteName="Creeting"
+                initialRouteName={data.userId ? 'HomePage' : 'Creeting'}
                 screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}
             >
                 <Stack.Screen

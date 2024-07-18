@@ -4,11 +4,16 @@ export const returnDataUser = async () => {
     try {
         const userId = await AsyncStorage.getItem("userId");
         const fio = await AsyncStorage.getItem("fio");
-        console.log(userId, userId !== null, 'userId !== null')
+        const verificated = await AsyncStorage.getItem('verificated')
+        const rejectRegistration = await AsyncStorage.getItem('rejectRegistration')
+
+        console.log(userId, fio, verificated, rejectRegistration, 'userId, fio, verificated, rejectRegistration')
         if (userId !== null) {
             const data = {
                 userId,
                 fio,
+                verificated,
+                rejectRegistration
             };
             return data;
         } else {

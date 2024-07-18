@@ -1,24 +1,32 @@
 import {Image, Text, TouchableOpacity, View} from "react-native";
 import BottomSheet, {BottomSheetBackdrop, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
 import {styles} from './styles'
-import React, {useCallback, useMemo} from "react";
+import React, {useCallback, useMemo, useState} from "react";
 import {Ionicons} from "@expo/vector-icons";
-import {dates} from "../../constants/constants";
-import Dates from "../Dates/Dates";
 import {useNavigation} from "@react-navigation/native";
+import {useDispatch, useSelector} from "react-redux";
+import {API} from "../../env";
 
-export default function Booking({item, booking}) {
+export default function Booking({booking, setIsOpen, selectedDates}) {
     const snapPoints = useMemo(() => ['57%'], []);
     const navigation = useNavigation();
+    const [activeDate, setActiveDate] = useState(false);
 
-    const prepaymentPercentage = 15;
-    const prepaymentAmount = Math.round((item?.price * prepaymentPercentage) / 100);
-    const remainingAmount = Math.round(item?.price - prepaymentAmount);
+    const handleSelectDatePress = () => {
+        setIsOpen(true)
+        setActiveDate(true);
+    };
+
+    const { apartmentDetail, bottomSheetPreloader} = useSelector((state) => state.requestSlice);
 
     const closeBooking = () => {
         booking.current?.close()
     };
-    // navigation.navigate('PaymentMethods')
+
+    const numberOfDays = selectedDates?.endDate?.diff(selectedDates.startDate, 'days');
+    const totalAmount = numberOfDays * (apartmentDetail?.price || 0);
+
+
     const shadowBlock = useCallback(
         (props) => (
             <BottomSheetBackdrop
@@ -35,6 +43,7 @@ export default function Booking({item, booking}) {
          navigation.navigate('PaymentMethods')
     };
 
+
     return (
         <BottomSheet
             ref={booking}
@@ -50,12 +59,12 @@ export default function Booking({item, booking}) {
                 <BottomSheetView style={styles.contentContainer}>
                     <View style={styles.imageAndAdress}>
                         <Image
-                            source={{uri: item?.images[0]?.imageUrl}}
+                            source={{ uri: `${API}/${apartmentDetail?.photos[0]?.pathUrl}` }}
                             style={styles.image}
                         />
                         <View>
-                            <Text style={styles.nameText}>{item.name}</Text>
-                            <Text style={styles.adressText}>{item.address}</Text>
+                            <Text style={styles.nameText}>{apartmentDetail.apartament_name}</Text>
+                            <Text style={styles.adressText}>{apartmentDetail.address}</Text>
                         </View>
                     </View>
                     <TouchableOpacity onPress={() => {closeBooking()}} style={styles.closeButton}>
@@ -63,41 +72,50 @@ export default function Booking({item, booking}) {
                     </TouchableOpacity>
                 </BottomSheetView>
 
-                <BottomSheetView style={styles.kalendar}>
-                    <Text style={styles.nameText}>Июль</Text>
-
-                    <BottomSheetScrollView
-                        style={styles.selectDates}
-                        horizontal={true}
-                        showsHorizontalScrollIndicator={false}
-                    >
-                        {dates.map((data) => (
-                            <Dates itemDate={data} key={data?.id}/>
-                        ))}
-                    </BottomSheetScrollView>
+                <BottomSheetView style={styles.selectDateContainer}>
+                    <TouchableOpacity
+                        onPress={handleSelectDatePress}
+                        style={[styles.selectDateBigBtn, activeDate && styles.activeBtn]}>
+                        <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать дату</Text>
+                    </TouchableOpacity>
                 </BottomSheetView>
 
+                {selectedDates.startDate && (
+                    <BottomSheetView style={styles.selectedDatesContainer}>
+                        <Text style={styles.selectedDateText}>
+                            Дата начала: {selectedDates.startDate.format('DD.MM.YYYY')}
+                        </Text>
+                        {selectedDates.endDate && (
+                            <Text style={styles.selectedDateText}>
+                                Дата окончания: {selectedDates.endDate.format('DD.MM.YYYY')}
+                            </Text>
+                        )}
+                    </BottomSheetView>
+                )}
+
+
                 <BottomSheetView style={styles.infoBlock}>
+                    <Text style={styles.infoText}>Дополнительно: {apartmentDetail?.additional_information}</Text>
                     <Text style={styles.outTimeText}>Выберите дату заезда и дату выезда</Text>
-                    <Text style={styles.outTimeText}>Заезд с {item.entryTime} * Выезд до {item.outTime}</Text>
+                    <Text style={styles.outTimeText}> Заезд с 14-00 * Выезд до 12-00 </Text>
                 </BottomSheetView>
 
                 <BottomSheetView style={styles.pricesContainer}>
                     <View style={styles.priceTitle}>
-                        <Text style={styles.priceText}>{item.price}сом</Text>
+                        <Text style={styles.priceText}>{apartmentDetail?.price}сом</Text>
                         <Text style={styles.priceInfoText}>за 1 сутки дней</Text>
                     </View>
-                    <View style={styles.priceTitle}>
-                        <Text style={styles.priceInfoText}>Доплата при заселении:</Text>
-                        <Text style={styles.priceText}>{remainingAmount} сом</Text>
-                    </View>
+                    {/*<View style={styles.priceTitle}>*/}
+                    {/*    <Text style={styles.priceInfoText}>Доплата при заселении:</Text>*/}
+                    {/*    <Text style={styles.priceText}>{remainingAmount} сом</Text>*/}
+                    {/*</View>*/}
                 </BottomSheetView>
 
                 <TouchableOpacity
                     onPress={() => handleStartPayment()}
                     style={styles.buyButton}
                 >
-                    <Text style={{fontSize: 17, fontWeight: '500', color: '#fff'}}>Внести предоплату {prepaymentAmount} сом ({prepaymentPercentage}%)</Text>
+                    <Text style={{fontSize: 17, fontWeight: '500', color: '#fff'}}>Внести оплату {numberOfDays} дней: {totalAmount} сом</Text>
                 </TouchableOpacity>
             </BottomSheetView>
         </BottomSheet>

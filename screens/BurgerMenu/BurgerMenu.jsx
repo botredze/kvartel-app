@@ -8,20 +8,32 @@ import FaqBottomSheet from "../../components/FaqBottomSheet/FaqBottomSheet";
 import Favorites from "../../components/Favorites/Favorites";
 import Support from "../../components/Support/Support";
 import HistoryOrder from "../../components/HistoryOrder/HistoryOrder";
+import {useDispatch, useSelector} from "react-redux";
+import Details from "../../components/Details/Details";
+import DateRangePicker from "react-native-daterange-picker";
+import moment from "moment/moment";
+import Booking from "../../components/Booking/Booking";
 
 export default function BurgerMenu() {
     const navigation = useNavigation();
-    const [showHistory, setShowHistory] = useState(false)
-    const [showFavorites, setShowFavorites] = useState(false)
-    const [showFaq, setShowFaq] = useState(false)
-    const [showSupport , setShowSupport] = useState(false)
-
     const history = useRef(null)
     const favorites = useRef(null)
+    const booking = useRef(null)
+    const details = useRef(null)
     const faq = useRef(null)
     const support = useRef(null)
+    const dispatch = useDispatch();
 
-    const username = 'Баатыр'
+    const { data } = useSelector((state) => state.saveDataSlice)
+
+    const [isOpen, setIsOpen] = useState(false);
+    const [selectedDates, setSelectedDates] = useState({
+        startDate: null,
+        endDate: null,
+        displayedDate: moment(),
+    });
+
+
     const buttons = [
         {id: 1, name: 'История аренды', bottomComponent: 'history'},
         {id: 2, name: 'Избранное', bottomComponent: 'favorites'},
@@ -45,6 +57,19 @@ export default function BurgerMenu() {
     const showBottomSheetSupport = useCallback((index) => {
         support.current?.snapToIndex(index);
     }, []);
+
+    const onDatesChange = (dates) => {
+        const newStartDate = dates.startDate ? moment(dates.startDate) : selectedDates.startDate;
+        const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDates.endDate;
+        setSelectedDates({ ...selectedDates, startDate: newStartDate, endDate: newEndDate });
+
+        if(selectedDates.endDate) {
+            setTimeout(() => {
+                setIsOpen(false)
+            }, 5000)
+        }
+    };
+
 
     const handleNavigationClick = (navigateTo) => {
         switch (navigateTo) {
@@ -88,12 +113,13 @@ export default function BurgerMenu() {
         navigation.replace('Creeting')
     }
 
+    const username =  data.fio.split(' ')
     return (
         <View style={styles.container}>
             <View>
                 <View style={styles.sideBarContainer}>
                     <View style={styles.userNameContainer}>
-                        <Text style={styles.userNameTitle}>Привет, {username} </Text>
+                        <Text style={styles.userNameTitle}>Привет, {username[1]} </Text>
                         <Feather name="settings" size={20} color={colors.mainPurple}/>
                     </View>
 
@@ -137,8 +163,22 @@ export default function BurgerMenu() {
                 </TouchableOpacity>
             </View>
 
+            {/*<DateRangePicker*/}
+            {/*    onChange={onDatesChange}*/}
+            {/*    endDate={selectedDates.endDate}*/}
+            {/*    startDate={selectedDates.startDate}*/}
+            {/*    displayedDate={selectedDates.displayedDate}*/}
+            {/*    range*/}
+            {/*    open={isOpen}*/}
+            {/*>*/}
+            {/*    <View />*/}
+            {/*</DateRangePicker>*/}
+
              <FaqBottomSheet faq = {faq}/>
-             <Favorites favorites = {favorites}/>
+             <Favorites favorites = {favorites}  />
+            <Details detailsRef={details} booking={booking}/>
+            <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen}/>
+
              <Support support = {support}/>
             <HistoryOrder history = {history}/>
 

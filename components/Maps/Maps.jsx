@@ -1,13 +1,16 @@
 import React, {useCallback, useEffect, useState} from 'react';
-import { View, PermissionsAndroid, Platform, Text} from 'react-native';
+import { View, PermissionsAndroid, Platform, Text } from 'react-native';
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps';
 import supercluster from 'supercluster';
-import {Fontisto} from "@expo/vector-icons";
-import {styles} from './styles'
+import { Fontisto } from "@expo/vector-icons";
+import { styles } from './styles';
+import {useDispatch, useSelector} from "react-redux";
+import {getApartamentDetails} from "../../store/reducers/requestSlice";
 
-export default function Maps({previewButton}) {
+export default function Maps({ previewButton }) {
     const [markers, setMarkers] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
+    const dispatch = useDispatch()
 
     const [region, setRegion] = useState({
         latitude: 42.880103935651995,
@@ -15,7 +18,6 @@ export default function Maps({previewButton}) {
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0922,
     });
-
 
     const previewButtonHandle = useCallback((index) => {
         previewButton.current?.snapToIndex(index);
@@ -40,13 +42,10 @@ export default function Maps({previewButton}) {
         requestLocationPermission();
     }, []);
 
-    useEffect(() => {
-        const data = [
-            { id: 1, latitude: 42.880103935651995, longitude: 74.58154184284606, name: 'Уютная квартира для кроликов' },
-            { id: 2, latitude: 42.881103935651995, longitude: 74.58254184284606, name: 'Тише пожалуйста соседи жалуются'},
-        ];
+    const {listApartments} = useSelector((state) => state.requestSlice)
 
-        const clusters = createClusters(data, region);
+    useEffect(() => {
+        const clusters = createClusters(listApartments, region);
         setMarkers(clusters);
     }, [region]);
 
@@ -61,9 +60,9 @@ export default function Maps({previewButton}) {
                 type: 'Feature',
                 geometry: {
                     type: 'Point',
-                    coordinates: [item.longitude, item.latitude],
+                    coordinates: [item.shirota, item.dolgota],
                 },
-                properties: { id: item.id, name: item.name },
+                properties: { id: item.codeid, apartament_name: item.apartament_name },
             }))
         );
 
@@ -83,8 +82,9 @@ export default function Maps({previewButton}) {
     };
 
     const handleMarkerPress = (id) => {
+        dispatch(getApartamentDetails(id))
         setSelectedMarker(id);
-        previewButtonHandle(0)
+        previewButtonHandle(0);
     };
 
     return (
@@ -95,6 +95,7 @@ export default function Maps({previewButton}) {
                 showsUserLocation={true}
                 initialRegion={region}
                 onRegionChangeComplete={onRegionChangeComplete}
+                mapLa={'ru-ru'}
             >
                 {markers.map((marker) =>
                     marker.properties.cluster ? (
@@ -119,10 +120,9 @@ export default function Maps({previewButton}) {
                                 latitude: marker.geometry.coordinates[1],
                                 longitude: marker.geometry.coordinates[0],
                             }}
-                            //title={`Название квартиры: ${marker.properties.name}`}
+                            // title={`Название квартиры: ${marker.properties.apartament_name}`}
                             onPress={() => handleMarkerPress(marker.properties.id)}
                         >
-
                             <View style={selectedMarker === marker.properties.id ? styles.selectedMarker : styles.marker}>
                                 {selectedMarker === marker.properties.id ? (
                                     <Fontisto name="map-marker-alt" size={22} color="white" />
@@ -134,8 +134,6 @@ export default function Maps({previewButton}) {
                     )
                 )}
             </MapView>
-
         </View>
     );
 }
-

@@ -3,9 +3,18 @@ import {colors} from "../../constants/constants";
 
 export const styles = StyleSheet.create({
     sheetContent: {
-        paddingHorizontal: 15,
+        paddingHorizontal: 5,
     },
 
+    selectedDatesContainer: {
+        paddingVertical: 10,
+        gap: 7,
+        justifyContent: "center",
+        marginBottom: 15,
+    },
+    selectedDateText: {
+        fontSize: 16,
+    },
     sectionTitle: {
         marginBottom: 16,
         display: "flex",
@@ -22,7 +31,22 @@ export const styles = StyleSheet.create({
     },
     section: {
         marginBottom: 16,
+        paddingHorizontal: 10
     },
+
+    sectionType: {
+        marginBottom: 16,
+    },
+
+    subtitleType: {
+        paddingHorizontal: 10,
+        fontSize: 16,
+        fontWeight: '400',
+        marginBottom: 8,
+        color: '#ccc',
+        textTransform: 'uppercase'
+    },
+
     title: {
         fontSize: 24,
         fontWeight: '600',
@@ -276,10 +300,36 @@ export const styles = StyleSheet.create({
     activeBtnTitle: {
         color: colors.mainPurple,
     },
+
+    activeBtnCountState: {
+        borderColor: colors.mainPurple,
+        backgroundColor: colors.mainPurple
+    },
+    activeBtnTitleCountState: {
+        color: colors.mainWhite,
+    },
+
     activeBronBtn: {
         borderColor: colors.mainPurple,
+        backgroundColor: colors.mainPurple
     },
     activeTypeBron: {
-        color: colors.mainPurple,
+        color: colors.mainWhite,
+    },
+    showResultsButton: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        backgroundColor: colors.mainPurple,
+        height: 60,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    showResultsButtonText: {
+        color: colors.mainWhite,
+        fontSize: 17,
+        fontWeight: '600'
     }
+
 });

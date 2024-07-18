@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    data: { userId: "", fio: "" },
+    data: { userId: "", fio: "", verificated: true, rejectRegistration: false },
 };
 
 const saveDataSlice = createSlice({
@@ -15,6 +15,8 @@ const saveDataSlice = createSlice({
             state.data = {
                 userId: "",
                 fio: "",
+                verificated: false,
+                rejectRegistration: false,
             };
         },
     },

@@ -1,16 +1,20 @@
-import BottomSheet, {BottomSheetView} from "@gorhom/bottom-sheet";
-import React, {useCallback, useMemo} from "react";
-import {Text, TouchableOpacity, StyleSheet, Image, View} from "react-native";
-import {Entypo, Ionicons} from "@expo/vector-icons";
-import {colors} from "../../constants/constants";
+import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
+import React, { useCallback, useMemo } from "react";
+import { Text, TouchableOpacity, StyleSheet, Image, View } from "react-native";
+import { Entypo, Ionicons } from "@expo/vector-icons";
+import { colors } from "../../constants/constants";
+import { useSelector } from "react-redux";
+import { API } from "../../env";
+import Skeleton from "./Skeleton";
 
-
-export default function PreviewBottiomSheet({item, previewButton, booking, details}) {
+export default function PreviewBottomSheet({ previewButton, booking, details }) {
     const snapPoints = useMemo(() => ['20%'], []);
 
     const handleClosePreview = () => {
         previewButton.current?.close();
     };
+
+    const { apartmentDetail, bottomSheetPreloader } = useSelector((state) => state.requestSlice);
 
     const handleClickBooking = useCallback((index) => {
         booking.current?.snapToIndex(index);
@@ -24,44 +28,50 @@ export default function PreviewBottiomSheet({item, previewButton, booking, detai
         <BottomSheet
             ref={previewButton}
             snapPoints={snapPoints}
-            index ={-1}
+            index={-1}
             enablePanDownToClose={true}
             enableContentPanningGesture={false}
             enableHandlePanningGesture={true}
         >
-            <BottomSheetView style={styles.contentContainer}>
-                <TouchableOpacity style={styles.imageAndAdress}
-                onPress={() => {handleClickDetailsClick(0)}}>
-                    <Image
-                        source={{uri: item?.images[0]?.imageUrl}}
-                        style={styles.image}
-                    />
+            {bottomSheetPreloader ? (
+                <Skeleton />
+            ) : (
+                <>
+                    <BottomSheetView style={styles.contentContainer}>
+                        <TouchableOpacity style={styles.imageAndAdress}
+                                          onPress={() => { handleClickDetailsClick(0) }}>
+                            <Image
+                                source={{ uri: `${API}/${apartmentDetail?.photos[0]?.pathUrl}` }}
+                                style={styles.image}
+                            />
 
-                    <View>
-                        <Text style={styles.nameText}>{item.name}</Text>
-                        <Text style={styles.adressText}>{item.address}</Text>
-                    </View>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => {handleClosePreview()}} style={styles.closeButton}>
-                    <Ionicons name="close" size={24} color="white"/>
-                </TouchableOpacity>
-            </BottomSheetView>
+                            <View>
+                                <Text style={styles.nameText}>{apartmentDetail.apartament_name}</Text>
+                                <Text style={styles.adressText}>{apartmentDetail.address}</Text>
+                            </View>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={handleClosePreview} style={styles.closeButton}>
+                            <Ionicons name="close" size={24} color="white" />
+                        </TouchableOpacity>
+                    </BottomSheetView>
 
-            <BottomSheetView style={styles.selectDateContainer}>
-                <TouchableOpacity
-                    style={styles.selectDateBtn}
-                    onPress={() => {handleClickBooking(0)}}
-                >
-                    <Text style={styles.selectDateBtnText}>Выбрать дату</Text>
-                    <Text style={styles.selectDateBtnText}>{item.price} сутки</Text>
-                </TouchableOpacity>
+                    <BottomSheetView style={styles.selectDateContainer}>
+                        <TouchableOpacity
+                            style={styles.selectDateBtn}
+                            onPress={() => { handleClickBooking(0) }}
+                        >
+                            <Text style={styles.selectDateBtnText}>Выбрать дату</Text>
+                            <Text style={styles.selectDateBtnText}>{apartmentDetail.price} сутки</Text>
+                        </TouchableOpacity>
 
-                <TouchableOpacity style={styles.closeButton}>
-                    <Entypo name="dots-three-horizontal" size={22} color="#666666"/>
-                </TouchableOpacity>
-            </BottomSheetView>
+                        <TouchableOpacity style={styles.closeButton}>
+                            <Entypo name="dots-three-horizontal" size={22} color="#666666" />
+                        </TouchableOpacity>
+                    </BottomSheetView>
+                </>
+            )}
         </BottomSheet>
-    )
+    );
 }
 
 const styles = StyleSheet.create({
@@ -134,4 +144,4 @@ const styles = StyleSheet.create({
         color: '#66666',
         fontWeight: '400',
     }
-})
+});

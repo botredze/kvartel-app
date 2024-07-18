@@ -6,13 +6,27 @@ export const styles  = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 17,
+        position: "relative"
     },
+
+    selectDateContainer: {
+        paddingVertical: 20,
+        height: 80,
+        alignItems: "center"
+    },
+
     contentContainer: {
         display: "flex",
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: "center",
         gap: 10
+    },
+
+    infoText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#666666',
     },
 
     image: {
@@ -71,7 +85,9 @@ export const styles  = StyleSheet.create({
         height: 60,
         borderRadius: 20,
         backgroundColor: '#5127FF',
-        marginTop: 35
+        marginTop: 35,
+        position: "absolute",
+        bottom: 10,
     },
 
     pricesContainer: {
@@ -92,5 +108,36 @@ export const styles  = StyleSheet.create({
 
         fontSize: 16,
         fontWeight: '400'
+    },
+
+    activeBtn: {
+        borderColor: colors.mainPurple,
+    },
+    selectDateBigBtn:{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: '95%',
+        height: 50,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#ccc',
+    },
+    bigBtnTitle: {
+        fontSize: 15,
+    },
+    activeBtnTitle: {
+        color: colors.mainPurple,
+    },
+
+    selectedDatesContainer: {
+        paddingVertical: 10,
+        gap: 7,
+        justifyContent: "center",
+        marginBottom: 15,
+    },
+    selectedDateText: {
+        fontSize: 16,
     }
+
 })

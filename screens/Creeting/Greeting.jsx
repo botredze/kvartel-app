@@ -43,12 +43,12 @@ export default function Creeting() {
                     >
                         <Text style={styles.buttonText}>Вход и регистрация</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity
-                        style={styles.skipButton}
-                        onPress={handleSwitchRegister}
-                    >
-                        <Text style={styles.skipText}>Пропустить</Text>
-                    </TouchableOpacity>
+                    {/*<TouchableOpacity*/}
+                    {/*    style={styles.skipButton}*/}
+                    {/*    onPress={handleSwitchRegister}*/}
+                    {/*>*/}
+                    {/*    <Text style={styles.skipText}>Пропустить</Text>*/}
+                    {/*</TouchableOpacity>*/}
                 </View>
             </ImageBackground>
         </SafeAreaView>

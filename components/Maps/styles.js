@@ -28,8 +28,8 @@ export const styles = StyleSheet.create({
     marker: {
         backgroundColor: '#7250FF',
         padding: 5,
-        width: 40,
-        height: 40,
+        width: 30,
+        height: 30,
         borderRadius: 30,
         alignItems: "center",
         justifyContent: "center"
@@ -51,8 +51,8 @@ export const styles = StyleSheet.create({
     innerMarker: {
         backgroundColor: '#fff',
         padding: 5,
-        width: 15,
-        height: 15,
+        width: 12,
+        height: 12,
         borderRadius: 30,
     },
 

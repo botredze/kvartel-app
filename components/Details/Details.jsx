@@ -1,85 +1,72 @@
 import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
 import React, {useCallback, useMemo, useState} from "react";
-import {View, Text, TouchableOpacity, Image, ScrollView} from "react-native";
+import {View, Text, TouchableOpacity, Image, ActivityIndicator} from "react-native";
 import {styles} from './styles'
-import {Entypo, Feather, FontAwesome5, FontAwesome6, Ionicons, MaterialCommunityIcons} from "@expo/vector-icons";
+import {
+    AntDesign,
+    Entypo,
+    Feather,
+    FontAwesome5,
+    FontAwesome6,
+    Ionicons,
+    MaterialCommunityIcons
+} from "@expo/vector-icons";
 import Swiper from "react-native-swiper";
 import {colors, convenience, rules} from "../../constants/constants";
-import ConvenienceItem from "../ConvenienceItem/ConvenienceItem";
 import ConvenienceViewItem from "../ConvenienceItem/ConveninceViewItem";
 import Rules from "../Rules/Rules";
-import ApartmentCard from "../ApartmentCard/ApartmentCard";
 import RecomendationsCard from "../RecomendationsCard/RecomendationsCard";
+import {useDispatch, useSelector} from "react-redux";
+import {API} from "../../env";
+import Loader from "../Loader";
+import {addOrDeleteFavorites} from "../../store/reducers/requestSlice";
 
 export default function Details({detailsRef, booking}) {
-    const snapPoints = useMemo(() => ['100%'], []);
-    const apartomentDetails = {
-        name: 'Студия №3',
-        address: 'Бишкек, ул.Токтоналиева 12, 3 этаж, квартира № 74',
-        photos: [
-            {photoUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'},
-            {photoUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'},
-            {photoUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'},
-        ],
-        closedDate: "03 июля",
-        entryTime: '14-00',
-        outTime: '12-00',
-        arendType: 'Классическая аренда',
-        guest: 2,
-        bads: 1,
-        apartamentType: 'Студия',
-        tualets: 1,
-        convenience: [
-            {id: 1},
-            {id: 2},
-            {id: 3},
-        ],
-        apartamentRules: [
-            {id: 1},
-            {id: 2},
-            {id: 3},
-            {id: 4},
-        ],
-        price: 1432,
+    const snapPoints = useMemo(() => ['98%'], []);
 
-        othersNearby: [
-            {
-                id: 1,
-                name: 'Двухкомнатная квартира',
-                address: 'Кудыкины горы',
-                price: 2519,
-                images: [
-                    {
-                        imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    }
-                ]
-            },
-            {
-                id: 2,
-                name: 'Однакомнатная комната где то там',
-                address: 'Кудыкины горы',
-                price: 2519,
-                images: [
-                    {
-                        imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    }
-                ]
-            },
-            {
-                id: 3,
-                name: 'Трешка в центре, элитка',
-                address: 'Кудыкины горы',
-                price: 2519,
-                images: [
-                    {
-                        imageUrl: 'https://www.akchabar.kg/media/news/79e701e2-8328-40b8-b3d6-fdec2ee0141d.jpg'
-                    }
-                ]
-            }
-        ]
+    const [visibleConvenienceCount, setVisibleConvenienceCount] = useState(3);
+    const [visibleRulesCount, setVisibleRulesCount] = useState(3);
+    const [isConvenienceExpanded, setIsConvenienceExpanded] = useState(false);
+    const [isRulesExpanded, setIsRulesExpanded] = useState(false);
+
+    function handlePressFavirites(action) {
+        switch (action) {
+            case 1:
+                //добавление
+                dispatch(addOrDeleteFavorites({action: 0, userId: userId, apartamentId: apartment.codeid}))
+                break;
+            case 2:
+                //удаление
+                dispatch(addOrDeleteFavorites({action: 1, userId: userId, apartamentId: apartment.codeid}))
+                break;
+            default:
+                console.log("Action Not FOUND");
+        }
     }
 
-    const selectedConvenienceIds = apartomentDetails.convenience.map(item => item.id);
+    const toggleConvenience = () => {
+        if (isConvenienceExpanded) {
+            setVisibleConvenienceCount(3);
+        } else {
+            setVisibleConvenienceCount(filteredConvenience.length);
+        }
+        setIsConvenienceExpanded(!isConvenienceExpanded);
+    };
+
+    const toggleRules = () => {
+        if (isRulesExpanded) {
+            setVisibleRulesCount(3);
+        } else {
+            setVisibleRulesCount(rules.length);
+        }
+        setIsRulesExpanded(!isRulesExpanded);
+    };
+
+    const dispatch = useDispatch();
+
+    const { apartmentDetail, bottomSheetPreloader} = useSelector((state) => state.requestSlice);
+
+    const selectedConvenienceIds = apartmentDetail?.conversions.map(item => item.codeid);
 
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
 
@@ -91,7 +78,6 @@ export default function Details({detailsRef, booking}) {
         booking.current?.snapToIndex(index);
     }, []);
 
-
     return (
         <BottomSheet
             ref={detailsRef}
@@ -101,9 +87,12 @@ export default function Details({detailsRef, booking}) {
             index={-1}
             onClose={closeDetailButtomSheet}
         >
+            {bottomSheetPreloader === true ?  (
+                <Loader/>
+            ) : (
             <BottomSheetScrollView  style={styles.container}>
                 <View style={styles.sidebar}>
-                    <Text style={styles.mainTitleText}>{apartomentDetails.name}</Text>
+                    <Text style={styles.mainTitleText}>{apartmentDetail?.apartament_name} </Text>
                     <TouchableOpacity onPress={() => {closeDetailButtomSheet()}} style={styles.closeButton}>
                         <Ionicons name="close" size={24} color="white"/>
                     </TouchableOpacity>
@@ -116,30 +105,44 @@ export default function Details({detailsRef, booking}) {
                         <FontAwesome5 name="walking" size={24} color="black"/>
                         <Text style={styles.gapTextTime}>(0 мин.)</Text>
                     </View>
-                    <Text style={styles.addressText}>{apartomentDetails.address}</Text>
+                    <Text style={styles.addressText}>{apartmentDetail.address}</Text>
                 </View>
 
                 <View style={styles.wrapperContainer}>
                     <Swiper style={styles.wrapper} showsButtons loop={false}>
-                        {apartomentDetails?.photos?.map((item) => (
+                        {apartmentDetail?.photos?.map((item) => (
                             <View key={item.id} style={styles.imageContainer}>
                                 <Image
-                                    source={{uri: item?.photoUrl}}
+                                    source={{uri: `${API}/${item?.pathUrl}`}}
                                     style={styles.image}
                                 />
                             </View>
                         ))}
                     </Swiper>
+
+                    <View style={styles.favoriteHeart}>
+                        {apartmentDetail.favourite ? (
+                            <TouchableOpacity onPress={() => {handlePressFavirites(1)}}>
+                                <AntDesign name="heart" size={25} color="#FF5244" />
+                            </TouchableOpacity>
+                        ): (
+                            <TouchableOpacity onPress={() => {handlePressFavirites(2)}}>
+                                <AntDesign name="hearto" size={25} color="white" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </View>
 
                 <View style={styles.approveTimeContainer}>
-                    <Text style={styles.approveText}>{apartomentDetails.closedDate} - ближайшая доступная дата</Text>
-                    <Text style={styles.outTimeText}>Заезд с {apartomentDetails.entryTime} * Выезд до {apartomentDetails.outTime}</Text>
+                    <Text style={styles.approveText}>{apartmentDetail?.date_to} - ближайшая доступная дата</Text>
+                    <Text style={styles.outTimeText}> Заезд с 14-00 * Выезд до 12-00 </Text>
+
+                    <Text style={styles.infoText}>Дополнительно: {apartmentDetail?.additional_information}</Text>
                 </View>
 
                 <View style={styles.infoContainer}>
                     <View style={styles.arendType}>
-                        <Text style={styles.buttonInnerText}>{apartomentDetails.arendType}</Text>
+                        <Text style={styles.buttonInnerText}>{apartmentDetail?.bookingType == 0 ? "Классическая аренда" : "Бесконтактная аренда"}</Text>
                         <TouchableOpacity onPress={()=>{}}>
                             <Feather name="info" size={24} color='#7250FF'/>
                         </TouchableOpacity>
@@ -148,70 +151,83 @@ export default function Details({detailsRef, booking}) {
                     <View style={styles.rowContainer}>
                         <View style={styles.functuionsContainer}>
                             <Ionicons name="people-outline" size={22} color={colors.mainGrey} />
-                            <Text style={styles.buttonInnerText}>{apartomentDetails.guest} гостя</Text>
+                            <Text style={styles.buttonInnerText}>{apartmentDetail?.max_guest.length <= 0 ? 0 : apartmentDetail?.max_guest } гостей</Text>
                         </View>
                         <View style={styles.functuionsContainer}>
                             <Ionicons name="bed-outline" size={22} color={colors.mainGrey} />
-                            <Text style={styles.buttonInnerText}>{apartomentDetails.bads} местная кровать</Text>
+                            <Text style={styles.buttonInnerText}>{apartmentDetail?.num_guests} {apartmentDetail?.num_guests <= 1 ? 'местная кровать' : 'кровати'}</Text>
                         </View>
                     </View>
 
                     <View style={styles.rowContainer}>
                         <View style={styles.functuionsContainer}>
                             <MaterialCommunityIcons name="door-open" size={22} color={colors.mainGrey} />
-                            <Text style={styles.buttonInnerText}>{apartomentDetails.apartamentType}</Text>
+                            <Text style={styles.buttonInnerText}>{apartmentDetail?.num_rooms == 0 ? "Студия" : apartmentDetail?.num_rooms} комнаты</Text>
                         </View>
                         <View style={styles.functuionsContainer}>
                             <FontAwesome6 name="toilet" size={22} color={colors.mainGrey} />
-                            <Text style={styles.buttonInnerText}>{apartomentDetails.tualets} уборная</Text>
+                            <Text style={styles.buttonInnerText}>{apartmentDetail?.num_bathroom} уборная</Text>
                         </View>
                     </View>
                 </View>
-
+                {/*Удобства*/}
                 <BottomSheetView style={styles.convenienceContainer}>
                     <Text style={styles.contentTitle}>Удобства</Text>
                     <BottomSheetFlatList
-                        data={filteredConvenience}
+                        data={filteredConvenience.slice(0, visibleConvenienceCount)}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item }) => (<ConvenienceViewItem item={item}/>
-                        )}
+                        renderItem={({ item }) => (<ConvenienceViewItem item={item} />)}
                         contentContainerStyle={styles.flatListContainer}
                     />
-                    <TouchableOpacity>
-                        <Text style={styles.watchMoreText}>Показать ещё</Text>
+                    <TouchableOpacity onPress={toggleConvenience}>
+                        <Text style={styles.watchMoreText}>
+                            {isConvenienceExpanded ? 'Скрыть' : 'Показать ещё'}
+                        </Text>
                     </TouchableOpacity>
                 </BottomSheetView>
 
+                {/*Правило дома*/}
                 <BottomSheetView style={styles.convenienceContainer}>
                     <Text style={styles.contentTitle}>Правило дома</Text>
-
-                    <View style={styles.listContainer}>{rules.map((item) => (<Rules item={item} key = {item.id.toString()}/>))}</View>
-
-                    <TouchableOpacity>
-                        <Text style={styles.watchMoreText}>Показать ещё</Text>
+                    <View style={styles.listContainer}>
+                        {rules.slice(0, visibleRulesCount).map((item) => (
+                            <Rules item={item} key={item.id.toString()} />
+                        ))}
+                    </View>
+                    <TouchableOpacity onPress={toggleRules}>
+                        <Text style={styles.watchMoreText}>
+                            {isRulesExpanded ? 'Скрыть' : 'Показать ещё'}
+                        </Text>
                     </TouchableOpacity>
                 </BottomSheetView>
 
-                <BottomSheetScrollView
-                    style={styles.recomendationContainer}
-                >
+                <BottomSheetScrollView style={{...styles.recommendationContainer, marginBottom: apartmentDetail.othersHere.length > 0 ? 50 : 0}}>
                     <Text style={styles.contentTitle}>Другие дома рядом</Text>
-                    <BottomSheetScrollView
-                        style={styles.recomendated}
-                         horizontal={true}
-                         showsHorizontalScrollIndicator={false}
-                    >{apartomentDetails.othersNearby.map((item)=> (
-                          <RecomendationsCard apartment={item} key={item.id}/>
-                    ))}</BottomSheetScrollView>
+                    {apartmentDetail && apartmentDetail.othersHere && apartmentDetail.othersHere.length > 0 ? (
+                        <BottomSheetScrollView
+                            style={styles.recommended}
+                            horizontal={true}
+                            showsHorizontalScrollIndicator={false}
+                        >
+                            {apartmentDetail.othersHere.map((item) => (
+                                <RecomendationsCard apartment={item} key={item.id} />
+                            ))}
+                        </BottomSheetScrollView>
+                    ) : (
+                        <View style={styles.notRecommended}>
+                            <Text style={styles.notRecommendedText}>Пока квартир по близости нет</Text>
+                        </View>
+                    )}
                 </BottomSheetScrollView>
             </BottomSheetScrollView >
+            )}
 
             <BottomSheetView style={styles.selectDateContainer}>
                 <TouchableOpacity style={styles.selectDateBtn}
                                   onPress={() => {handleClickBooking(0)}}
                 >
                     <Text style={styles.selectDateBtnText}>Выбрать дату</Text>
-                    <Text style={styles.selectDateBtnText}>{apartomentDetails.price} сутки</Text>
+                    <Text style={styles.selectDateBtnText}>{apartmentDetail.price} сутки</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.closeButton}>

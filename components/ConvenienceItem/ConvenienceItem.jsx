@@ -1,6 +1,5 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import {MaterialCommunityIcons} from "@expo/vector-icons";
 
 const ConvenienceItem = ({ item, onSelect, isSelected }) => {

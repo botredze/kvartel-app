@@ -59,6 +59,7 @@ export const styles = StyleSheet.create({
     },
     wrapperContainer: {
         height: 250,
+        position: "relative"
     },
     image: {
         width: '100%',
@@ -66,18 +67,31 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
     },
 
+    favoriteHeart: {
+        position: 'absolute',
+        right: 20,
+        top: 20
+    },
+
     approveTimeContainer: {
         marginTop: 10,
+        gap: 5
     },
     approveText: {
         fontSize: 18,
         fontWeight: '500',
         color: '#666666'
     },
+
+    infoText: {
+        fontSize: 16,
+        fontWeight: '500',
+        color: '#666666',
+    },
     outTimeText: {
-        fontSize: 14,
+        fontSize: 16,
         fontWeight: '400',
-        color: '#ccc'
+        color: '#ccc',
     },
 
     infoContainer: {
@@ -130,7 +144,7 @@ export const styles = StyleSheet.create({
         flex: 1,
     },
 
-    recomendationContainer: {
+    recommendationContainer: {
         marginTop: 20,
         flex: 1,
         marginBottom: 50,
@@ -162,7 +176,7 @@ export const styles = StyleSheet.create({
         marginBottom: 10,
     },
 
-    recomendated: {
+    recommended: {
         display: "flex",
         flexDirection: 'row',
     },
@@ -196,5 +210,17 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
         color: colors.mainWhite
+    },
+
+    notRecommended: {
+        alignItems: "center",
+        justifyContent: "center",
+        paddingVertical: 10,
+    },
+
+    notRecommendedText: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: '#ccc'
     }
 })

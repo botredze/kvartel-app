@@ -1,12 +1,10 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, StyleSheet, TouchableOpacity, SafeAreaView, KeyboardAvoidingView} from 'react-native';
-import {Ionicons} from '@expo/vector-icons';
+import {View, Text, TextInput, SafeAreaView, KeyboardAvoidingView} from 'react-native';
 import {styles} from './styles/otpStyles'
 import SideBar from "../../components/SideBar/SideBar";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {verifyOtpCode} from "../../store/reducers/requestSlice";
-import Register from "./Register";
 
 export default function OTPInputScreen() {
     const navigation = useNavigation();

@@ -118,11 +118,6 @@ export const convenience = [
         icon: 'car'
     },
     {
-        id: 23,
-        name: 'Телефон',
-        icon: 'phone'
-    },
-    {
         id: 24,
         name: 'Для романтических встреч',
         icon: 'heart'

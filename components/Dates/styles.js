@@ -20,6 +20,7 @@ export const styles = StyleSheet.create({
     },
 
     dateContainer:{
+        position: 'relative',
         marginRight: 30,
         alignItems: "center",
         justifyContent: 'center',
@@ -41,5 +42,15 @@ export const styles = StyleSheet.create({
     },
     activeDateTitle: {
         color: colors.mainPurple,
-    }
+    },
+
+    connectionLine: {
+        position: 'absolute',
+        width: '50%',
+        height: 40,
+        backgroundColor: colors.mainPurple,
+        top: '50%',
+        left: '100%',
+    },
+
 });

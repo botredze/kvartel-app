@@ -1,19 +1,17 @@
 import React, {useCallback, useMemo} from "react";
 import BottomSheet, {BottomSheetBackdrop, BottomSheetFlatList} from "@gorhom/bottom-sheet";
-import BottomSheetSideBar from "../BottomSheetSideBar/BottomSheetSideBar";
 import ApartmentCard from "../ApartmentCard/ApartmentCard";
-import { apartament } from "../../constants/apartaments";
 import {useSelector} from "react-redux";
 
-export default function Favorites({favorites}) {
-    const snapPoints = useMemo(() => ['95%'], []);
+export default function FilteredApartaments({filtered, detailsRef}) {
+    const snapPoints = useMemo(() => ['80%'], []);
 
     const handleBack = () => {
-        favorites.current?.close()
+        filtered.current?.close()
     }
 
-    const {favoritesList} = useSelector((state) => state.stateSlice)
-    console.log(favoritesList, 'favoritesList')
+    const { filtredApartaments } = useSelector((state )=> state.requestSlice)
+
     const shadowBlock = useCallback(
         (props) => (
             <BottomSheetBackdrop
@@ -27,18 +25,16 @@ export default function Favorites({favorites}) {
     );
     return (
         <BottomSheet
-            ref={favorites}
+            ref={filtered}
             index={-1}
             enablePanDownToClose={true}
             backdropComponent={shadowBlock}
             onClose={handleBack}
             snapPoints={snapPoints}
         >
-            <BottomSheetSideBar handleClickBack={handleBack} title='Избранные'/>
-
             <BottomSheetFlatList
-                data={favoritesList}
-                renderItem={({ item }) => <ApartmentCard apartment={item} />}
+                data={filtredApartaments}
+                renderItem={({ item }) => <ApartmentCard apartment={item} detailsRef={detailsRef} />}
                 keyExtractor={item => item.id}
             />
         </BottomSheet>

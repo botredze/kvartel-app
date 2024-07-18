@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 20,
         display: "flex",
-        gap: 8
+        gap: 8,
     },
 
     recommendationText: {

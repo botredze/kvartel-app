@@ -2,7 +2,6 @@ import { Text, StyleSheet, View } from 'react-native';
 import {colors} from "../../constants/constants";
 
 const Rules = ({item}) => {
-    console.log(item)
     return (
         <View style={styles.ruleItem}>
             <View style={styles.emojiContainer}>

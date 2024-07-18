@@ -3,14 +3,22 @@ import {View, Text, Image, TouchableOpacity} from "react-native";
 import {styles} from "./style";
 import Swiper from 'react-native-swiper';
 import {AntDesign, FontAwesome5} from "@expo/vector-icons";
+import {API} from "../../env";
+import {useDispatch, useSelector} from "react-redux";
+import {addOrDeleteFavorites, getApartamentDetails} from "../../store/reducers/requestSlice";
 
 export default function ApartmentCard({apartment, detailsRef}) {
-
+    const dispatch = useDispatch();
+    const {data} = useSelector((state) => state.saveDataSlice)
     function handlePressFavirites(action) {
         switch (action) {
             case 1:
+                //добавление
+                dispatch(addOrDeleteFavorites({action: 0, userId: data.userId, apartamentId: apartment.codeid}))
                 break;
             case 2:
+                //удаление
+                dispatch(addOrDeleteFavorites({action: 1, userId: data.userId, apartamentId: apartment.codeid}))
                 break;
             default:
                 console.log("Action Not FOUND");
@@ -18,9 +26,17 @@ export default function ApartmentCard({apartment, detailsRef}) {
     }
 
     const handleSelectApartment = useCallback((index) => {
+        dispatch(getApartamentDetails(apartment.codeid))
         detailsRef.current?.snapToIndex(index);
-    }, []);
+    }, [dispatch, apartment.codeid, detailsRef]);
 
+    // Проверка и парсинг JSON
+    let imagesArray = [];
+    try {
+        imagesArray = apartment?.arr_path ? JSON.parse(apartment.arr_path) : [];
+    } catch (error) {
+        console.error("Error parsing JSON", error);
+    }
 
     return (
         <TouchableOpacity
@@ -30,11 +46,10 @@ export default function ApartmentCard({apartment, detailsRef}) {
         >
             <View style={styles.wrapperContainer}>
                 <Swiper style={styles.wrapper} showsButtons loop={false}>
-                    {apartment?.images?.map((item, index) => (
-                        <View style={styles.imageContainer}>
+                    {imagesArray?.map((item, index) => (
+                        <View key={index} style={styles.imageContainer}>
                             <Image
-                                key={index}
-                                source={{uri: item?.imageUrl}}
+                                source={{uri: `${API}/${item.new_filename}`}}
                                 style={styles.image}
                             />
                         </View>
@@ -42,11 +57,11 @@ export default function ApartmentCard({apartment, detailsRef}) {
                 </Swiper>
 
                 <View style={styles.priceContainer}>
-                    <Text style={styles.price}>{apartment?.price}сом сутки</Text>
+                    <Text style={styles.price}>{apartment?.price} сом сутки</Text>
                 </View>
 
                 <View style={styles.favoriteHeart}>
-                    {apartment.favorites ? (
+                    {!apartment?.favourite ? (
                         <TouchableOpacity onPress={() => {handlePressFavirites(1)}}>
                             <AntDesign name="heart" size={25} color="#FF5244" />
                         </TouchableOpacity>
@@ -56,6 +71,7 @@ export default function ApartmentCard({apartment, detailsRef}) {
                         </TouchableOpacity>
                     )}
                 </View>
+
             </View>
             <Text style={styles.name}>{apartment?.name}</Text>
             <View style={styles.gapContainer}>
