@@ -25,17 +25,18 @@ export const Navigation = () => {
     const {data} = useSelector((state) => state.saveDataSlice)
 
     useEffect(() => {
-        //dispatch(getApartments({status: 1, codeid_client: data.userId}))
-        dispatch(getApartments({status: 1, codeid_client: 1}))
+        dispatch(getApartments({status: 1, codeid_client: data.userId}))
     }, [data]);
 
     useEffect(() => {
-        console.log(!data.verificated, 'data.verificated === false')
-        if(!data.verificated) {
-            console.log(!'data.verificated === false')
-            dispatch(checkUserVerify({codeid: data.userId}));
-        }
-    }, [dispatch]);
+        const interval = setInterval(() => {
+            if (data.verificated === 'false') {
+                dispatch(checkUserVerify({ codeid: data.userId }));
+            }
+        }, 10 * 60 * 1000);
+
+        return () => clearInterval(interval);
+    }, [dispatch, data.verificated, data.userId]);
 
     return (
         <NavigationContainer>
