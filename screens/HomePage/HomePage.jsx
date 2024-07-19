@@ -14,7 +14,8 @@ import {FontAwesome6} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import DateRangePicker from "react-native-daterange-picker";
-import {changeDatesSelected, changeDisabledDates, changeOpenDateRange} from "../../store/reducers/stateSlice";
+
+
 import moment from "moment";
 import FilteredApartaments from "../../components/FilteredApartaments/FilteredApartaments";
 
@@ -96,7 +97,7 @@ export default function HomePage() {
     };
 
     const handlePressBurgerButton = () => {
-        navigation.navigate('BurgerMenu');
+        navigation.navigate('BurgerMenu', { detailsRef, booking });
     };
 
     const {data} = useSelector((state) => state.saveDataSlice)

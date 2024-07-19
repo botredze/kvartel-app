@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, SafeAreaView, KeyboardAvoidingView} from 'react-native';
+import {View, Text, TextInput, SafeAreaView, KeyboardAvoidingView, TouchableOpacity} from 'react-native';
 import {styles} from './styles/otpStyles'
 import SideBar from "../../components/SideBar/SideBar";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
-import {verifyOtpCode} from "../../store/reducers/requestSlice";
+import {login_ver, verifyOtpCode} from "../../store/reducers/requestSlice";
 
 export default function OTPInputScreen() {
     const navigation = useNavigation();
     const [otp, setOtp] = useState('');
-    const [timer, setTimer] = useState(30);
+    const [timer, setTimer] = useState(60);
     const [otpValid, setOtpValid] = useState(false);
     const dispatch = useDispatch();
     const { data } = useSelector((state) => state.saveDataSlice);
@@ -22,7 +22,7 @@ export default function OTPInputScreen() {
         return () => clearInterval(countdown);
     }, []);
 
-    const {loginData} = useSelector((state)=> state.stateSlice)
+    const { loginData, phoneNumber} = useSelector((state)=> state.stateSlice)
 
     useEffect(() => {
         if (otp.length === 6) {
@@ -43,6 +43,11 @@ export default function OTPInputScreen() {
         if (cleanedText.length <= 6) {
             setOtp(cleanedText);
         }
+    };
+
+    const handleRefreshOtpCode = () => {
+        setTimer(60)
+        dispatch(login_ver({phoneNumber, navigation}))
     };
 
     return (
@@ -76,9 +81,18 @@ export default function OTPInputScreen() {
                     </View>
                 </View>
 
-                <View style={styles.timerContainer}>
-                    <Text style={styles.timerText}>Повторно через {timer}с</Text>
-                </View>
+                {timer === 0 ? (
+                    <TouchableOpacity
+                        style={styles.refreshhCode}
+                        onPress={() => {handleRefreshOtpCode()}}
+                    >
+                        <Text style={styles.refreshhCodeText}>Отправить код повторно</Text>
+                    </TouchableOpacity>
+                ) : (
+                    <View style={styles.timerContainer}>
+                        <Text style={styles.timerText}>Повторно через {timer}с</Text>
+                    </View>
+                )}
             </KeyboardAvoidingView>
         </SafeAreaView>
     );

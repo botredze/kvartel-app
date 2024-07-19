@@ -23,9 +23,13 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
         booking.current?.close()
     };
 
-    const numberOfDays = selectedDates?.endDate?.diff(selectedDates.startDate, 'days');
-    const totalAmount = numberOfDays * (apartmentDetail?.price || 0);
+    const numberOfDays = selectedDates?.endDate && selectedDates?.startDate
+        ? selectedDates.endDate.diff(selectedDates.startDate, 'days')
+        : null;
 
+    const totalAmount = numberOfDays !== null
+        ? numberOfDays * (apartmentDetail?.price || 0)
+        : apartmentDetail?.price || 0;
 
     const shadowBlock = useCallback(
         (props) => (
@@ -115,7 +119,11 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                     onPress={() => handleStartPayment()}
                     style={styles.buyButton}
                 >
-                    <Text style={{fontSize: 17, fontWeight: '500', color: '#fff'}}>Внести оплату {numberOfDays} дней: {totalAmount} сом</Text>
+                    <Text style={{fontSize: 17, fontWeight: '500', color: '#fff'}}>
+                        {numberOfDays !== null
+                            ? `Внести оплату ${numberOfDays} дня: ${totalAmount} сом`
+                            : `Внести оплату: ${totalAmount} сом`}
+                    </Text>
                 </TouchableOpacity>
             </BottomSheetView>
         </BottomSheet>

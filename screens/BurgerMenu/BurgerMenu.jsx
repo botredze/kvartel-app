@@ -10,16 +10,14 @@ import Support from "../../components/Support/Support";
 import HistoryOrder from "../../components/HistoryOrder/HistoryOrder";
 import {useDispatch, useSelector} from "react-redux";
 import Details from "../../components/Details/Details";
-import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment/moment";
 import Booking from "../../components/Booking/Booking";
 
-export default function BurgerMenu() {
-    const navigation = useNavigation();
+export default function BurgerMenu({ route, navigation }) {
+    const { detailsRef ,booking } = route.params;
+
     const history = useRef(null)
     const favorites = useRef(null)
-    const booking = useRef(null)
-    const details = useRef(null)
     const faq = useRef(null)
     const support = useRef(null)
     const dispatch = useDispatch();
@@ -175,8 +173,8 @@ export default function BurgerMenu() {
             {/*</DateRangePicker>*/}
 
              <FaqBottomSheet faq = {faq}/>
-             <Favorites favorites = {favorites}  />
-            <Details detailsRef={details} booking={booking}/>
+             <Favorites favorites = {favorites}  detailsRef={detailsRef} />
+            <Details detailsRef={detailsRef} booking={booking}/>
             <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen}/>
 
              <Support support = {support}/>

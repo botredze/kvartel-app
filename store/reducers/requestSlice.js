@@ -167,18 +167,18 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
 
                 console.log(codeid, fio)
                 if(result == 0) {
-                    await navigation.navigate('HomePage');
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio);
 
                     await AsyncStorage.setItem("verificated", "false");
                     await AsyncStorage.setItem("rejectRegistration", "false");
+                    await navigation.replace('HomePage');
                     await getLocalDataUser({ changeLocalData, dispatch });
                 }else if (result == 1) {
                     await AsyncStorage.setItem("verificated", "false");
                     await AsyncStorage.setItem("rejectRegistration", "false");
                     await AsyncStorage.setItem("userId", codeid);
-                    await navigation.navigate('UserSettingScreen');
+                    await navigation.replace('UserSettingScreen');
                     await getLocalDataUser({ changeLocalData, dispatch });
                 }else if(result == 3) {
                     dispatch(login_ver({phoneNumber: loginData}))

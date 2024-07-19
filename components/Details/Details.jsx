@@ -22,6 +22,7 @@ import Loader from "../Loader";
 import {addOrDeleteFavorites} from "../../store/reducers/requestSlice";
 
 export default function Details({detailsRef, booking}) {
+
     const snapPoints = useMemo(() => ['98%'], []);
 
     const [visibleConvenienceCount, setVisibleConvenienceCount] = useState(3);
@@ -70,8 +71,10 @@ export default function Details({detailsRef, booking}) {
 
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
 
+    console.log(JSON.stringify(apartmentDetail) , 'apartmentDetail')
     const closeDetailButtomSheet = () => {
-        detailsRef.current?.close();
+        console.log('хухйхйххйу')
+        detailsRef?.current?.close();
     }
 
     const handleClickBooking = useCallback((index) => {
@@ -85,7 +88,7 @@ export default function Details({detailsRef, booking}) {
             enableContentPanningGesture={false}
             enableHandlePanningGesture={true}
             index={-1}
-            onClose={closeDetailButtomSheet}
+           // onClose={closeDetailButtomSheet}
         >
             {bottomSheetPreloader === true ?  (
                 <Loader/>

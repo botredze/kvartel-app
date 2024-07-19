@@ -5,7 +5,7 @@ import ApartmentCard from "../ApartmentCard/ApartmentCard";
 import { apartament } from "../../constants/apartaments";
 import {useSelector} from "react-redux";
 
-export default function Favorites({favorites}) {
+export default function Favorites({favorites,detailsRef }) {
     const snapPoints = useMemo(() => ['95%'], []);
 
     const handleBack = () => {
@@ -13,7 +13,7 @@ export default function Favorites({favorites}) {
     }
 
     const {favoritesList} = useSelector((state) => state.stateSlice)
-    console.log(favoritesList, 'favoritesList')
+
     const shadowBlock = useCallback(
         (props) => (
             <BottomSheetBackdrop
@@ -38,7 +38,7 @@ export default function Favorites({favorites}) {
 
             <BottomSheetFlatList
                 data={favoritesList}
-                renderItem={({ item }) => <ApartmentCard apartment={item} />}
+                renderItem={({ item }) => <ApartmentCard apartment={item} detailsRef={detailsRef} />}
                 keyExtractor={item => item.id}
             />
         </BottomSheet>

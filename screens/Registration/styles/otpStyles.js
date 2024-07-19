@@ -1,4 +1,5 @@
 import {StyleSheet} from "react-native";
+import {colors} from "../../../constants/constants";
 
 
 export const styles = StyleSheet.create({
@@ -65,6 +66,12 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         color: 'gray',
     },
+
+    refreshhCodeText: {
+        fontSize: 16,
+        color: 'white',
+        fontWeight: '500'
+    },
     timerContainer: {
         position: 'absolute',
         bottom: 10,
@@ -81,6 +88,17 @@ export const styles = StyleSheet.create({
         alignSelf: "center",
         alignItems: "center",
         marginTop: 20
+    },
+    refreshhCode: {
+        position: 'absolute',
+        bottom: 15,
+        left: 20,
+        right: 20,
+        alignItems: "center",
+        height: 55,
+        backgroundColor: colors.mainPurple,
+        justifyContent: "center",
+        borderRadius: 15
     }
 
 });

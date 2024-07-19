@@ -16,12 +16,13 @@ import AddCardWebView from "../screens/AddCardWebView/AddCardWebView";
 import ViewRegistrationDogovor from "../screens/DocsView/ViewRegistrationDogovor";
 import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos";
 import {checkUserVerify, getApartments, userFavoritesApartments} from "../store/reducers/requestSlice";
-import {useEffect} from "react";
+import {useEffect, useRef} from "react";
 
 const Stack = createNativeStackNavigator();
 
 export const Navigation = () => {
     const dispatch = useDispatch();
+    const detailsRef = useRef(null)
     const {data} = useSelector((state) => state.saveDataSlice)
 
     useEffect(() => {
