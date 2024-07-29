@@ -71,7 +71,6 @@ export default function Details({detailsRef, booking}) {
 
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
 
-    console.log(JSON.stringify(apartmentDetail) , 'apartmentDetail')
     const closeDetailButtomSheet = () => {
         console.log('хухйхйххйу')
         detailsRef?.current?.close();

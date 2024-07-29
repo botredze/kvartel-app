@@ -52,13 +52,17 @@ const initialState  = {
         num_bathroom: "88",                                              //количество ванныч
         num_guests: "88",                                                //количество спальных мест
         max_guest: "",
+    },
+
+    search: {
+        codeid_client: 0,
+        address: ''
     }
 }
 
 export const getApartments = createAsyncThunk(
     "getApartments",
     async function ( status,{ dispatch,rejectWithValue }) {
-        console.log('хуйххйху',status)
         try {
             const response = await axios({
                 method: "POST",
@@ -342,6 +346,27 @@ export const checkUserVerify = createAsyncThunk('checkUserVerify',
     })
 
 
+export const searchByAddress = createAsyncThunk('searchByAddress', async function(data, {rejectWithValue, dispatch}){
+    try {
+        console.log('ХУХЙХЙХУХХЙХУ')
+        console.log(data, 'хуйхуйdata')
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/address_search`,
+            data
+        })
+        console.log(response.data,  'ХУЙХЙХУХЙХУЙ', response.status)
+        if (response.status >= 200 && response.status < 300) {
+            return response?.data;
+        } else {
+            throw Error(`Error: ${response.status}`);
+        }
+
+    }catch (error) {
+       return  rejectWithValue(error.message)
+    }
+} )
+
 const requestSlice = createSlice({
     name: "requestSlice",
     initialState,
@@ -350,7 +375,6 @@ const requestSlice = createSlice({
         checkFavorites: (state, action) => {
             state.loginData = action.payload
         },
-
         updateListApartmentsAndDetail: (state) => {
             const favoritesCodeIds = state.favoritesList.map(fav => fav.codeid);
             state.listApartments = state.listApartments.map(apartment => ({
@@ -364,6 +388,9 @@ const requestSlice = createSlice({
             };
         },
 
+        changeSearchData: (state, action) => {
+            state.search = action.payload
+        }
     },
     extraReducers: (builder) => {
         ///// getApartaments
@@ -432,10 +459,23 @@ const requestSlice = createSlice({
             state.bottomSheetPreloader = true;
         });
 
+        //searchByAddress
+        builder.addCase(searchByAddress.fulfilled, (state, action) => {
+            state.bottomSheetPreloader = false;
+            state.listApartments = action.payload;
+        });
+        builder.addCase(searchByAddress.rejected, (state, action) => {
+            state.error = action.payload;
+            state.bottomSheetPreloader = false;
+        });
+        builder.addCase(searchByAddress.pending, (state, action) => {
+            state.bottomSheetPreloader = true;
+        });
+
     },
 });
 
-export const {updateListApartmentsAndDetail} = requestSlice.actions;
+export const {updateListApartmentsAndDetail, changeSearchData} = requestSlice.actions;
 
 
 export default requestSlice.reducer;

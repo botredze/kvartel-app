@@ -131,5 +131,18 @@ export const styles = StyleSheet.create({
         fontSize: 16,
     },
 
+    dataNotFound: {
+        alignSelf: "center",
+        justifyContent: "center",
+        height: '100%',
+        gap: 20,
+        alignItems: "center",
+
+    },
+    dataNotFoundText: {
+        fontSize: 20,
+        fontWeight: '600',
+    }
+
 
 });

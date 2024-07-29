@@ -10,14 +10,14 @@ import Filters from "../../components/Filters/Filters";
 import Details from "../../components/Details/Details";
 import PreviewBottiomSheet from "../../components/PreviewBottiomSheet/PreviewBottiomSheet";
 import Booking from "../../components/Booking/Booking";
-import {FontAwesome6} from "@expo/vector-icons";
+import {Entypo, FontAwesome6} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import DateRangePicker from "react-native-daterange-picker";
-
-
 import moment from "moment";
 import FilteredApartaments from "../../components/FilteredApartaments/FilteredApartaments";
+import {changeSearchData, getApartments, searchByAddress} from "../../store/reducers/requestSlice";
+import { debounce } from "lodash"
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -67,10 +67,17 @@ export default function HomePage() {
         const timeoutId = setTimeout(() => {
             if (searchQuery) {
                 setRecommendations([
-                    'Metro Белорусская',
-                    'ул. Белокаменная 24/5',
-                    'проспект Мечникова, 40',
-                    'Дунайский проспект, 27',
+                    'Vefa',
+                    'ул. Тыныстанова',
+                    'рабочий городок',
+                    'район филармонии',
+                    'район Политех',
+                    '6 микрорайон',
+                    '12 микрорайон',
+                    'Джал',
+                    'Улан 2',
+                    'Кок жар',
+                    'Восток 5',
                 ]);
             }
         }, 200);
@@ -83,7 +90,7 @@ export default function HomePage() {
     };
 
     const handleClearSearch = () => {
-        console.log('Close clicked')
+        clear()
         setSearchQuery("");
         setShowApartments(true)
         setShowRecommendations(false);
@@ -101,9 +108,17 @@ export default function HomePage() {
     };
 
     const {data} = useSelector((state) => state.saveDataSlice)
-    const {listApartments} = useSelector((state) => state.requestSlice);
+    const {listApartments, search} = useSelector((state) => state.requestSlice);
 
-    console.log(data, data.verificated == 'true', 'data.verificated == true' )
+    useEffect(() => {
+        const searchData = {
+            codeid_client: data.userId,
+            address: ''
+        }
+        dispatch(changeSearchData(searchData))
+    }, [data])
+
+
     const onDatesChange = (dates) => {
         const newStartDate = dates.startDate ? moment(dates.startDate) : selectedDates.startDate;
         const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDates.endDate;
@@ -141,6 +156,29 @@ export default function HomePage() {
         } else {
             setShowStatus(true)
         }
+    }
+
+    const handleChangeInputText =  (text) => {
+        setSearchQuery(text)
+         searchData(text)
+        dispatch(changeSearchData({...search, address: searchQuery}))
+        search?.length === 0 && dispatch(getApartments({status: 1, codeid_client: data.userId}));
+    };
+
+    const searchData = useCallback(
+        debounce((text) => {
+            if (text?.length > 1) {
+                dispatch(searchByAddress({...search, address: text}))
+            }
+        }, 500),
+        []
+    );
+
+    const clear = () => {
+        dispatch(changeSearchData({
+            codeid_client: data.userId,
+            address: ''}))
+        dispatch(getApartments({status: 1, codeid_client: data.userId}))
     }
 
     return (
@@ -187,7 +225,7 @@ export default function HomePage() {
                         style={styles.searchInput}
                         placeholder="Поиск по адресу"
                         value={searchQuery}
-                        onChangeText={setSearchQuery}
+                        onChangeText={handleChangeInputText}
                         onFocus={handleFocusSearch}
                         onSubmitEditing={handleSearchSubmit}
                         icon="magnify"
@@ -215,13 +253,25 @@ export default function HomePage() {
 
 
                 {showListApartments && (
-                    <BottomSheetFlatList
-                        data={listApartments}
-                        renderItem={({item}) => <ApartmentCard apartment={item} detailsRef={detailsRef}/>}
-                        keyExtractor={(item) => item?.codeid}
-                        style={styles.apartmentList}
-                    />
+                    listApartments && listApartments.length > 0 ? (
+                        <BottomSheetFlatList
+                            data={listApartments}
+                            renderItem={({ item }) => (
+                                <ApartmentCard apartment={item} detailsRef={detailsRef} />
+                            )}
+                            keyExtractor={(item) => item?.codeid}
+                            style={styles.apartmentList}
+                        />
+                    ) : (
+                        <View style={styles.dataNotFound}>
+                            <Entypo name="emoji-sad" size={54} color="#2B2B2B" />
+                            <Text style={styles.dataNotFoundText}>
+                               Данные не найдены
+                            </Text>
+                        </View>
+                    )
                 )}
+
             </BottomSheet>
 
             <Filters filtered={filtered} filterRef={filterRef} selectedDatesFilters ={selectedDatesFilters} setIsOpenFilters={setIsOpenFilters}/>
