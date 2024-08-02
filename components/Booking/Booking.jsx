@@ -6,11 +6,15 @@ import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {API} from "../../env";
+import moment from "moment/moment";
+import {changeBookingData, changeBookingModal} from "../../store/reducers/stateSlice";
 
 export default function Booking({booking, setIsOpen, selectedDates}) {
     const snapPoints = useMemo(() => ['57%'], []);
     const navigation = useNavigation();
     const [activeDate, setActiveDate] = useState(false);
+    const dispatch = useDispatch();
+    const {data} = useSelector((state) => state.saveDataSlice)
 
     const handleSelectDatePress = () => {
         setIsOpen(true)
@@ -26,6 +30,9 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
     const numberOfDays = selectedDates?.endDate && selectedDates?.startDate
         ? selectedDates.endDate.diff(selectedDates.startDate, 'days')
         : null;
+
+    console.log(numberOfDays === null ? 'ХУЙХЙУ' : 'Писька питска')
+    console.log(numberOfDays, numberOfDays != null, numberOfDays === null,  'numberOfDays != null', 'numberOfDays === null')
 
     const totalAmount = numberOfDays !== null
         ? numberOfDays * (apartmentDetail?.price || 0)
@@ -44,7 +51,9 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
     );
 
     const handleStartPayment = () => {
-         navigation.navigate('PaymentMethods')
+        dispatch(changeBookingModal(true))
+        dispatch(changeBookingData({date_from: selectedDates.endDate, days_amount:numberOfDays, codeid_client: data.userId, codeid_apartment: apartmentDetail.codeid, name: apartmentDetail.apartament_name, summ: totalAmount }))
+         //navigation.navigate('PaymentMethods')
     };
 
 
@@ -116,8 +125,9 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                 </BottomSheetView>
 
                 <TouchableOpacity
-                    onPress={() => handleStartPayment()}
-                    style={styles.buyButton}
+                    onPress={numberOfDays !== null ? handleStartPayment : null}
+                    style={[styles.buyButton, numberOfDays === null ?  styles.disabledButton : styles.buyButton ]}
+                    disabled={numberOfDays == null}
                 >
                     <Text style={{fontSize: 17, fontWeight: '500', color: '#fff'}}>
                         {numberOfDays !== null
@@ -125,6 +135,7 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                             : `Внести оплату: ${totalAmount} сом`}
                     </Text>
                 </TouchableOpacity>
+
             </BottomSheetView>
         </BottomSheet>
     )

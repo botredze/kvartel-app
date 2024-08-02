@@ -16,8 +16,15 @@ import {useDispatch, useSelector} from "react-redux";
 import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import FilteredApartaments from "../../components/FilteredApartaments/FilteredApartaments";
-import {changeSearchData, getApartments, searchByAddress} from "../../store/reducers/requestSlice";
+import {
+    changeSearchData,
+    checkUserVerify,
+    createBooking,
+    getApartments,
+    searchByAddress
+} from "../../store/reducers/requestSlice";
 import { debounce } from "lodash"
+import {changeBookingModal, changeShowSuccessBookingModal} from "../../store/reducers/stateSlice";
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -109,6 +116,7 @@ export default function HomePage() {
 
     const {data} = useSelector((state) => state.saveDataSlice)
     const {listApartments, search} = useSelector((state) => state.requestSlice);
+    const {showBookingModal, bookingData, showSuccessBookingModal} = useSelector((state) => state.stateSlice)
 
     useEffect(() => {
         const searchData = {
@@ -124,6 +132,7 @@ export default function HomePage() {
         const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDates.endDate;
         setSelectedDates({ ...selectedDates, startDate: newStartDate, endDate: newEndDate });
 
+        console.log(selectedDates.endDate, 'selectedDates.endDate', !selectedDates.endDate)
         if(selectedDates.endDate) {
             setTimeout(() => {
                 setIsOpen(false)
@@ -150,6 +159,7 @@ export default function HomePage() {
     };
 
     const handleStatus = () => {
+        dispatch(checkUserVerify({ codeid: data.userId }));
         setShowStatus(true);
         if (data.verificated == 'false' && data.rejectRegistration) {
             setStatusText("Ваша регистрация отклонена")
@@ -181,6 +191,18 @@ export default function HomePage() {
         dispatch(getApartments({status: 1, codeid_client: data.userId}))
     }
 
+    const handleCloseBookingModal = () => {
+        dispatch(changeBookingModal(false))
+    };
+
+    const handleActivateBooking = () => {
+        dispatch(createBooking({...bookingData}))
+    };
+
+    const handleCloseBookingModal2 = () => {
+        dispatch(changeShowSuccessBookingModal(false))
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <Maps previewButton={previewButton}/>
@@ -208,8 +230,8 @@ export default function HomePage() {
                 >
                     <Text style={{
                         ...styles.statusTitle,
-                        color: data.verificated === 'false' && data.rejectRegistration ? '#FF3B30' : '#6200EE'
-                    }}>{data.verificated === 'false' && data.rejectRegistration ? 'Ваши данные для регистрации отклонены, необходимо заполнить документы заново' : 'Ваш запрос на регистрацию находится в обработке'}</Text>
+                        color: data.verificated === 'false' && data.rejectRegistration ? '#6200EE' : '#FF3B30'
+                    }}>{data.verificated === 'false' && data.rejectRegistration ? ' Ваш запрос на регистрацию находится в обработке' : 'Ваши данные для регистрации отклонены, необходимо заполнить документы заново'}</Text>
                 </TouchableOpacity>
             )}
 
@@ -281,7 +303,7 @@ export default function HomePage() {
                                  details={detailsRef}/>
 
             <Details detailsRef={detailsRef} booking={booking}/>
-            <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen}/>
+            <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen} setSelectedDates = {setSelectedDates}/>
             <DateRangePicker
                 onChange={onDatesChange}
                 endDate={selectedDates.endDate}
@@ -313,18 +335,53 @@ export default function HomePage() {
             >
                 <View style={styles.modalOverlay}>
                     <View style={styles.modalContainer}>
-                        <Text style={styles.modalTextTitle}>
-                            Запрос не регистрацию находиться в обработке
-                        </Text>
-                        <Text style={styles.modalText}>
-                            {'Мы получили ваши данные, наши администраторы проверят в скором времени и верифицируют вас.\n\nПо завершению верификации вы получите уведомление об этом и доступ в приложение и всем его функциям,'}
-                        </Text>
+                        <Text style={styles.modalTextTitle}>Запрос на регистрацию находиться в обработке</Text>
+                        <Text style={styles.modalText}>{'Мы получили ваши данные, наши администраторы проверят в скором времени и верифицируют вас.\n\nПо завершению верификации вы получите уведомление об этом и доступ в приложение и всем его функциям,'}</Text>
                         <TouchableOpacity style={styles.closeButtonModal} onPress={handleModalClose}>
                             <Text style={styles.closeButtonText}>ПОНЯТНО</Text>
+                        </TouchableOpacity>
+                    </View>Ds
+                </View>
+            </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showBookingModal}
+                onRequestClose={handleCloseBookingModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTextTitle}>Подтверждение действия</Text>
+                        {bookingData.date_from && (
+                         <Text style={styles.modalText}>{`Вы действительно хотите забронировать апартаменты: ${bookingData.name} с ${bookingData.date_from.format('DD.MM.YYYY')} на ${bookingData.days_amount} дня ? \n\nСумма к оплате: ${bookingData.summ}`}</Text>
+                        )}
+                        <TouchableOpacity style={styles.closeButtonModal} onPress={handleActivateBooking}>
+                            <Text style={styles.closeButtonText}>ПОДТВЕРДИТЬ</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
+
+            <Modal
+                animationType="slide"
+                transparent={true}
+                visible={showSuccessBookingModal}
+                onRequestClose={handleCloseBookingModal2}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTextTitle}>Бронь активирована</Text>
+                        <Text style={styles.modalText}>
+                            {`Мы получили вашу заявку на бронь, арендодатель с вами свяжется в ближайшее время`}
+                        </Text>
+                        <TouchableOpacity style={styles.closeButtonModal} onPress={handleCloseBookingModal2}>
+                            <Text style={styles.closeButtonText}>Подтвердить</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+
         </SafeAreaView>
     );
 }

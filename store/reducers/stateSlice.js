@@ -57,7 +57,19 @@ const initialState = {
         max_guest: 0,
         num_bathroom: 0,
         num_guests: 0
-    }
+    },
+
+    bookingData: {
+        date_from: 0,
+        days_amount: 0,
+        codeid_client: 0,
+        codeid_apartment:0,
+        name: '',
+        summ: 0
+    },
+
+    showBookingModal: false,
+    showSuccessBookingModal: false
 };
 
 const stateSlice = createSlice({
@@ -152,6 +164,26 @@ const stateSlice = createSlice({
                 num_bathroom: 0,
                 num_guests: 0
             }
+        },
+        changeBookingData: (state, action)=> {
+            state.bookingData = action.payload
+        },
+        clearBookingData: (state, action) => {
+            state.bookingData = {
+                    date_from: 0,
+                    days_amount: 0,
+                    codeid_client: 0,
+                    codeid_apartment:0,
+                    name: '',
+                summ: 0
+                }
+        },
+        changeBookingModal: (state, action) => {
+            state.showBookingModal = action.payload
+        },
+
+        changeShowSuccessBookingModal: (state, action) => {
+            state.showSuccessBookingModal = action.payload
         }
     }
 });
@@ -171,7 +203,11 @@ export const {
     clearFilters,
     changeSelectedItems,
     changeSelectedRooms,
-    changeFavorites
+    changeFavorites,
+    changeBookingData,
+    clearBookingData,
+    changeBookingModal,
+    changeShowSuccessBookingModal
 } = stateSlice.actions;
 
 export default stateSlice.reducer;

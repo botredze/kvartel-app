@@ -17,6 +17,7 @@ import ViewRegistrationDogovor from "../screens/DocsView/ViewRegistrationDogovor
 import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos";
 import {checkUserVerify, getApartments, userFavoritesApartments} from "../store/reducers/requestSlice";
 import {useEffect, useRef} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,9 +33,10 @@ export const Navigation = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             if (data.verificated === 'false') {
+                console.log('ХХКУЙХХУЙХХХЙУУ')
                 dispatch(checkUserVerify({ codeid: data.userId }));
             }
-        }, 10 * 60 * 1000);
+        }, 5 * 60 * 1000);
 
         return () => clearInterval(interval);
     }, [dispatch, data.verificated, data.userId]);

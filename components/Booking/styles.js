@@ -90,6 +90,10 @@ export const styles  = StyleSheet.create({
         bottom: 10,
     },
 
+    disabledButton: {
+        backgroundColor: '#B38FFF',
+    },
+
     pricesContainer: {
         gap: 15,
         marginTop:35

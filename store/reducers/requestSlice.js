@@ -1,7 +1,12 @@
 import { API } from "../../env";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import {changeAwaitedCode, changeFavorites, changeRegistrationModalVisible} from "./stateSlice";
+import {
+    changeAwaitedCode, changeBookingModal,
+    changeFavorites,
+    changeRegistrationModalVisible,
+    changeShowSuccessBookingModal
+} from "./stateSlice";
 import {changeLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {getLocalDataUser} from "../../helpers/returnDataUser";
@@ -173,8 +178,7 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
                 if(result == 0) {
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio);
-
-                    await AsyncStorage.setItem("verificated", "false");
+                    await AsyncStorage.setItem("verificated", 'true');
                     await AsyncStorage.setItem("rejectRegistration", "false");
                     await navigation.replace('HomePage');
                     await getLocalDataUser({ changeLocalData, dispatch });
@@ -220,12 +224,15 @@ export const apartamentFilters = createAsyncThunk("apartamentFilters",
 export const createBooking = createAsyncThunk("createBooking",
     async function(data, {dispatch, rejectWithValue}){
         try {
+            console.log(data)
             const response = await axios({
                 method: 'POST',
-                url: `${API}/createBooking`,
+                url: `${API}/booking`,
                 data
             })
             if (response.status >= 200 && response.status < 300) {
+                dispatch(changeBookingModal(false))
+                dispatch(changeShowSuccessBookingModal(true))
                 return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
@@ -326,12 +333,14 @@ export const checkUserVerify = createAsyncThunk('checkUserVerify',
 
             console.log(response?.data, 'status')
             if (response.status >= 200 && response.status < 300) {
-                const {status} = response?.data
+                const {status, codeid, fio} = response?.data
                 if(status == 0) {
                     await AsyncStorage.setItem("rejectRegistration", 'true');
                     await AsyncStorage.setItem("verificated", 'false');
                 }else if (status == 1) {
                     await AsyncStorage.setItem("verificated", 'true');
+                    await AsyncStorage.setItem("userId", codeid);
+                    await AsyncStorage.setItem("fio", fio)
                 }else if (status ==2) {
                     await AsyncStorage.setItem("verificated", 'false');
                 }
