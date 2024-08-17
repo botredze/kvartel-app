@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "268587504660",
+    "project_id": "kvartel-57189",
+    "storage_bucket": "kvartel-57189.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268587504660:android:2e8f2362212f0f329e8301",
+        "android_client_info": {
+          "package_name": "com.baaliev.kvartelapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJxO_JZT2m_IHcr3R7_qNeg-GwnCMswz4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

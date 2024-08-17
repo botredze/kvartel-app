@@ -37,7 +37,8 @@ const config: ExpoConfig = {
             "android.permission.CAMERA",
             "android.permission.RECORD_AUDIO"
         ],
-        package: "com.baaliev.kvartelapp"
+        package: "com.baaliev.kvartelapp",
+        googleServicesFile: "./android/app/google-services.json",
     },
     web: {
         favicon: "./assets/favicon.png"

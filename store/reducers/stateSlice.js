@@ -68,6 +68,10 @@ const initialState = {
         summ: 0
     },
 
+    paymentData: {
+    },
+
+    expoPushToken: "",
     showBookingModal: false,
     showSuccessBookingModal: false
 };
@@ -184,6 +188,14 @@ const stateSlice = createSlice({
 
         changeShowSuccessBookingModal: (state, action) => {
             state.showSuccessBookingModal = action.payload
+        },
+
+        changeExpoPushToken: (state, action) => {
+            state.expoPushToken = action.payload
+        },
+
+        clearExpoPushToken: (state, action) => {
+            state.expoPushToken = ''
         }
     }
 });
@@ -207,7 +219,9 @@ export const {
     changeBookingData,
     clearBookingData,
     changeBookingModal,
-    changeShowSuccessBookingModal
+    changeShowSuccessBookingModal,
+    changeExpoPushToken,
+    clearExpoPushToken
 } = stateSlice.actions;
 
 export default stateSlice.reducer;

@@ -22,7 +22,7 @@ export default function OTPInputScreen() {
         return () => clearInterval(countdown);
     }, []);
 
-    const { loginData, phoneNumber} = useSelector((state)=> state.stateSlice)
+    const { loginData, phoneNumber, expoPushToken} = useSelector((state)=> state.stateSlice)
 
     useEffect(() => {
         if (otp.length === 6) {
@@ -47,7 +47,7 @@ export default function OTPInputScreen() {
 
     const handleRefreshOtpCode = () => {
         setTimer(60)
-        dispatch(login_ver({phoneNumber, navigation}))
+        dispatch(login_ver({phoneNumber, navigation,expoPushToken }))
     };
 
     return (

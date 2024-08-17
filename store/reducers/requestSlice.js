@@ -134,13 +134,18 @@ export const getApartamentDetails = createAsyncThunk("getApartamentDetails",
 export const login_ver = createAsyncThunk(
     "login_ver",
     async function(props, {dispatch, rejectWithValue}){
-        const  {phoneNumber, navigation} = props
+        const  {phoneNumber, navigation, expoPushToken} = props
         console.log(phoneNumber, 'phoneNumber')
+        const reqdata = {
+            ...phoneNumber,
+            expoPushToken: expoPushToken
+        }
+        console.log(reqdata, 'reqdata')
         try {
             const response = await axios({
                 method: 'POST',
                 url: `${API}/login_ver`,
-                data: phoneNumber
+                data: reqdata
             })
             if (response.status >= 200 && response.status < 300) {
                 const {code} = response?.data
@@ -375,6 +380,18 @@ export const searchByAddress = createAsyncThunk('searchByAddress', async functio
        return  rejectWithValue(error.message)
     }
 } )
+
+export const applyPayment = createAsyncThunk('applyPayment', async function(data, {rejectWithValue}) {
+    try {
+        const response = await axios.post({
+            method: 'POST',
+            url: `${API}/applyPayment`,
+            data
+        })
+    }catch (error){
+        return  rejectWithValue(error.message)
+    }
+})
 
 const requestSlice = createSlice({
     name: "requestSlice",

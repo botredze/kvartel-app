@@ -31,9 +31,6 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
         ? selectedDates.endDate.diff(selectedDates.startDate, 'days')
         : null;
 
-    console.log(numberOfDays === null ? 'ХУЙХЙУ' : 'Писька питска')
-    console.log(numberOfDays, numberOfDays != null, numberOfDays === null,  'numberOfDays != null', 'numberOfDays === null')
-
     const totalAmount = numberOfDays !== null
         ? numberOfDays * (apartmentDetail?.price || 0)
         : apartmentDetail?.price || 0;
@@ -118,10 +115,6 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                         <Text style={styles.priceText}>{apartmentDetail?.price}сом</Text>
                         <Text style={styles.priceInfoText}>за 1 сутки дней</Text>
                     </View>
-                    {/*<View style={styles.priceTitle}>*/}
-                    {/*    <Text style={styles.priceInfoText}>Доплата при заселении:</Text>*/}
-                    {/*    <Text style={styles.priceText}>{remainingAmount} сом</Text>*/}
-                    {/*</View>*/}
                 </BottomSheetView>
 
                 <TouchableOpacity
