@@ -17,6 +17,7 @@ import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import FilteredApartaments from "../../components/FilteredApartaments/FilteredApartaments";
 import {
+    applyPayment,
     changeSearchData,
     checkUserVerify,
     createBooking,
@@ -116,7 +117,7 @@ export default function HomePage() {
 
     const {data} = useSelector((state) => state.saveDataSlice)
     const {listApartments, search} = useSelector((state) => state.requestSlice);
-    const {showBookingModal, bookingData, showSuccessBookingModal} = useSelector((state) => state.stateSlice)
+    const {showBookingModal, bookingData, showSuccessBookingModal, paymentData} = useSelector((state) => state.stateSlice)
 
     useEffect(() => {
         const searchData = {
@@ -196,7 +197,8 @@ export default function HomePage() {
     };
 
     const handleActivateBooking = () => {
-        dispatch(createBooking({...bookingData}))
+      //  dispatch(createBooking({...bookingData}))
+        dispatch(applyPayment({paymentData,navigation}))
     };
 
     const handleCloseBookingModal2 = () => {
@@ -357,7 +359,7 @@ export default function HomePage() {
                          <Text style={styles.modalText}>{`Вы действительно хотите забронировать апартаменты: ${bookingData.name} с ${bookingData.date_from.format('DD.MM.YYYY')} на ${bookingData.days_amount} дня ? \n\nСумма к оплате: ${bookingData.summ}`}</Text>
                         )}
                         <TouchableOpacity style={styles.closeButtonModal} onPress={handleActivateBooking}>
-                            <Text style={styles.closeButtonText}>ПОДТВЕРДИТЬ</Text>
+                            <Text style={styles.closeButtonText}>Оплатить</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

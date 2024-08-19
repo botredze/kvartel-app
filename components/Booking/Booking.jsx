@@ -7,7 +7,7 @@ import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {API} from "../../env";
 import moment from "moment/moment";
-import {changeBookingData, changeBookingModal} from "../../store/reducers/stateSlice";
+import {changeBookingData, changeBookingModal, changePaymentData} from "../../store/reducers/stateSlice";
 
 export default function Booking({booking, setIsOpen, selectedDates}) {
     const snapPoints = useMemo(() => ['57%'], []);
@@ -49,7 +49,20 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
 
     const handleStartPayment = () => {
         dispatch(changeBookingModal(true))
-        dispatch(changeBookingData({date_from: selectedDates.endDate, days_amount:numberOfDays, codeid_client: data.userId, codeid_apartment: apartmentDetail.codeid, name: apartmentDetail.apartament_name, summ: totalAmount }))
+        dispatch(changeBookingData({
+            date_from: selectedDates.endDate,
+            days_amount:numberOfDays,
+            codeid_client: data.userId,
+            codeid_apartment: apartmentDetail.codeid,
+            name: apartmentDetail.apartament_name,
+            summ: totalAmount
+        }))
+        dispatch(changePaymentData({
+            pg_amount: totalAmount,
+            pg_description: `Аренда апартаментов ${apartmentDetail.apartament_name} на ${numberOfDays} дней`,
+            pg_user_phone: data.phoneNumber,
+            pg_user_contact_email: data.email,
+            pg_user_id: data.userId}))
          //navigation.navigate('PaymentMethods')
     };
 

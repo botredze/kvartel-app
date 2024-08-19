@@ -6,13 +6,17 @@ export const returnDataUser = async () => {
         const fio = await AsyncStorage.getItem("fio");
         const verificated = await AsyncStorage.getItem('verificated')
         const rejectRegistration = await AsyncStorage.getItem('rejectRegistration')
+        const email = await AsyncStorage.getItem('email')
+        const phoneNumber = await AsyncStorage.getItem('phone')
 
         if (userId !== null) {
             const data = {
                 userId,
                 fio,
                 verificated,
-                rejectRegistration
+                rejectRegistration,
+                phoneNumber,
+                email
             };
             return data;
         } else {

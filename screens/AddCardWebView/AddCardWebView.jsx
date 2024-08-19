@@ -13,9 +13,10 @@ import React, {useEffect, useRef} from "react";
 import { SafeAreaView as SafeAreaViewAndroid } from 'react-native-safe-area-context'
 import {useNavigation} from "@react-navigation/native";
 
-const COVER = 'http://bekem.kg/'
 
-export default function AddCardWebView() {
+export default function AddCardWebView({route}) {
+    const {url} = route.params
+    console.log(url, 'url')
     const webViewRef = useRef(null);
     const navigation = useNavigation();
 
@@ -54,13 +55,13 @@ export default function AddCardWebView() {
                     <Ionicons name="chevron-back" size={30} color="black" />
                 </TouchableOpacity>
 
-                <Text style={styles.sidebarTitle}>Добавление карты</Text>
+                <Text style={styles.sidebarTitle}>Проведение платежа</Text>
             </View>
 
             <WebViewWrapper>
                 <WebView
                     ref={webViewRef}
-                    source={{ uri: COVER }}
+                    source={{ uri: url }}
                     scalesPageToFit={false}
                     javaScriptEnabled={true}
                     domStorageEnabled={true}

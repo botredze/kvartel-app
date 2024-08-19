@@ -1,16 +1,26 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {View, Text, StyleSheet, ImageBackground, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import background from '../../assets/background.jpg'
 import {styles} from './style'
 import {useNavigation} from "@react-navigation/native";
+import {loginByToken} from "../../store/reducers/requestSlice";
+import {usePushNotifications} from "../../usePushNotifications";
+import {useDispatch} from "react-redux";
 
 export default function Creeting() {
     const navigation = useNavigation();
-
+    const dispatch = useDispatch();
     function handleLoginOrRegister() {
         navigation.navigate('Register')
     }
+
+    const {expoPushToken, notification} = usePushNotifications()
+
+    useEffect(() => {
+        dispatch(loginByToken({navigation, expoPushToken}))
+    }, [expoPushToken])
+
 
     function handleSwitchRegister() {
         navigation.navigate('HomePage')

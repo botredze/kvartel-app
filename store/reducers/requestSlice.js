@@ -134,11 +134,10 @@ export const getApartamentDetails = createAsyncThunk("getApartamentDetails",
 export const login_ver = createAsyncThunk(
     "login_ver",
     async function(props, {dispatch, rejectWithValue}){
-        const  {phoneNumber, navigation, expoPushToken} = props
+        const  {phoneNumber, navigation} = props
         console.log(phoneNumber, 'phoneNumber')
         const reqdata = {
             ...phoneNumber,
-            expoPushToken: expoPushToken
         }
         console.log(reqdata, 'reqdata')
         try {
@@ -168,22 +167,27 @@ export const login_ver = createAsyncThunk(
 export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
     async function(props, {dispatch, rejectWithValue}){
         console.log(props)
-        const {navigation, loginData, data} = props
+        const {navigation, loginData, data, expoPushToken} = props
 
         try {
             const response = await axios({
                 method: 'POST',
                 url: `${API}/confirm_reg`,
-                data: loginData
+                data: {
+                    ...loginData,
+                    expoPushToken
+                }
             })
             if (response.status >= 200 && response.status < 300) {
-                const {result, codeid, fio} = response?.data
+                const {result, codeid, fio, phone, email} = response?.data
 
                 console.log(codeid, fio)
                 if(result == 0) {
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio);
                     await AsyncStorage.setItem("verificated", 'true');
+                    await AsyncStorage.setItem('phone', phone)
+                    await AsyncStorage.setItem('email', email)
                     await AsyncStorage.setItem("rejectRegistration", "false");
                     await navigation.replace('HomePage');
                     await getLocalDataUser({ changeLocalData, dispatch });
@@ -194,7 +198,7 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
                     await navigation.replace('UserSettingScreen');
                     await getLocalDataUser({ changeLocalData, dispatch });
                 }else if(result == 3) {
-                    dispatch(login_ver({phoneNumber: loginData}))
+                    dispatch(login_ver({phoneNumber: loginData, expoPushToken}))
                     Alert.alert('Ваш код устарел, мы отправили вам код еще раз, пожалуйста дождитесь и введите код еще раз')
                 }else if (result == 4) {
                     Alert.alert('Номер телефона не верный, пожалуйста проверьте номер и попробуйте еще раз')
@@ -246,7 +250,6 @@ export const createBooking = createAsyncThunk("createBooking",
             return rejectWithValue(error.message)
         }
     })
-
 
 export const userBookingList = createAsyncThunk("userBookingList",
     async function(data, {dispatch, rejectWithValue}){
@@ -307,25 +310,6 @@ export const addOrDeleteFavorites = createAsyncThunk('addOrDeleteFavorites' ,
     })
 
 
-export const getUserCardData = createAsyncThunk("getUserCardData",
-    async function(data, {dispatch, rejectWithValue}){
-        try {
-            const response = await axios({
-                method: 'GET',
-                url: `${API}/getPaymentMethods`,
-                data
-            })
-            if (response.status >= 200 && response.status < 300) {
-                return response?.data;
-            } else {
-                throw Error(`Error: ${response.status}`);
-            }
-        }catch (error){
-            return rejectWithValue(error.message)
-        }
-    })
-
-
 export const checkUserVerify = createAsyncThunk('checkUserVerify',
     async function(data, {dispatch, rejectWithValue}){
         try {
@@ -338,7 +322,7 @@ export const checkUserVerify = createAsyncThunk('checkUserVerify',
 
             console.log(response?.data, 'status')
             if (response.status >= 200 && response.status < 300) {
-                const {status, codeid, fio} = response?.data
+                const {status, codeid, fio, phone, email} = response?.data
                 if(status == 0) {
                     await AsyncStorage.setItem("rejectRegistration", 'true');
                     await AsyncStorage.setItem("verificated", 'false');
@@ -346,6 +330,8 @@ export const checkUserVerify = createAsyncThunk('checkUserVerify',
                     await AsyncStorage.setItem("verificated", 'true');
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio)
+                    await AsyncStorage.setItem('phone', phone)
+                    await AsyncStorage.setItem('email', email)
                 }else if (status ==2) {
                     await AsyncStorage.setItem("verificated", 'false');
                 }
@@ -381,16 +367,58 @@ export const searchByAddress = createAsyncThunk('searchByAddress', async functio
     }
 } )
 
-export const applyPayment = createAsyncThunk('applyPayment', async function(data, {rejectWithValue}) {
+export const applyPayment = createAsyncThunk('applyPayment', async function(props, {rejectWithValue}) {
+   const {navigation, paymentData} = props
     try {
-        const response = await axios.post({
+        const response = await axios({
             method: 'POST',
-            url: `${API}/applyPayment`,
-            data
+            url: `${API}/create-payment`,
+            data: {...paymentData}
         })
+
+        console.log(response.status, response.data, 'response')
+
+        console.log(response.data)
+        if(response.status === 200){
+          await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0]})
+        }
     }catch (error){
         return  rejectWithValue(error.message)
     }
+})
+
+export const loginByToken = createAsyncThunk('loginByToken', async function(props, {rejectWithValue,dispatch}) {
+    try {
+        const {navigation, expoPushToken} = props
+        console.log(expoPushToken, 'expoPushToken')
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/register_by_token`,
+            data: {
+                token: expoPushToken
+            }
+        })
+
+        if (response.status >= 200 && response.status < 300) {
+            const {codeid, fio, phone, email} = response.data
+            await navigation.navigate('HomePage')
+            console.log(codeid, fio)
+            await AsyncStorage.setItem("userId", codeid);
+            await AsyncStorage.setItem("fio", fio);
+            await AsyncStorage.setItem('phone', phone)
+            await AsyncStorage.setItem('email', email)
+            await AsyncStorage.setItem("verificated", 'true');
+            await AsyncStorage.setItem("rejectRegistration", "false");
+            await getLocalDataUser({ changeLocalData, dispatch });
+        }
+
+    }catch (error){
+        return  rejectWithValue(error.message)
+    }
+})
+
+export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async function(props, {rejectWithValue, dispatch}) {
+
 })
 
 const requestSlice = createSlice({

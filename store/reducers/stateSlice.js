@@ -32,7 +32,6 @@ const initialState = {
         displayedDate: null,
     },
     disabledDates: [],
-
     selectedItems:[],
     selectedRooms:[],
     favoritesList: [
@@ -69,6 +68,11 @@ const initialState = {
     },
 
     paymentData: {
+        pg_amount: 0,
+        pg_description: '',
+        pg_user_phone: '',
+        pg_user_contact_email: '',
+        pg_user_id: ''
     },
 
     expoPushToken: "",
@@ -196,6 +200,20 @@ const stateSlice = createSlice({
 
         clearExpoPushToken: (state, action) => {
             state.expoPushToken = ''
+        },
+
+        changePaymentData: (state, action) => {
+            state.paymentData = action.payload
+        },
+
+        clearPaymentData: (state, action) => {
+            state.paymentData = {
+                pg_amount: 0,
+                pg_description: '',
+                pg_user_phone: '',
+                pg_user_contact_email: '',
+                pg_user_id: ''
+            }
         }
     }
 });
@@ -221,7 +239,9 @@ export const {
     changeBookingModal,
     changeShowSuccessBookingModal,
     changeExpoPushToken,
-    clearExpoPushToken
+    clearExpoPushToken,
+    changePaymentData,
+    clearPaymentData
 } = stateSlice.actions;
 
 export default stateSlice.reducer;

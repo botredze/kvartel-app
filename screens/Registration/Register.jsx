@@ -8,6 +8,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {changePhoneNumber} from "../../store/reducers/stateSlice";
 import {login_ver} from "../../store/reducers/requestSlice";
 import SideBar from "../../components/SideBar/SideBar";
+import {usePushNotifications} from "../../usePushNotifications";
 
 export default function Register() {
     const [phone, setPhone] = useState('');

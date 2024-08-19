@@ -5,6 +5,7 @@ import SideBar from "../../components/SideBar/SideBar";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {login_ver, verifyOtpCode} from "../../store/reducers/requestSlice";
+import {usePushNotifications} from "../../usePushNotifications";
 
 export default function OTPInputScreen() {
     const navigation = useNavigation();
@@ -22,14 +23,14 @@ export default function OTPInputScreen() {
         return () => clearInterval(countdown);
     }, []);
 
-    const { loginData, phoneNumber, expoPushToken} = useSelector((state)=> state.stateSlice)
-
+    const { loginData, phoneNumber} = useSelector((state)=> state.stateSlice)
+    const {expoPushToken, notification} = usePushNotifications()
     useEffect(() => {
         if (otp.length === 6) {
             console.log(loginData, 'loginData')
             if (otp == loginData?.code) {
                 console.log(otp === loginData?.code)
-                dispatch(verifyOtpCode({navigation, loginData, data}))
+                dispatch(verifyOtpCode({navigation, loginData, data, expoPushToken}))
             } else {
                 setOtpValid(true);
             }

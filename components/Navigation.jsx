@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer } from "@react-navigation/native";
+import {NavigationContainer, useNavigation} from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { StatusBar } from "expo-status-bar";
 import { Preloader } from "./Preloader";
@@ -15,25 +15,24 @@ import DocsView from "../screens/DocsView/DocsView";
 import AddCardWebView from "../screens/AddCardWebView/AddCardWebView";
 import ViewRegistrationDogovor from "../screens/DocsView/ViewRegistrationDogovor";
 import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos";
-import {checkUserVerify, getApartments, userFavoritesApartments} from "../store/reducers/requestSlice";
+import {checkUserVerify, getApartments, loginByToken, userFavoritesApartments} from "../store/reducers/requestSlice";
 import {useEffect, useRef} from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {usePushNotifications} from "../usePushNotifications";
 
 const Stack = createNativeStackNavigator();
 
 export const Navigation = () => {
     const dispatch = useDispatch();
-    const detailsRef = useRef(null)
     const {data} = useSelector((state) => state.saveDataSlice)
 
+    console.log(data, 'data')
     useEffect(() => {
-        dispatch(getApartments({status: 1, codeid_client: data.userId}))
+        dispatch(getApartments({status: 1, codeid_client: data.userId ? data.userId : 1}))
     }, [data]);
 
     useEffect(() => {
         const interval = setInterval(() => {
             if (data.verificated === 'false') {
-                console.log('ХХКУЙХХУЙХХХЙУУ')
                 dispatch(checkUserVerify({ codeid: data.userId }));
             }
         }, 5 * 60 * 1000);
@@ -72,11 +71,11 @@ export const Navigation = () => {
                     options={{headerShown: false}}
                 />
 
-                <Stack.Screen
-                    name='ChatScreen'
-                    component={ChatScreen}
-                    options={{headerShown: false}}
-                />
+                {/*<Stack.Screen*/}
+                {/*    name='ChatScreen'*/}
+                {/*    component={ChatScreen}*/}
+                {/*    options={{headerShown: false}}*/}
+                {/*/>*/}
 
                 <Stack.Screen
                     name='HomePage'
@@ -107,7 +106,6 @@ export const Navigation = () => {
                     component={AddCardWebView}
                     options={{headerShown: false}}
                 />
-
 
 
                 <Stack.Screen
