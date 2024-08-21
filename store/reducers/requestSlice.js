@@ -367,7 +367,7 @@ export const searchByAddress = createAsyncThunk('searchByAddress', async functio
     }
 } )
 
-export const applyPayment = createAsyncThunk('applyPayment', async function(props, {rejectWithValue}) {
+export const applyPayment = createAsyncThunk('applyPayment', async function(props, {rejectWithValue, dispatch}) {
    const {navigation, paymentData} = props
     try {
         const response = await axios({
@@ -381,6 +381,7 @@ export const applyPayment = createAsyncThunk('applyPayment', async function(prop
         console.log(response.data)
         if(response.status === 200){
           await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0]})
+            dispatch(changeBookingModal(false))
         }
     }catch (error){
         return  rejectWithValue(error.message)
@@ -399,10 +400,11 @@ export const loginByToken = createAsyncThunk('loginByToken', async function(prop
             }
         })
 
+        console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
             const {codeid, fio, phone, email} = response.data
             await navigation.navigate('HomePage')
-            console.log(codeid, fio)
+            console.log(codeid, fio, phone, email)
             await AsyncStorage.setItem("userId", codeid);
             await AsyncStorage.setItem("fio", fio);
             await AsyncStorage.setItem('phone', phone)
@@ -410,15 +412,39 @@ export const loginByToken = createAsyncThunk('loginByToken', async function(prop
             await AsyncStorage.setItem("verificated", 'true');
             await AsyncStorage.setItem("rejectRegistration", "false");
             await getLocalDataUser({ changeLocalData, dispatch });
+        }else {
+            throw Error(`Error: ${response.status}`);
         }
 
     }catch (error){
+        console.log(error, 'error')
         return  rejectWithValue(error.message)
     }
 })
 
 export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async function(props, {rejectWithValue, dispatch}) {
+    try {
 
+        const {pg_payment_id, pg_order_id} = props
+
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/get-payment_result`,
+            data: {
+                pg_order_id,
+                pg_payment_id
+            }
+        })
+
+        if (response.status >= 200 && response.status < 300) {
+
+        }else {
+            throw Error(`Error: ${response.status}`);
+        }
+    }catch (error) {
+        console.log(error, 'error')
+        return  rejectWithValue(error.message)
+    }
 })
 
 const requestSlice = createSlice({
