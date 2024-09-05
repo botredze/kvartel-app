@@ -2,10 +2,10 @@ import { API } from "../../env";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import {
-    changeAwaitedCode, changeBookingModal,
-    changeFavorites,
+    changeAwaitedCode, changeBookingData, changeBookingModal,
+    changeFavorites, changePaymentStatus, changePaymentStatusData,
     changeRegistrationModalVisible,
-    changeShowSuccessBookingModal
+    changeShowSuccessBookingModal, clearBookingData, clearPaymentStatusData
 } from "./stateSlice";
 import {changeLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -62,6 +62,17 @@ const initialState  = {
     search: {
         codeid_client: 0,
         address: ''
+    },
+
+    activeBooking: {
+        date_to: '',
+        date_from: "",
+        days: '',
+        address: '',
+        fio: '',
+        apartament_name: '',
+        code_lock: "",
+        status: '',
     }
 }
 
@@ -183,13 +194,13 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
 
                 console.log(codeid, fio)
                 if(result == 0) {
+                    await navigation.replace('HomePage');
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio);
                     await AsyncStorage.setItem("verificated", 'true');
                     await AsyncStorage.setItem('phone', phone)
                     await AsyncStorage.setItem('email', email)
                     await AsyncStorage.setItem("rejectRegistration", "false");
-                    await navigation.replace('HomePage');
                     await getLocalDataUser({ changeLocalData, dispatch });
                 }else if (result == 1) {
                     await AsyncStorage.setItem("verificated", "false");
@@ -381,6 +392,10 @@ export const applyPayment = createAsyncThunk('applyPayment', async function(prop
         console.log(response.data)
         if(response.status === 200){
           await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0]})
+            dispatch(changePaymentStatusData({
+                pg_payment_id: response.data?.data?.response?.pg_payment_id[0],
+                pg_order_id: response.data?.pg_order_id
+            }))
             dispatch(changeBookingModal(false))
         }
     }catch (error){
@@ -425,7 +440,7 @@ export const loginByToken = createAsyncThunk('loginByToken', async function(prop
 export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async function(props, {rejectWithValue, dispatch}) {
     try {
 
-        const {pg_payment_id, pg_order_id} = props
+        const {pg_payment_id, pg_order_id, bookingData} = props
 
         const response = await axios({
             method: 'POST',
@@ -437,7 +452,16 @@ export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async f
         })
 
         if (response.status >= 200 && response.status < 300) {
+            console.log(response.data.data.response.pg_status[0], 'response.data.data.response.pg_status[0]')
+            console.log(response.data.data.response.pg_payment_status[0], 'response.data.data.response.pg_payment_status[0]')
 
+            if(response.data.data.response.pg_status[0] == 'ok' && response.data.data.response.pg_payment_status[0] == 'success') {
+                dispatch(changePaymentStatus(true))
+                dispatch(clearPaymentStatusData())
+                dispatch(createBooking({...bookingData}))
+            }else{
+                throw Error(`Платеж еще не завершен`);
+            }
         }else {
             throw Error(`Error: ${response.status}`);
         }
@@ -446,6 +470,90 @@ export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async f
         return  rejectWithValue(error.message)
     }
 })
+
+export const saveMyCard = createAsyncThunk(
+    'saveMyCard', async function(props, {rejectWithValue, dispatch}) {
+        try {
+            const {} = props
+            const response = await axios({
+                method: 'POST',
+                url: `${API}/get-payment_result`,
+                data: {
+                }
+            })
+            console.log('response.statu', response.status)
+            if (response.status >= 200 && response.status < 300) {
+
+            }else  {
+                throw Error(`Error: ${response.status}`);
+            }
+        }catch (error){
+            return  rejectWithValue(error.message)
+        }
+    }
+)
+
+export const getMyCardList = createAsyncThunk('getMyCardList', async  function(props, {rejectWithValue, dispatch}) {
+    try {
+        const {} = props
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/register_by_token`,
+            data: {
+            }
+        })
+        console.log('response.statu', response.status)
+        if (response.status >= 200 && response.status < 300) {
+
+        }else  {
+            throw Error(`Error: ${response.status}`);
+        }
+    }catch (error){
+        return  rejectWithValue(error.message)
+    }
+})
+
+export const getMyBookingHistory = createAsyncThunk('getMyBookingHistory', async  function(props, {rejectWithValue, dispatch}) {
+    try {
+        const {} = props
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/register_by_token`,
+            data: {
+            }
+        })
+        console.log('response.statu', response.status)
+        if (response.status >= 200 && response.status < 300) {
+
+        }else  {
+            throw Error(`Error: ${response.status}`);
+        }
+    }catch (error){
+        return  rejectWithValue(error.message)
+    }
+})
+
+export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  function(props, {rejectWithValue, dispatch}) {
+    try {
+        const {codeid} = props
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/booking_info`,
+            data: {codeid_client: 1}
+        })
+        console.log('response.statu', response.status)
+        if (response.status >= 200 && response.status < 300) {
+            console.log(response?.data)
+            return response?.data;
+        }else  {
+            throw Error(`Error: ${response.status}`);
+        }
+    }catch (error){
+        return  rejectWithValue(error.message)
+    }
+})
+
+
 
 const requestSlice = createSlice({
     name: "requestSlice",
@@ -470,6 +578,23 @@ const requestSlice = createSlice({
 
         changeSearchData: (state, action) => {
             state.search = action.payload
+        },
+
+        changeActiveBookingData: (state, action) => {
+            state.activeBooking = action.payload
+        },
+
+        clearActiveBookingData: (state, action) => {
+            state.activeBooking = {
+                date_to: '',
+                    date_from: "",
+                    days: '',
+                    address: '',
+                    fio: '',
+                    apartament_name: '',
+                    code_lock: "",
+                    status: '',
+            }
         }
     },
     extraReducers: (builder) => {
@@ -539,6 +664,19 @@ const requestSlice = createSlice({
             state.bottomSheetPreloader = true;
         });
 
+        //getMyActiveBooking
+        builder.addCase(getMyActiveBooking.fulfilled, (state, action) => {
+            state.bottomSheetPreloader = false;
+            state.activeBooking = action.payload;
+        });
+        builder.addCase(getMyActiveBooking.rejected, (state, action) => {
+            state.error = action.payload;
+            state.bottomSheetPreloader = false;
+        });
+        builder.addCase(getMyActiveBooking.pending, (state, action) => {
+            state.bottomSheetPreloader = true;
+        });
+
         //searchByAddress
         builder.addCase(searchByAddress.fulfilled, (state, action) => {
             state.bottomSheetPreloader = false;
@@ -555,7 +693,10 @@ const requestSlice = createSlice({
     },
 });
 
-export const {updateListApartmentsAndDetail, changeSearchData} = requestSlice.actions;
+export const {updateListApartmentsAndDetail,
+    changeSearchData,
+    clearActiveBookingData
+} = requestSlice.actions;
 
 
 export default requestSlice.reducer;

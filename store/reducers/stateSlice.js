@@ -77,7 +77,14 @@ const initialState = {
 
     expoPushToken: "",
     showBookingModal: false,
-    showSuccessBookingModal: false
+    showSuccessBookingModal: false,
+
+    paymentStatusData: {
+        pg_payment_id: "",
+        pg_order_id: ''
+    },
+
+    paymentStatus: false
 };
 
 const stateSlice = createSlice({
@@ -214,6 +221,20 @@ const stateSlice = createSlice({
                 pg_user_contact_email: '',
                 pg_user_id: ''
             }
+        },
+
+        changePaymentStatusData: (state, action) => {
+            state.paymentStatusData = action.payload
+        },
+
+        clearPaymentStatusData: (state, action) => {
+            state.paymentStatusData = {
+                pg_payment_id: "",
+                pg_order_id: ''
+            }
+        },
+        changePaymentStatus: (state, action) => {
+            state.paymentStatus = action.payload
         }
     }
 });
@@ -241,7 +262,10 @@ export const {
     changeExpoPushToken,
     clearExpoPushToken,
     changePaymentData,
-    clearPaymentData
+    clearPaymentData,
+    changePaymentStatusData,
+    clearPaymentStatusData,
+    changePaymentStatus
 } = stateSlice.actions;
 
 export default stateSlice.reducer;

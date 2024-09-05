@@ -112,6 +112,8 @@ export default function BurgerMenu({ route, navigation }) {
     }
 
     const username =  data.fio.split(' ')
+    console.log(username,  data.fio, ' data.fio')
+
     return (
         <View style={styles.container}>
             <View>

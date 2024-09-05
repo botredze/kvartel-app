@@ -39,7 +39,7 @@ export default function Favorites({favorites,detailsRef }) {
             <BottomSheetFlatList
                 data={favoritesList}
                 renderItem={({ item }) => <ApartmentCard apartment={item} detailsRef={detailsRef} />}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item.guid}
             />
         </BottomSheet>
     )

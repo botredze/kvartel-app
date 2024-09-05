@@ -1,4 +1,4 @@
-import {SafeAreaView, View, Text, FlatList, TouchableOpacity, Modal} from "react-native";
+import {SafeAreaView, View, Text, TouchableOpacity, Modal} from "react-native";
 import {styles} from './style'
 import Maps from "../../components/Maps/Maps";
 import BottomSheet, {BottomSheetFlatList, BottomSheetView} from "@gorhom/bottom-sheet";
@@ -10,7 +10,7 @@ import Filters from "../../components/Filters/Filters";
 import Details from "../../components/Details/Details";
 import PreviewBottiomSheet from "../../components/PreviewBottiomSheet/PreviewBottiomSheet";
 import Booking from "../../components/Booking/Booking";
-import {Entypo, FontAwesome6} from "@expo/vector-icons";
+import {Entypo, FontAwesome6, Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import DateRangePicker from "react-native-daterange-picker";
@@ -21,7 +21,7 @@ import {
     changeSearchData,
     checkUserVerify,
     createBooking,
-    getApartments,
+    getApartments, getMyActiveBooking,
     searchByAddress
 } from "../../store/reducers/requestSlice";
 import { debounce } from "lodash"
@@ -63,7 +63,7 @@ export default function HomePage() {
         moment('2024-07-03'),
     ];
 
-    const snapPoints = useMemo(() => ['10%', '96%'], [])
+    const snapPoints = useMemo(() => ['10%', '94%'], [])
 
     const toggleFilters = useCallback((index) => {
         filterRef.current?.snapToIndex(index);
@@ -119,21 +119,28 @@ export default function HomePage() {
     const {listApartments, search} = useSelector((state) => state.requestSlice);
     const {showBookingModal, bookingData, showSuccessBookingModal, paymentData} = useSelector((state) => state.stateSlice)
 
-    useEffect(() => {
-        const searchData = {
-            codeid_client: data.userId,
-            address: ''
-        }
-        dispatch(changeSearchData(searchData))
-    }, [data])
+    console.log(data, 'data')
 
+    // useEffect(() => {
+    //     const searchData = {
+    //         codeid_client: data.userId,
+    //         address: ''
+    //     }
+    //     dispatch(changeSearchData(searchData))
+    // }, [data])
+
+    useEffect(()=> {
+        console.log(data.userId, 'data.codeid')
+        if(data.userId) {
+            dispatch(getMyActiveBooking({codeid: data.codeid}))
+        }
+    }, [data])
 
     const onDatesChange = (dates) => {
         const newStartDate = dates.startDate ? moment(dates.startDate) : selectedDates.startDate;
         const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDates.endDate;
         setSelectedDates({ ...selectedDates, startDate: newStartDate, endDate: newEndDate });
 
-        console.log(selectedDates.endDate, 'selectedDates.endDate', !selectedDates.endDate)
         if(selectedDates.endDate) {
             setTimeout(() => {
                 setIsOpen(false)
@@ -147,7 +154,6 @@ export default function HomePage() {
         const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDatesFilters.endDate;
         setSelectedDatesFilters({ ...selectedDatesFilters, startDate: newStartDate, endDate: newEndDate });
 
-        console.log(selectedDatesFilters.endDate)
         if(selectedDatesFilters.endDate) {
             setTimeout(() => {
                 setIsOpenFilters(false)
@@ -197,12 +203,15 @@ export default function HomePage() {
     };
 
     const handleActivateBooking = () => {
-      //  dispatch(createBooking({...bookingData}))
-        dispatch(applyPayment({paymentData,navigation}))
+      //  dispatch(applyPayment({paymentData,navigation}))
     };
 
     const handleCloseBookingModal2 = () => {
         dispatch(changeShowSuccessBookingModal(false))
+    };
+
+    const handlePressMyBooking = () => {
+        navigation.navigate('MyBooking')
     };
 
     return (
@@ -218,6 +227,16 @@ export default function HomePage() {
                         }}
                     >
                         <FontAwesome6 name="grip-lines" size={28} color="#613DDC"/>
+                    </TouchableOpacity>
+
+
+                    <TouchableOpacity
+                        style={styles.burgerMenuButton}
+                        onPress={() => {
+                            handlePressMyBooking()
+                        }}
+                    >
+                        <Ionicons name="timer-outline" size={28} color="#613DDC" />
                     </TouchableOpacity>
                 </View>
             )}
@@ -265,11 +284,10 @@ export default function HomePage() {
                     <BottomSheetView style={styles.recommendationList}>
                         <BottomSheetFlatList
                             data={recommendations}
-                            renderItem={({item}) => <Recomendation
-                                item={item}
+                            renderItem={({item}) => <Recomendation item={item}
                                 setSearchQuery={setSearchQuery}
                                 handleSearchSubmit={handleSearchSubmit}/>}
-                            keyExtractor={(item, index) => index.toString()}
+                            keyExtractor={(item, index) => item?.guid}
                             style={styles.recommendationList}
                         />
                     </BottomSheetView>
@@ -283,7 +301,7 @@ export default function HomePage() {
                             renderItem={({ item }) => (
                                 <ApartmentCard apartment={item} detailsRef={detailsRef} />
                             )}
-                            keyExtractor={(item) => item?.codeid}
+                            keyExtractor={(item) => item?.guid}
                             style={styles.apartmentList}
                         />
                     ) : (

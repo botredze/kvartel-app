@@ -12,13 +12,36 @@ import {Ionicons} from "@expo/vector-icons";
 import React, {useEffect, useRef} from "react";
 import { SafeAreaView as SafeAreaViewAndroid } from 'react-native-safe-area-context'
 import {useNavigation} from "@react-navigation/native";
+import {useDispatch, useSelector} from "react-redux";
+import {checkPaymentStatus} from "../../store/reducers/requestSlice";
 
 
 export default function AddCardWebView({route}) {
-    const {url} = route.params
-    console.log(url, 'url')
+    //const {url} = route.params
+    const dispatch = useDispatch();
+
     const webViewRef = useRef(null);
     const navigation = useNavigation();
+
+    const url = 'https://customer.freedompay.kg/pay.html?customer=e9fd6758f487ccc6be58f36e2341525c'
+
+    const {paymentStatusData, paymentStatus, bookingData} = useSelector((state) => state.stateSlice)
+
+    useEffect(() => {
+        if (paymentStatusData && Object.keys(paymentStatusData).length > 0){
+            const interval = setInterval(() => {
+                console.log(!paymentStatus, '!paymentStatus');
+                if (!paymentStatus) {
+                    dispatch(checkPaymentStatus({ ...paymentStatusData, bookingData }));
+                } else {
+                    clearInterval(interval);
+                }
+            }, 5000);
+
+            return () => clearInterval(interval);
+        }
+    }, [paymentStatus, paymentStatusData]);
+
 
     useEffect(() => {
         const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
@@ -44,10 +67,12 @@ export default function AddCardWebView({route}) {
     }
 
     function handleBack() {
-        console.log('ХУЙХЙУ')
         navigation.navigate('PaymentMethods')
     }
 
+    const handleGoHomeage = () => {
+        navigation.navigate('HomePage')
+    };
     return (
         <View style={styles.container}>
             <View style={styles.sidebarContainer}>
@@ -71,6 +96,12 @@ export default function AddCardWebView({route}) {
                     mixedContentMode='always'
                 />
             </WebViewWrapper>
+
+            {paymentStatus && (
+            <TouchableOpacity style={styles.getBackkButton}
+            onPress={() => {handleGoHomeage()}}>
+                <Text style={styles.btnBackTitle}>Вернуться в приложение</Text>
+            </TouchableOpacity>)}
         </View>
     )
 }
@@ -80,7 +111,6 @@ const styles = StyleSheet.create({
         flex: 1,
         marginTop: 30,
         //backgroundColor: '#fff',
-        backgroundColor: "blue ",
         padding: 0,
         margin: 0
     },
@@ -90,19 +120,37 @@ const styles = StyleSheet.create({
     },
     sidebarTitle: {
         fontSize: 22,
-        fontWeight: '600'
+        fontWeight: '600',
     },
 
     sidebarContainer: {
         flexDirection: 'row',
         gap: 5,
         width: '74%',
-        paddingHorizontal: 18,
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "center",
     },
     appView: {
         flex: 1,
+    },
+    getBackkButton: {
+        display: "flex",
+        justifyContent: "center",
+        position: 'absolute',
+        bottom: 20,
+        gap: 10,
+        paddingVertical: 15,
+        paddingHorizontal: 40,
+        borderRadius: 15,
+        width: '90%',
+        alignItems: "center",
+        alignSelf: "center",
+        backgroundColor: '#5B21FF'
+    },
+    btnBackTitle: {
+        fontSize: 16,
+        fontWeight: "500",
+        color: '#fff'
     }
 
 })

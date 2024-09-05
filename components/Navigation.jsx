@@ -18,6 +18,7 @@ import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos
 import {checkUserVerify, getApartments, loginByToken, userFavoritesApartments} from "../store/reducers/requestSlice";
 import {useEffect, useRef} from "react";
 import {usePushNotifications} from "../usePushNotifications";
+import MyBooking from "../screens/MyBooking/MyBooking";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,9 +33,7 @@ export const Navigation = () => {
 
     useEffect(() => {
         const interval = setInterval(() => {
-            if (data.verificated === 'false') {
                 dispatch(checkUserVerify({ codeid: data.userId }));
-            }
         }, 5 * 60 * 1000);
 
         return () => clearInterval(interval);
@@ -47,6 +46,11 @@ export const Navigation = () => {
                 initialRouteName={data.userId ? 'HomePage' : 'Creeting'}
                 screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}
             >
+
+            {/*<Stack.Navigator*/}
+            {/*    initialRouteName={data.userId ? 'AddCardWebView' : 'AddCardWebView'}*/}
+            {/*    screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}*/}
+            {/*>*/}
                 <Stack.Screen
                     name="Creeting"
                     component={Creeting}
@@ -119,6 +123,12 @@ export const Navigation = () => {
                     component={LoadPassportPhotos}
                     options={{headerShown: false}}
                 />
+
+                <Stack.Screen
+                    name='MyBooking'
+                    component={MyBooking}
+                    options={{headerShown: false}}
+                ></Stack.Screen>
 
             </Stack.Navigator>
             <StatusBar theme="auto" backgroundColor="rgba(47, 71, 190, 0.287)" />

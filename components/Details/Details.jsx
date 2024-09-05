@@ -1,6 +1,6 @@
 import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
 import React, {useCallback, useMemo, useState} from "react";
-import {View, Text, TouchableOpacity, Image, ActivityIndicator} from "react-native";
+import {View, Text, TouchableOpacity, Image} from "react-native";
 import {styles} from './styles'
 import {
     AntDesign,
@@ -72,7 +72,6 @@ export default function Details({detailsRef, booking}) {
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
 
     const closeDetailButtomSheet = () => {
-        console.log('хухйхйххйу')
         detailsRef?.current?.close();
     }
 
@@ -113,7 +112,7 @@ export default function Details({detailsRef, booking}) {
                 <View style={styles.wrapperContainer}>
                     <Swiper style={styles.wrapper} showsButtons loop={false}>
                         {apartmentDetail?.photos?.map((item) => (
-                            <View key={item.id} style={styles.imageContainer}>
+                            <View key={item.codeid} style={styles.imageContainer}>
                                 <Image
                                     source={{uri: `${API}/${item?.pathUrl}`}}
                                     style={styles.image}
@@ -177,7 +176,7 @@ export default function Details({detailsRef, booking}) {
                     <Text style={styles.contentTitle}>Удобства</Text>
                     <BottomSheetFlatList
                         data={filteredConvenience.slice(0, visibleConvenienceCount)}
-                        keyExtractor={(item) => item.id.toString()}
+                        keyExtractor={(item) => item?.id}
                         renderItem={({ item }) => (<ConvenienceViewItem item={item} />)}
                         contentContainerStyle={styles.flatListContainer}
                     />
@@ -193,7 +192,7 @@ export default function Details({detailsRef, booking}) {
                     <Text style={styles.contentTitle}>Правило дома</Text>
                     <View style={styles.listContainer}>
                         {rules.slice(0, visibleRulesCount).map((item) => (
-                            <Rules item={item} key={item.id.toString()} />
+                            <Rules item={item} key={item.id} />
                         ))}
                     </View>
                     <TouchableOpacity onPress={toggleRules}>
@@ -212,7 +211,7 @@ export default function Details({detailsRef, booking}) {
                             showsHorizontalScrollIndicator={false}
                         >
                             {apartmentDetail.othersHere.map((item) => (
-                                <RecomendationsCard apartment={item} key={item.id} />
+                                <RecomendationsCard apartment={item} key={item.codeid} />
                             ))}
                         </BottomSheetScrollView>
                     ) : (

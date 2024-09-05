@@ -52,6 +52,7 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 100,
         right: 20,
+        gap: 15
     },
     burgerMenuButton: {
         width: 50,
