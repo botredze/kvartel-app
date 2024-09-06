@@ -19,6 +19,7 @@ import {checkUserVerify, getApartments, loginByToken, userFavoritesApartments} f
 import {useEffect, useRef} from "react";
 import {usePushNotifications} from "../usePushNotifications";
 import MyBooking from "../screens/MyBooking/MyBooking";
+import MapForBooking from "../screens/MapForBooking/MapForBooking";
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,12 @@ export const Navigation = () => {
                 <Stack.Screen
                     name="Creeting"
                     component={Creeting}
+                    options={{ headerShown: false }}
+                />
+
+                <Stack.Screen
+                    name="MapForBooking"
+                    component={MapForBooking}
                     options={{ headerShown: false }}
                 />
 
