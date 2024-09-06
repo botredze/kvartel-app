@@ -1,4 +1,4 @@
-import {Text, TouchableOpacity, View} from "react-native";
+import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {styles} from './style'
 import {useNavigation} from "@react-navigation/native";
 import {Ionicons} from "@expo/vector-icons";
@@ -26,8 +26,11 @@ export default function MyBooking (){
     }, [data])
 
 
+    const handlePressViewOnMap = () => {
+        navigation.navigate('MapForBooking')
+    };
     return (
-        <View style={styles.container}>
+        <ScrollView style={styles.container}>
             <View style={styles.sidebarContainer}>
                 <Text style={styles.sidebarTitle}>Моя активная бронь</Text>
 
@@ -39,28 +42,27 @@ export default function MyBooking (){
 
             <View style={styles.mainContentContainer}>
                 <View>
-                    <Text>Название: {activeBooking?.apartament_name}</Text>
-                    <Text>Адрес: {activeBooking?.address}</Text>
+                    <Text style={styles.titleText}>Название: {activeBooking?.apartament_name}</Text>
+                    <Text style={styles.titleText}>Адрес: {activeBooking?.address}</Text>
                 </View>
 
                 <View>
-                    <Text>Дата начало: {activeBooking?.date_from}</Text>
-                    <Text>Дата окончания: {activeBooking?.date_to}</Text>
+                    <Text style={styles.titleText}>Дата начало: {activeBooking?.date_from}</Text>
+                    <Text style={styles.titleText}>Дата окончания: {activeBooking?.date_to}</Text>
                 </View>
                 <View>
-                    <Text>Оплата</Text>
-
-                    <Text>Оплачено: {activeBooking?.amount} сом</Text>
+                    <Text style={styles.titleText}>Оплачено: {activeBooking?.amount} сом</Text>
                 </View>
 
                 <View>
-                    <Text>Код от замка: </Text>
-                    <Text>{activeBooking?.code_lock}#</Text>
+                    <Text style={styles.titleText}>Код от замка: </Text>
+                    <Text style={styles.activeLookCode}>{activeBooking?.code_lock}#</Text>
                 </View>
 
-                <View>
-                    <Text>Инструкция</Text>
-                    <Text>
+
+                <View style={{gap: 10}}>
+                    <Text style={styles.titleText}>Инструкция</Text>
+                    <Text style={styles.instrunctionText}>
                         {`Инструкция по входу в квартиру через кодовый замок
 1. Получите код доступа После подтверждения бронирования, вы получите уникальный 6-значный код, который действует в течение всего срока вашего проживания. Этот код будет отправлен вам на электронную почту или в SMS-сообщении. Так же вы сможете его увидеть в приложении в разделе моя Активная бронь
 
@@ -84,7 +86,14 @@ export default function MyBooking (){
 Вы можете использовать тот же код для повторного входа в квартиру в течение всего срока аренды. Если у вас возникли проблемы с доступом, обратитесь в нашу службу поддержки.`
                         }</Text>
                 </View>
+
+                <TouchableOpacity
+                style={styles.goMapButton}
+                onPress={() => {handlePressViewOnMap()}}
+                >
+                    <Text style={styles.goMapButtonText}>Посмотреть на карте</Text>
+                </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     )
 }

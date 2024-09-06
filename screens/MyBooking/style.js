@@ -13,6 +13,7 @@ export const styles = StyleSheet.create({
         width:"100%",
         justifyContent: "space-between",
         paddingHorizontal: 15,
+        paddingVertical: 10,
         alignSelf: "center",
         alignItems: "center",
     },
@@ -38,7 +39,31 @@ export const styles = StyleSheet.create({
         paddingVertical:5,
         paddingHorizontal: 15,
         gap: 10,
+    },
+
+    titleText: {
+        fontSize: 16,
+        fontWeight: '600'
+    },
+    activeLookCode: {
+        fontSize: 18,
+    },
+    instrunctionText: {
+        fontSize: 14
+    },
+
+    goMapButton: {
+        width: '80%',
+        height: 50,
+        backgroundColor: '#5127FF',
+        alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
+        borderRadius: 15,
+    },
+    goMapButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600'
     }
-
-
 })
