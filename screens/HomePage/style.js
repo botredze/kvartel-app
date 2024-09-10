@@ -5,7 +5,8 @@ import React from "react";
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        position: 'relative'
+        position: 'relative',
+        paddingTop: 34
     },
     searchContainer: {
         flexDirection: 'row',

@@ -27,9 +27,6 @@ const DateRangePicker = ({ onDatesChange, selectedDatesFilters, isOpenFilters, s
             : {}),
     };
 
-    console.log(markedDates, 'markedDates')
-
-    console.log(selectedDates, 'selectedDates')
     const onDayPress = (day) => {
         const newSelectedDates = { ...selectedDates };
         if (selectedDates.startDate && !selectedDates.endDate) {

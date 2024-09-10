@@ -1,7 +1,7 @@
 import {View, Text, TouchableOpacity} from "react-native";
 import {styles} from './style'
 import {Feather, Ionicons, SimpleLineIcons} from "@expo/vector-icons";
-import React, {useCallback, useRef, useState} from "react";
+import React, {useCallback, useEffect, useRef, useState} from "react";
 import {colors} from "../../constants/constants";
 import {useNavigation} from "@react-navigation/native";
 import FaqBottomSheet from "../../components/FaqBottomSheet/FaqBottomSheet";
@@ -12,6 +12,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Details from "../../components/Details/Details";
 import moment from "moment/moment";
 import Booking from "../../components/Booking/Booking";
+import {getMyBookingHistory} from "../../store/reducers/requestSlice";
 
 export default function BurgerMenu({ route, navigation }) {
     const { detailsRef ,booking } = route.params;
@@ -31,6 +32,9 @@ export default function BurgerMenu({ route, navigation }) {
         displayedDate: moment(),
     });
 
+    useEffect(() => {
+        dispatch(getMyBookingHistory({codeid: data.userId}))
+    }, [data]);
 
     const buttons = [
         {id: 1, name: 'История аренды', bottomComponent: 'history'},
@@ -175,13 +179,12 @@ export default function BurgerMenu({ route, navigation }) {
             {/*</DateRangePicker>*/}
 
              <FaqBottomSheet faq = {faq}/>
+            <HistoryOrder history = {history} detailsRef={detailsRef} />
              <Favorites favorites = {favorites}  detailsRef={detailsRef} />
             <Details detailsRef={detailsRef} booking={booking}/>
             <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen}/>
 
              <Support support = {support}/>
-            <HistoryOrder history = {history} detailsRef={detailsRef} />
-
         </View>
     )
 }

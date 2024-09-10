@@ -101,7 +101,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         position:'relative',
-        paddingTop: 50,
     },
     map: {
         width: '100%',

@@ -73,7 +73,17 @@ const initialState  = {
         apartament_name: '',
         code_lock: "",
         status: '',
-    }
+    },
+    bookHistory: [
+        {
+            dolgota: '',
+            favourite: false,
+            shirota: "",
+            codeid: '',
+            apartament_name: '',
+
+        }
+    ],
 }
 
 export const getApartments = createAsyncThunk(
@@ -328,7 +338,7 @@ export const checkUserVerify = createAsyncThunk('checkUserVerify',
             const response = await axios({
                 method: 'POST',
                 url: `${API}/passport_check`,
-                data
+                data: {codeid: data.codeid}
             })
 
             console.log(response?.data, 'status')
@@ -516,16 +526,31 @@ export const getMyCardList = createAsyncThunk('getMyCardList', async  function(p
 
 export const getMyBookingHistory = createAsyncThunk('getMyBookingHistory', async  function(props, {rejectWithValue, dispatch}) {
     try {
-        const {} = props
+        const {codeid} = props
+        console.log(codeid, 'codeid')
         const response = await axios({
             method: 'POST',
-            url: `${API}/register_by_token`,
-            data: {
-            }
+            url: `${API}/get_history`,
+           // data: {codeid_user: codeid}
+            data: {codeid_user: 1}
         })
         console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
+            console.log(response?.data, 'response?.data')
+            if(response?.data.length> 0) {
+            return  response?.data
+            }else {
+                return [
+                    {
+                        dolgota: '',
+                        favourite: false,
+                        shirota: "",
+                        codeid: '',
+                        apartament_name: '',
 
+                    }
+                ]
+            }
         }else  {
             throw Error(`Error: ${response.status}`);
         }
@@ -696,6 +721,18 @@ const requestSlice = createSlice({
             state.bottomSheetPreloader = true;
         });
 
+        //bookHistory
+        builder.addCase(getMyBookingHistory.fulfilled, (state, action) => {
+            state.bottomSheetPreloader = false;
+            state.bookHistory = action.payload;
+        });
+        builder.addCase(getMyBookingHistory.rejected, (state, action) => {
+            state.error = action.payload;
+            state.bottomSheetPreloader = false;
+        });
+        builder.addCase(getMyBookingHistory.pending, (state, action) => {
+            state.bottomSheetPreloader = true;
+        });
     },
 });
 

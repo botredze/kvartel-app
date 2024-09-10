@@ -1,10 +1,10 @@
-import BottomSheet, {BottomSheetBackdrop, BottomSheetFlatList} from "@gorhom/bottom-sheet";
+import BottomSheet, {BottomSheetBackdrop, BottomSheetFlatList, BottomSheetView} from "@gorhom/bottom-sheet";
 import React, {useCallback, useMemo} from "react";
 import BottomSheetSideBar from "../BottomSheetSideBar/BottomSheetSideBar";
 import {styles} from './style'
 import {faqData} from "../../constants/faqData";
 import FaqCard from "../FaqCards/FaqCards";
-import {Text} from 'react-native'
+import {Text, View} from 'react-native'
 import ApartmentCard from "../ApartmentCard/ApartmentCard";
 import {useSelector} from "react-redux";
 
@@ -27,8 +27,7 @@ export default function HistoryOrder({history, detailsRef}) {
         []
     );
 
-    const {favoritesList} = useSelector((state) => state.stateSlice)
-
+    const {bookHistory} = useSelector((state) => state.requestSlice)
 
     return (
         <BottomSheet
@@ -40,11 +39,18 @@ export default function HistoryOrder({history, detailsRef}) {
             snapPoints={snapPoints}
         >
             <BottomSheetSideBar handleClickBack={handleBack} title='История аренды'/>
-            <BottomSheetFlatList
-                data={favoritesList}
-                renderItem={({ item }) => <ApartmentCard apartment={item} detailsRef={detailsRef} />}
-                keyExtractor={item => item.guid}
-            />
+            {bookHistory[0].codeid ? (
+                <BottomSheetFlatList
+                    data={bookHistory}
+                    renderItem={({ item }) => <ApartmentCard apartment={item} detailsRef={detailsRef} />}
+                    keyExtractor={item => item.guid}
+                />
+            ) : (
+                <BottomSheetView style={styles.notHistoryContainer}>
+                    <Text style={styles.cleanText}>У вас пока нет забронированных квартир</Text>
+                </BottomSheetView>
+            )}
+
         </BottomSheet>
     )
 }

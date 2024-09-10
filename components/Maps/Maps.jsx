@@ -10,6 +10,8 @@ import {getApartamentDetails} from "../../store/reducers/requestSlice";
 export default function Maps({ previewButton }) {
     const [markers, setMarkers] = useState([]);
     const [selectedMarker, setSelectedMarker] = useState(null);
+    const [clusteredApartments, setClusteredApartments] = useState([]);
+
     const dispatch = useDispatch()
 
     const [region, setRegion] = useState({
@@ -44,16 +46,25 @@ export default function Maps({ previewButton }) {
 
     const {listApartments} = useSelector((state) => state.requestSlice)
 
+    const cluster = new supercluster({
+        radius: 40,
+        maxZoom: 20,
+    });
+
     useEffect(() => {
         const clusters = createClusters(listApartments, region);
         setMarkers(clusters);
     }, [region]);
 
+    console.log(clusteredApartments, 'clusteredApartments')
+
+
+    useEffect(() => {
+            console.log('Clustered apartments:', clusteredApartments);
+    }, [clusteredApartments]);
+
+
     const createClusters = (data, region) => {
-        const cluster = new supercluster({
-            radius: 40,
-            maxZoom: 20,
-        });
 
         cluster.load(
             data.map((item) => ({
@@ -81,11 +92,20 @@ export default function Maps({ previewButton }) {
         setRegion(newRegion);
     };
 
-    const handleMarkerPress = (id) => {
-        dispatch(getApartamentDetails(id))
-        setSelectedMarker(id);
-        previewButtonHandle(0);
+    const handleMarkerPress = (marker) => {
+        console.log(marker, 'cluster')
+        if (marker.properties.point_count) {
+            // const clusterApartments = listApartments.filter((item) =>
+            //     cluster.getLeaves(marker.id, Infinity).some(leaf => leaf.properties.id === item.codeid)
+            // );
+            setClusteredApartments([]);
+        } else {
+            dispatch(getApartamentDetails(marker.properties.id));
+            setSelectedMarker(marker.properties.id);
+            previewButtonHandle(0);
+        }
     };
+
 
     return (
         <View style={styles.container}>
@@ -106,6 +126,7 @@ export default function Maps({ previewButton }) {
                                 longitude: marker.geometry.coordinates[0],
                             }}
                             title={`В этом районе есть ${marker.properties.point_count} доступных дома`}
+                            onPress={() => handleMarkerPress(marker)}
                         >
                             <View style={styles.cluster}>
                                 <Text style={styles.clusterText}>
@@ -113,6 +134,7 @@ export default function Maps({ previewButton }) {
                                 </Text>
                             </View>
                         </Marker>
+
                     ) : (
                         <Marker
                             key={`marker-${marker.properties.id}`}
@@ -121,7 +143,7 @@ export default function Maps({ previewButton }) {
                                 longitude: marker.geometry.coordinates[0],
                             }}
                             // title={`Название квартиры: ${marker.properties.apartament_name}`}
-                            onPress={() => handleMarkerPress(marker.properties.id)}
+                            onPress={() => handleMarkerPress(marker)}
                         >
                             <View style={selectedMarker === marker.properties.id ? styles.selectedMarker : styles.marker}>
                                 {selectedMarker === marker.properties.id ? (
