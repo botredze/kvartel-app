@@ -46,7 +46,7 @@ export default function Filters(props) {
             num_bathroom: countTualete || 0,
             num_guests: countBeds || 0
         };
-        dispatch(changeFilters(localFilters));
+        //dispatch(changeFilters(localFilters));
 
         dispatch(apartamentFilters({filters}))
     };

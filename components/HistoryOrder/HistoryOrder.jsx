@@ -5,8 +5,10 @@ import {styles} from './style'
 import {faqData} from "../../constants/faqData";
 import FaqCard from "../FaqCards/FaqCards";
 import {Text} from 'react-native'
+import ApartmentCard from "../ApartmentCard/ApartmentCard";
+import {useSelector} from "react-redux";
 
-export default function HistoryOrder({history}) {
+export default function HistoryOrder({history, detailsRef}) {
     const snapPoints = useMemo(() => ['96%'], []);
 
     const handleBack = () => {
@@ -25,6 +27,9 @@ export default function HistoryOrder({history}) {
         []
     );
 
+    const {favoritesList} = useSelector((state) => state.stateSlice)
+
+
     return (
         <BottomSheet
             ref={history}
@@ -35,7 +40,11 @@ export default function HistoryOrder({history}) {
             snapPoints={snapPoints}
         >
             <BottomSheetSideBar handleClickBack={handleBack} title='История аренды'/>
-            <Text>Пока данных нет</Text>
+            <BottomSheetFlatList
+                data={favoritesList}
+                renderItem={({ item }) => <ApartmentCard apartment={item} detailsRef={detailsRef} />}
+                keyExtractor={item => item.guid}
+            />
         </BottomSheet>
     )
 }

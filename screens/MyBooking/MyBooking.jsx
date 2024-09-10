@@ -15,7 +15,7 @@ export default function MyBooking (){
 
     console.log(activeBooking, 'activeBooking')
     const handleBack = () => {
-        navigation.navigate('HomePage')
+        navigation.navigate('HomePage',)
     }
 
     useEffect(()=> {
@@ -25,9 +25,20 @@ export default function MyBooking (){
         }
     }, [data])
 
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = ("0" + date.getDate()).slice(-2);
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const year = date.getFullYear();
+        const hours = ("0" + date.getHours()).slice(-2);
+        const minutes = ("0" + date.getMinutes()).slice(-2);
+
+        return `${day}.${month}.${year} ${hours}:${minutes}`;
+    };
+
 
     const handlePressViewOnMap = () => {
-        navigation.navigate('MapForBooking')
+        navigation.navigate('MapForBooking', {destinationCoords: {latitude: activeBooking.dolgota, longitude: activeBooking.shirota }})
     };
     return (
         <ScrollView style={styles.container}>
@@ -47,9 +58,10 @@ export default function MyBooking (){
                 </View>
 
                 <View>
-                    <Text style={styles.titleText}>Дата начало: {activeBooking?.date_from}</Text>
-                    <Text style={styles.titleText}>Дата окончания: {activeBooking?.date_to}</Text>
+                    <Text style={styles.titleText}>Дата начало: {activeBooking?.date_from ? formatDate(activeBooking.date_from) : ''}</Text>
+                    <Text style={styles.titleText}>Дата окончания: {activeBooking?.date_to ? formatDate(activeBooking.date_to) : ''}</Text>
                 </View>
+
                 <View>
                     <Text style={styles.titleText}>Оплачено: {activeBooking?.amount} сом</Text>
                 </View>

@@ -37,7 +37,7 @@ export default function BurgerMenu({ route, navigation }) {
         {id: 2, name: 'Избранное', bottomComponent: 'favorites'},
         {id: 3, name: 'Частые вопросы', bottomComponent: 'faq'},
         {id: 4, name: 'Служба поддержки', bottomComponent: 'support'},
-        {id: 5, name: 'Способы оплаты', bottomComponent: 'payments'},
+        // {id: 5, name: 'Способы оплаты', bottomComponent: 'payments'},
     ]
 
     const showBottomSheetHistory = useCallback((index) => {
@@ -180,7 +180,7 @@ export default function BurgerMenu({ route, navigation }) {
             <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen}/>
 
              <Support support = {support}/>
-            <HistoryOrder history = {history}/>
+            <HistoryOrder history = {history} detailsRef={detailsRef} />
 
         </View>
     )

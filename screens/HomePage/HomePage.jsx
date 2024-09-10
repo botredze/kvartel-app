@@ -4,7 +4,7 @@ import Maps from "../../components/Maps/Maps";
 import BottomSheet, {BottomSheetFlatList, BottomSheetView} from "@gorhom/bottom-sheet";
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import ApartmentCard from "../../components/ApartmentCard/ApartmentCard";
-import {Searchbar, TextInput} from 'react-native-paper';
+import {Searchbar} from 'react-native-paper';
 import Recomendation from "../../components/Recomendation/Recomendation";
 import Filters from "../../components/Filters/Filters";
 import Details from "../../components/Details/Details";
@@ -13,19 +13,18 @@ import Booking from "../../components/Booking/Booking";
 import {Entypo, FontAwesome6, Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
-import DateRangePicker from "react-native-daterange-picker";
 import moment from "moment";
 import FilteredApartaments from "../../components/FilteredApartaments/FilteredApartaments";
 import {
     applyPayment,
     changeSearchData,
     checkUserVerify,
-    createBooking,
     getApartments, getMyActiveBooking,
     searchByAddress
 } from "../../store/reducers/requestSlice";
 import { debounce } from "lodash"
 import {changeBookingModal, changeShowSuccessBookingModal} from "../../store/reducers/stateSlice";
+import DateRangePicker from "../../components/DateRangePicker/DateRangePicker";
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -57,11 +56,6 @@ export default function HomePage() {
         endDate: null,
         displayedDate: moment(),
     });
-
-    const disabledDates = [
-        moment('2024-07-02'),
-        moment('2024-07-03'),
-    ];
 
     const snapPoints = useMemo(() => ['10%', '94%'], [])
 
@@ -116,23 +110,24 @@ export default function HomePage() {
     };
 
     const {data} = useSelector((state) => state.saveDataSlice)
-    const {listApartments, search} = useSelector((state) => state.requestSlice);
+    const {listApartments, search, activeBooking} = useSelector((state) => state.requestSlice);
     const {showBookingModal, bookingData, showSuccessBookingModal, paymentData} = useSelector((state) => state.stateSlice)
 
     console.log(data, 'data')
 
-    // useEffect(() => {
-    //     const searchData = {
-    //         codeid_client: data.userId,
-    //         address: ''
-    //     }
-    //     dispatch(changeSearchData(searchData))
-    // }, [data])
+    useEffect(() => {
+        const searchData = {
+            codeid_client: data.userId,
+            address: ''
+        }
+        dispatch(changeSearchData(searchData))
+    }, [data])
 
     useEffect(()=> {
         console.log(data.userId, 'data.codeid')
         if(data.userId) {
-            dispatch(getMyActiveBooking({codeid: data.codeid}))
+            console.log(data.userId, 'data.codeid')
+            dispatch(getMyActiveBooking({codeid: data.userId}))
         }
     }, [data])
 
@@ -148,17 +143,16 @@ export default function HomePage() {
         }
     };
 
-
     const onDatesChangeFilters = (dates) => {
         const newStartDate = dates.startDate ? moment(dates.startDate) : selectedDatesFilters.startDate;
         const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDatesFilters.endDate;
         setSelectedDatesFilters({ ...selectedDatesFilters, startDate: newStartDate, endDate: newEndDate });
 
-        if(selectedDatesFilters.endDate) {
-            setTimeout(() => {
-                setIsOpenFilters(false)
-            }, 5000)
-        }
+        // if(selectedDatesFilters.endDate) {
+        //     setTimeout(() => {
+        //         setIsOpenFilters(false)
+        //     }, 5000)
+        // }
     };
 
     const handleModalClose = () => {
@@ -203,7 +197,7 @@ export default function HomePage() {
     };
 
     const handleActivateBooking = () => {
-      //  dispatch(applyPayment({paymentData,navigation}))
+       dispatch(applyPayment({paymentData,navigation}))
     };
 
     const handleCloseBookingModal2 = () => {
@@ -214,6 +208,7 @@ export default function HomePage() {
         navigation.navigate('MyBooking')
     };
 
+    console.log(!activeBooking.status, '!activeBooking')
     return (
         <SafeAreaView style={styles.container}>
             <Maps previewButton={previewButton}/>
@@ -228,16 +223,14 @@ export default function HomePage() {
                     >
                         <FontAwesome6 name="grip-lines" size={28} color="#613DDC"/>
                     </TouchableOpacity>
-
-
+                    {activeBooking?.address?.length > 0  && (
                     <TouchableOpacity
                         style={styles.burgerMenuButton}
                         onPress={() => {
-                            handlePressMyBooking()
-                        }}
-                    >
+                            handlePressMyBooking();
+                        }}>
                         <Ionicons name="timer-outline" size={28} color="#613DDC" />
-                    </TouchableOpacity>
+                    </TouchableOpacity>)}
                 </View>
             )}
 
@@ -252,7 +245,7 @@ export default function HomePage() {
                     <Text style={{
                         ...styles.statusTitle,
                         color: data.verificated === 'false' && data.rejectRegistration ? '#6200EE' : '#FF3B30'
-                    }}>{data.verificated === 'false' && data.rejectRegistration ? ' Ваш запрос на регистрацию находится в обработке' : 'Ваши данные для регистрации отклонены, необходимо заполнить документы заново'}</Text>
+                    }}>{data.verificated === 'false' && data.rejectRegistration ? ' Ваш запрос на регистрацию находится в обработке' : 'Ваши данные для регистрации отклонены, необходимо заполнить доменты заново'}</Text>
                 </TouchableOpacity>
             )}
 
@@ -325,27 +318,18 @@ export default function HomePage() {
             <Details detailsRef={detailsRef} booking={booking}/>
             <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen} setSelectedDates = {setSelectedDates}/>
             <DateRangePicker
-                onChange={onDatesChange}
-                endDate={selectedDates.endDate}
-                startDate={selectedDates.startDate}
-                displayedDate={selectedDates.displayedDate}
-                range
-                open={isOpen}
-            >
-                <View />
-            </DateRangePicker>
+                onDatesChange={onDatesChangeFilters}
+                selectedDatesFilters={selectedDatesFilters}
+                isOpenFilters={isOpenFilters}
+                setIsOpenFilters={setIsOpenFilters}
+            />
 
             <DateRangePicker
-                onChange={onDatesChangeFilters}
-                endDate={selectedDatesFilters.endDate}
-                startDate={selectedDatesFilters.startDate}
-                displayedDate={selectedDatesFilters.displayedDate}
-                range
-                open={isOpenFilters}
-            >
-                <View />
-            </DateRangePicker>
-
+                onDatesChange={onDatesChange}
+                selectedDatesFilters={selectedDates}
+                isOpenFilters={isOpen}
+                setIsOpenFilters={setIsOpen}
+            />
 
             <Modal
                 animationType="slide"
@@ -374,8 +358,7 @@ export default function HomePage() {
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalTextTitle}>Подтверждение действия</Text>
                         {bookingData.date_from && (
-                         <Text style={styles.modalText}>{`Вы действительно хотите забронировать апартаменты: ${bookingData.name} с ${bookingData.date_from.format('DD.MM.YYYY')} на ${bookingData.days_amount} дня ? \n\nСумма к оплате: ${bookingData.summ}`}</Text>
-                        )}
+                         <Text style={styles.modalText}>{`Вы действительно хотите забронировать апартаменты: ${bookingData.name} с ${bookingData.date_from.format('DD.MM.YYYY')} на ${bookingData.days_amount} дня ? \n\nСумма к оплате: ${bookingData.summ}`}</Text>)}
                         <TouchableOpacity style={styles.closeButtonModal} onPress={handleActivateBooking}>
                             <Text style={styles.closeButtonText}>Оплатить</Text>
                         </TouchableOpacity>
@@ -393,7 +376,7 @@ export default function HomePage() {
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalTextTitle}>Бронь активирована</Text>
                         <Text style={styles.modalText}>
-                            {`Мы получили вашу заявку на бронь, арендодатель с вами свяжется в ближайшее время`}
+                            {`Вы успешно оплатили бронь, перейдите в главное меню, у вас появиться специальная кнопка для перехода в меню брони`}
                         </Text>
                         <TouchableOpacity style={styles.closeButtonModal} onPress={handleCloseBookingModal2}>
                             <Text style={styles.closeButtonText}>Подтвердить</Text>

@@ -63,7 +63,7 @@ const initialState  = {
         codeid_client: 0,
         address: ''
     },
-
+    paymentFinished: false,
     activeBooking: {
         date_to: '',
         date_from: "",
@@ -459,6 +459,7 @@ export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async f
                 dispatch(changePaymentStatus(true))
                 dispatch(clearPaymentStatusData())
                 dispatch(createBooking({...bookingData}))
+                dispatch(changePaymentFinished(true))
             }else{
                 throw Error(`Платеж еще не завершен`);
             }
@@ -536,10 +537,11 @@ export const getMyBookingHistory = createAsyncThunk('getMyBookingHistory', async
 export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  function(props, {rejectWithValue, dispatch}) {
     try {
         const {codeid} = props
+        console.log(codeid, 'codeid')
         const response = await axios({
             method: 'POST',
             url: `${API}/booking_info`,
-            data: {codeid_client: 1}
+            data: {codeid_client: codeid}
         })
         console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
@@ -582,6 +584,10 @@ const requestSlice = createSlice({
 
         changeActiveBookingData: (state, action) => {
             state.activeBooking = action.payload
+        },
+
+        changePaymentFinished: (state, action) => {
+            state.paymentFinished = action.payload
         },
 
         clearActiveBookingData: (state, action) => {
@@ -695,7 +701,8 @@ const requestSlice = createSlice({
 
 export const {updateListApartmentsAndDetail,
     changeSearchData,
-    clearActiveBookingData
+    clearActiveBookingData,
+    changePaymentFinished
 } = requestSlice.actions;
 
 

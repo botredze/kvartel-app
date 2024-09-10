@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 40,
+        paddingBottom: 40,
     },
 
     sidebarContainer: {
@@ -60,6 +61,7 @@ export const styles = StyleSheet.create({
         justifyContent: "center",
         alignSelf: "center",
         borderRadius: 15,
+        marginBottom: 50,
     },
     goMapButtonText: {
         color: '#fff',

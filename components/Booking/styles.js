@@ -128,7 +128,7 @@ export const styles  = StyleSheet.create({
         borderColor: '#ccc',
     },
     bigBtnTitle: {
-        fontSize: 15,
+        fontSize: 16,
     },
     activeBtnTitle: {
         color: colors.mainPurple,

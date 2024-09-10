@@ -21,11 +21,16 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
         setActiveDate(true);
     };
 
-    const { apartmentDetail, bottomSheetPreloader} = useSelector((state) => state.requestSlice);
+    const { apartmentDetail, bottomSheetPreloader, paymentFinished} = useSelector((state) => state.requestSlice);
 
     const closeBooking = () => {
         booking.current?.close()
     };
+
+    console.log(paymentFinished, 'paymentFinished')
+    if(paymentFinished){
+        closeBooking()
+    }
 
     const numberOfDays = selectedDates?.endDate && selectedDates?.startDate
         ? selectedDates.endDate.diff(selectedDates.startDate, 'days')
@@ -99,7 +104,7 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                     <TouchableOpacity
                         onPress={handleSelectDatePress}
                         style={[styles.selectDateBigBtn, activeDate && styles.activeBtn]}>
-                        <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать дату</Text>
+                        <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать даты посещения</Text>
                     </TouchableOpacity>
                 </BottomSheetView>
 

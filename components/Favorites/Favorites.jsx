@@ -12,6 +12,7 @@ export default function Favorites({favorites,detailsRef }) {
         favorites.current?.close()
     }
 
+
     const {favoritesList} = useSelector((state) => state.stateSlice)
 
     const shadowBlock = useCallback(

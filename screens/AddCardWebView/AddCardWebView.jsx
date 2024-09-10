@@ -17,13 +17,11 @@ import {checkPaymentStatus} from "../../store/reducers/requestSlice";
 
 
 export default function AddCardWebView({route}) {
-    //const {url} = route.params
+    const {url} = route.params
     const dispatch = useDispatch();
 
     const webViewRef = useRef(null);
     const navigation = useNavigation();
-
-    const url = 'https://customer.freedompay.kg/pay.html?customer=e9fd6758f487ccc6be58f36e2341525c'
 
     const {paymentStatusData, paymentStatus, bookingData} = useSelector((state) => state.stateSlice)
 
@@ -67,7 +65,7 @@ export default function AddCardWebView({route}) {
     }
 
     function handleBack() {
-        navigation.navigate('PaymentMethods')
+        navigation.navigate('HomePage')
     }
 
     const handleGoHomeage = () => {
