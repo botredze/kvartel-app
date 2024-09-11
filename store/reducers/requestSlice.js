@@ -7,7 +7,7 @@ import {
     changeRegistrationModalVisible,
     changeShowSuccessBookingModal, clearBookingData, clearPaymentStatusData
 } from "./stateSlice";
-import {changeLocalData} from "./saveDataSlice";
+import {changeLocalData, clearLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {getLocalDataUser} from "../../helpers/returnDataUser";
 import {Alert} from "react-native";
@@ -205,6 +205,7 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
                 console.log(codeid, fio)
                 if(result == 0) {
                     await navigation.replace('HomePage');
+                    dispatch(checkUserVerify({codeid: codeid}));
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio);
                     await AsyncStorage.setItem("verificated", 'true');
@@ -428,7 +429,7 @@ export const loginByToken = createAsyncThunk('loginByToken', async function(prop
         console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
             const {codeid, fio, phone, email} = response.data
-            await navigation.navigate('HomePage')
+            await navigation.replace('HomePage')
             console.log(codeid, fio, phone, email)
             await AsyncStorage.setItem("userId", codeid);
             await AsyncStorage.setItem("fio", fio);
@@ -438,11 +439,35 @@ export const loginByToken = createAsyncThunk('loginByToken', async function(prop
             await AsyncStorage.setItem("rejectRegistration", "false");
             await getLocalDataUser({ changeLocalData, dispatch });
         }else {
+            dispatch(clearLocalData())
+        }
+
+    }catch (error){
+        console.log(error, 'errorРГГВГРАОШВ')
+        return  rejectWithValue(error.message)
+    }
+})
+
+export const logoutUser = createAsyncThunk('logoutUser', async function(props, {rejectWithValue,dispatch}) {
+    try {
+        const {codeid} = props
+        console.log(codeid, 'codeid')
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/logout_app`,
+            data: {
+                userId: codeid
+            }
+        })
+
+        if (response.status >= 200 && response.status < 300) {
+            dispatch(clearLocalData())
+        }else {
             throw Error(`Error: ${response.status}`);
         }
 
     }catch (error){
-        console.log(error, 'error')
+        console.log(error, 'error sdfsdf')
         return  rejectWithValue(error.message)
     }
 })

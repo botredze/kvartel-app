@@ -12,7 +12,7 @@ import {useDispatch, useSelector} from "react-redux";
 import Details from "../../components/Details/Details";
 import moment from "moment/moment";
 import Booking from "../../components/Booking/Booking";
-import {getMyBookingHistory} from "../../store/reducers/requestSlice";
+import {getMyBookingHistory, logoutUser} from "../../store/reducers/requestSlice";
 
 export default function BurgerMenu({ route, navigation }) {
     const { detailsRef ,booking } = route.params;
@@ -112,11 +112,11 @@ export default function BurgerMenu({ route, navigation }) {
     };
 
     function handleClickLogout() {
+        dispatch(logoutUser({codeid: data.userId}))
         navigation.replace('Creeting')
     }
 
     const username =  data.fio.split(' ')
-    console.log(username,  data.fio, ' data.fio')
 
     return (
         <View style={styles.container}>

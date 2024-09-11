@@ -33,12 +33,13 @@ export const Navigation = () => {
     }, [data]);
 
     useEffect(() => {
-        const interval = setInterval(() => {
-                dispatch(checkUserVerify({ codeid: data.userId }));
-        }, 5 * 60 * 1000);
+        console.log(data, 'verificated')
+            const interval = setInterval(() => {
+                dispatch(checkUserVerify({codeid: data.userId}));
+            }, 5 * 60 * 1000);
+            return () => clearInterval(interval);
 
-        return () => clearInterval(interval);
-    }, [dispatch, data.verificated, data.userId]);
+    }, [data.verificated, data.userId]);
 
     return (
         <NavigationContainer>
