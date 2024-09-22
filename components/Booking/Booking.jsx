@@ -27,7 +27,6 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
         booking.current?.close()
     };
 
-    console.log(paymentFinished, 'paymentFinished')
     if(paymentFinished){
         closeBooking()
     }

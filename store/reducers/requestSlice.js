@@ -5,7 +5,7 @@ import {
     changeAwaitedCode, changeBookingData, changeBookingModal,
     changeFavorites, changePaymentStatus, changePaymentStatusData,
     changeRegistrationModalVisible,
-    changeShowSuccessBookingModal, clearBookingData, clearPaymentStatusData
+    changeShowSuccessBookingModal, clearBookingData, clearFavorites, clearPaymentStatusData
 } from "./stateSlice";
 import {changeLocalData, clearLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -90,6 +90,7 @@ export const getApartments = createAsyncThunk(
     "getApartments",
     async function ( status,{ dispatch,rejectWithValue }) {
         try {
+            console.log(status, 'status')
             const response = await axios({
                 method: "POST",
                 url: `${API}/get_apartments`,
@@ -98,8 +99,12 @@ export const getApartments = createAsyncThunk(
 
             if (response.status >= 200 && response.status < 300) {
                 const newData = response?.data
-                const filteredApartments = newData?.filter(item => item?.favourite !== true);
+                const filteredApartments = newData?.filter(item => item?.favourite === true);
+                if(filteredApartments.length > 0){
                 dispatch(changeFavorites(filteredApartments));
+                    }else {
+                    dispatch(clearFavorites())
+                }
                 return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
@@ -264,6 +269,7 @@ export const createBooking = createAsyncThunk("createBooking",
             if (response.status >= 200 && response.status < 300) {
                 dispatch(changeBookingModal(false))
                 dispatch(changeShowSuccessBookingModal(true))
+                dispatch(getMyActiveBooking({codeid: data.codeid_client}))
                 return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
@@ -313,12 +319,12 @@ export const userFavoritesApartments = createAsyncThunk("userFavoritesApartments
 export const addOrDeleteFavorites = createAsyncThunk('addOrDeleteFavorites' ,
     async function(data, {dispatch, rejectWithValue}){
         try {
-            console.log(data)
+            console.log(data, 'data')
             const {action, userId, apartamentId} = data
             const response = await axios({
                 method: 'POST',
                 url: `${API}/addFavoritesList`,
-                data: {status: action, userId: userId, apartamentId: apartamentId}
+                data: {status: action, codeid_client: userId, codeid_apartment: apartamentId}
             })
             if (response.status >= 200 && response.status < 300) {
                 dispatch(getApartments({status: 1, codeid_client: userId}))
@@ -628,7 +634,21 @@ const requestSlice = createSlice({
             };
         },
 
-        changeSearchData: (state, action) => {
+        clearApartmentDetail: (state, action) => {
+            state.apartmentDetail = {
+                conversions: [],
+                    photos: [{pathUrl: ''}],
+                    othersHere: [],
+                    rules: [],
+                    floor: "88",                                                     //этаж
+                    num_rooms: "88",                                                 //количество комнат
+                    num_bathroom: "88",                                              //количество ванныч
+                    num_guests: "88",                                                //количество спальных мест
+                    max_guest: "",
+            }
+        },
+
+         changeSearchData: (state, action) => {
             state.search = action.payload
         },
 
@@ -764,7 +784,8 @@ const requestSlice = createSlice({
 export const {updateListApartmentsAndDetail,
     changeSearchData,
     clearActiveBookingData,
-    changePaymentFinished
+    changePaymentFinished,
+    clearApartmentDetail
 } = requestSlice.actions;
 
 

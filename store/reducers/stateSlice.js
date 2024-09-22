@@ -164,6 +164,17 @@ const stateSlice = createSlice({
         changeFavorites: (state, action) => {
             state.favoritesList = action.payload
         },
+        clearFavorites: (state, action) => {
+            state.favoritesList = [
+                {
+                    dolgota: '',
+                    shirota: "",
+                    codeid: '',
+                    apartament_name: '',
+
+                }
+            ]
+        },
 
         clearFilters: (state, action) => {
             state.filters = {
@@ -235,11 +246,13 @@ const stateSlice = createSlice({
         },
         changePaymentStatus: (state, action) => {
             state.paymentStatus = action.payload
-        }
+        },
+
     }
 });
 
 export const {
+    clearFavorites,
     changePhoneNumber,
     clearPhone,
     changeAwaitedCode,

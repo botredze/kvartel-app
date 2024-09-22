@@ -5,19 +5,19 @@ import React, {useState} from "react";
 import {useNavigation} from "@react-navigation/native";
 
 export default function DocsView({route}) {
-    const {item, step, documents} = route.params;
+    const {item, step, documents, detailsRef, booking} = route.params;
     const [showButton, setShowButton] = useState(false);
     const navigation = useNavigation();
 
     const handleClickCloseDogovor = () => {
-        navigation.navigate('BurgerMenu');
+        navigation.navigate('BurgerMenu', {detailsRef, booking});
     };
 
     const handleAccept = () => {
         if (step < documents.length - 1) {
             navigation.navigate('DocsView', { item: documents[step + 1], step: step + 1, documents });
         } else {
-            navigation.navigate('NextPage'); 
+            navigation.navigate('NextPage');
         }
     };
 

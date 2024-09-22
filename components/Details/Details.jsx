@@ -19,7 +19,7 @@ import RecomendationsCard from "../RecomendationsCard/RecomendationsCard";
 import {useDispatch, useSelector} from "react-redux";
 import {API} from "../../env";
 import Loader from "../Loader";
-import {addOrDeleteFavorites} from "../../store/reducers/requestSlice";
+import {addOrDeleteFavorites, clearApartmentDetail} from "../../store/reducers/requestSlice";
 
 export default function Details({detailsRef, booking}) {
 
@@ -29,16 +29,19 @@ export default function Details({detailsRef, booking}) {
     const [visibleRulesCount, setVisibleRulesCount] = useState(3);
     const [isConvenienceExpanded, setIsConvenienceExpanded] = useState(false);
     const [isRulesExpanded, setIsRulesExpanded] = useState(false);
+    const { data } = useSelector((state) => state.saveDataSlice)
 
     function handlePressFavirites(action) {
         switch (action) {
             case 1:
                 //добавление
-                dispatch(addOrDeleteFavorites({action: 0, userId: userId, apartamentId: apartment.codeid}))
+                dispatch(addOrDeleteFavorites({action: 0, userId: data.userId, apartamentId: apartment.codeid}))
+                console.log({action: 0, userId: data.userId, apartamentId: apartment.codeid})
                 break;
             case 2:
                 //удаление
-                dispatch(addOrDeleteFavorites({action: 1, userId: userId, apartamentId: apartment.codeid}))
+                dispatch(addOrDeleteFavorites({action: 1, userId: data.userId, apartamentId: apartment.codeid}))
+                console.log({action: 1, userId: data.userId, apartamentId: apartment.codeid})
                 break;
             default:
                 console.log("Action Not FOUND");
@@ -72,6 +75,7 @@ export default function Details({detailsRef, booking}) {
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
 
     const closeDetailButtomSheet = () => {
+        dispatch(clearApartmentDetail())
         detailsRef?.current?.close();
     }
 

@@ -124,9 +124,7 @@ export default function HomePage() {
     }, [data])
 
     useEffect(()=> {
-        console.log(data.userId, 'data.codeid')
         if(data.userId) {
-            console.log(data.userId, 'data.codeid')
             dispatch(getMyActiveBooking({codeid: data.userId}))
         }
     }, [data])
@@ -136,11 +134,11 @@ export default function HomePage() {
         const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDates.endDate;
         setSelectedDates({ ...selectedDates, startDate: newStartDate, endDate: newEndDate });
 
-        if(selectedDates.endDate) {
-            setTimeout(() => {
-                setIsOpen(false)
-            }, 5000)
-        }
+        // if(selectedDates.endDate) {
+        //     setTimeout(() => {
+        //         setIsOpen(false)
+        //     }, 5000)
+        // }
     };
 
     const onDatesChangeFilters = (dates) => {
@@ -208,7 +206,6 @@ export default function HomePage() {
         navigation.navigate('MyBooking')
     };
 
-    console.log(!activeBooking.status, '!activeBooking')
     return (
         <SafeAreaView style={styles.container}>
             <Maps previewButton={previewButton}/>
@@ -234,7 +231,7 @@ export default function HomePage() {
                 </View>
             )}
 
-            {data.verificated === 'false' && (
+            {data.verificated == 'false' && (
                 <TouchableOpacity
                     style={{
                         ...styles.registrationStatusContainer,
@@ -245,7 +242,7 @@ export default function HomePage() {
                     <Text style={{
                         ...styles.statusTitle,
                         color: data.verificated === 'false' && data.rejectRegistration ? '#6200EE' : '#FF3B30'
-                    }}>{data.verificated === 'false' && data.rejectRegistration ? ' Ваш запрос на регистрацию находится в обработке' : 'Ваши данные для регистрации отклонены, необходимо заполнить доменты заново'}</Text>
+                    }}>{data.verificated === 'false' && data.rejectRegistration ? ' Ваш запрос на регистрацию находится в обработке' : 'Ваши данные для регистрации отклонены, необходимо заполнить документы заново'}</Text>
                 </TouchableOpacity>
             )}
 
@@ -344,7 +341,7 @@ export default function HomePage() {
                         <TouchableOpacity style={styles.closeButtonModal} onPress={handleModalClose}>
                             <Text style={styles.closeButtonText}>ПОНЯТНО</Text>
                         </TouchableOpacity>
-                    </View>Ds
+                    </View>
                 </View>
             </Modal>
 

@@ -1,17 +1,15 @@
-import BottomSheet, {BottomSheetBackdrop, BottomSheetFlatList} from "@gorhom/bottom-sheet";
-
 import React, {useCallback, useMemo} from "react";
-import {Text, TouchableOpacity, View} from "react-native";
-import {styles} from "./style";
+import {Text, TouchableOpacity, View, Linking, Alert} from "react-native";
 import {FontAwesome5, Ionicons} from "@expo/vector-icons";
+import BottomSheet, {BottomSheetBackdrop} from "@gorhom/bottom-sheet";
+import {styles} from "./style";
 
-
-export default function Support({support}){
-    const snapPoints = useMemo(() => ['47%'], []);
+export default function Support({support}) {
+    const snapPoints = useMemo(() => ['49%'], []);
 
     const handleBack = () => {
-        support.current?.close()
-    }
+        support.current?.close();
+    };
 
     const shadowBlock = useCallback(
         (props) => (
@@ -20,17 +18,30 @@ export default function Support({support}){
                 appearsOnIndex={1}
                 disappearsOnIndex={-1}
                 {...props}
-            ></BottomSheetBackdrop>
+            />
         ),
         []
     );
 
     const contactType = [
-        {id: 1, name: 'Написать E-mail', iconName: 'heart'},
-        {id: 2, name: 'Позвонить', iconName: 'phone-alt'},
-        {id: 3, name: 'Написать в Telegram', iconName: 'telegram-plane'},
-        {id: 4, name: 'Написать в WhatsApp', iconName: 'whatsapp'}
-    ]
+        {id: 1, name: 'Написать E-mail', iconName: 'mail-bulk', action: 'mailto:botedze@gmail.com'},
+        {id: 2, name: 'Позвонить', iconName: 'phone-alt', action: 'tel:+996504130622'},
+        {id: 3, name: 'Написать в Telegram', iconName: 'telegram-plane', action: 'tg://resolve?domain=@baaliev'},
+        {id: 4, name: 'Написать в WhatsApp', iconName: 'whatsapp', action: 'whatsapp://send?phone=+996504130622'}
+    ];
+
+    // Функция для открытия ссылки
+    const handleLinkPress = async (url) => {
+        const supported = await Linking.canOpenURL(url);
+
+        console.log(supported, 'supported')
+        if (supported) {
+            await Linking.openURL(url);
+        } else {
+            Alert.alert('Ошибка', 'Не удается открыть приложение.');
+        }
+    };
+
     return (
         <BottomSheet
             ref={support}
@@ -42,22 +53,25 @@ export default function Support({support}){
         >
             <View style={styles.sidebarContainer}>
                 <View style={styles.sidebarTitleContainer}>
-                <Text style={styles.sidebarTitle}>Выберите удобный для вас способ связи</Text>
+                    <Text style={styles.sidebarTitle}>Выберите удобный для вас способ связи</Text>
                 </View>
-                <TouchableOpacity onPress={() => {handleBack()}} style={styles.closeButton}>
+                <TouchableOpacity onPress={handleBack} style={styles.closeButton}>
                     <Ionicons name="close" size={24} color="white" />
                 </TouchableOpacity>
             </View>
 
-
             <View style={styles.buttonsGroupContainer}>
-                {contactType.map((item)=> (
-                    <TouchableOpacity style={styles.contactButton} key={item.id}>
+                {contactType.map((item) => (
+                    <TouchableOpacity
+                        key={item.id}
+                        style={styles.contactButton}
+                        onPress={() => handleLinkPress(item.action)}
+                    >
                         <Text style={styles.contactText}>{item.name}</Text>
                         <FontAwesome5 name={item.iconName} size={30} color="#666667" />
                     </TouchableOpacity>
                 ))}
             </View>
         </BottomSheet>
-    )
+    );
 }

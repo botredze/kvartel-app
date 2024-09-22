@@ -30,14 +30,12 @@ export default function ApartmentCard({apartment, detailsRef}) {
         detailsRef.current?.snapToIndex(index);
     }, [dispatch, apartment.codeid, detailsRef]);
 
-    // Проверка и парсинг JSON
     let imagesArray = [];
     try {
         imagesArray = apartment?.arr_path ? JSON.parse(apartment.arr_path) : [];
     } catch (error) {
         console.error("Error parsing JSON", error);
     }
-
     return (
         <TouchableOpacity
             onPress={() => {handleSelectApartment(0)}}
@@ -73,7 +71,7 @@ export default function ApartmentCard({apartment, detailsRef}) {
                 </View>
 
             </View>
-            <Text style={styles.name}>{apartment?.name}</Text>
+            <Text style={styles.name}>{apartment?.apartament_name}</Text>
             <View style={styles.gapContainer}>
                 <Text style={styles.gapText}>Нет информации</Text>
                 <FontAwesome5 name="walking" size={24} color="black" />
