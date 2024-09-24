@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     },
 
     goMapButton: {
-        width: '80%',
+        width: '50%',
         height: 50,
         backgroundColor: '#5127FF',
         alignItems: "center",
@@ -63,9 +63,16 @@ export const styles = StyleSheet.create({
         borderRadius: 15,
         marginBottom: 50,
     },
+
     goMapButtonText: {
         color: '#fff',
         fontSize: 16,
         fontWeight: '600'
+    },
+    buttonGroups: {
+        flexDirection: 'row',
+        gap: 10,
+        alignSelf: "center",
+        justifyContent: "center"
     }
 })

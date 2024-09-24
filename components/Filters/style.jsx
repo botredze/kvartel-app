@@ -223,7 +223,6 @@ export const styles = StyleSheet.create({
     paramsTitle: {
         fontSize: 16,
         fontWeight: '500',
-
     },
 
 

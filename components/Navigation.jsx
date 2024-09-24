@@ -30,7 +30,7 @@ export const Navigation = ({ userData }) => {
 
     useEffect(() => {
         if (data.userId) {
-            dispatch(getApartments({ status: 0, codeid_client: data.userId }));
+            dispatch(getApartments({ status: 1, codeid_client: data.userId }));
             dispatch(getMyActiveBooking({ codeid: data.userId }));
         }
     }, [data.userId]);

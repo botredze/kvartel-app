@@ -2,9 +2,10 @@ import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {styles} from './style'
 import {useNavigation} from "@react-navigation/native";
 import {Ionicons} from "@expo/vector-icons";
-import React, {useEffect} from "react";
+import React, {useCallback, useEffect, useRef} from "react";
 import {getMyActiveBooking} from "../../store/reducers/requestSlice";
 import {useDispatch, useSelector} from "react-redux";
+import ExtendTheLease from "../../components/ExtendTheLease/ExtendTheLease";
 
 export default function MyBooking (){
     const navigation = useNavigation();
@@ -15,14 +16,17 @@ export default function MyBooking (){
 
     console.log(activeBooking, 'activeBooking')
     const handleBack = () => {
+        extend.current?.close();
         navigation.navigate('HomePage',)
     }
 
+    const extend = useRef(null)
     useEffect(()=> {
         console.log(data.userId, 'data.codeid')
         if(data.userId) {
             dispatch(getMyActiveBooking({codeid: data.codeid}))
         }
+        extend.current?.close()
     }, [data])
 
     const formatDate = (dateString) => {
@@ -36,6 +40,9 @@ export default function MyBooking (){
         return `${day}.${month}.${year} ${hours}:${minutes}`;
     };
 
+    const showBottomSheetExtend = useCallback((index) => {
+        extend.current?.snapToIndex(index);
+    }, []);
 
     const handlePressViewOnMap = () => {
         navigation.navigate('MapForBooking', {destinationCoords: {latitude: activeBooking.dolgota, longitude: activeBooking.shirota }})
@@ -99,13 +106,24 @@ export default function MyBooking (){
                         }</Text>
                 </View>
 
+                <View style={styles.buttonGroups}>
+                <TouchableOpacity
+                    style={styles.goMapButton}
+                    onPress={() => {showBottomSheetExtend(0)}}
+                >
+                    <Text  style={styles.goMapButtonText}>Продлить аренду</Text>
+                </TouchableOpacity>
+
                 <TouchableOpacity
                 style={styles.goMapButton}
                 onPress={() => {handlePressViewOnMap()}}
                 >
                     <Text style={styles.goMapButtonText}>Посмотреть на карте</Text>
                 </TouchableOpacity>
+                </View>
             </View>
+
+            <ExtendTheLease extend={extend} formatDate={formatDate}/>
         </ScrollView>
     )
 }
