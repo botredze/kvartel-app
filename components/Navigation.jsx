@@ -18,9 +18,6 @@ import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos
 import MyBooking from "../screens/MyBooking/MyBooking";
 import MapForBooking from "../screens/MapForBooking/MapForBooking";
 import { checkUserVerify, getApartments, getMyActiveBooking } from "../store/reducers/requestSlice";
-import { usePushNotifications } from "../usePushNotifications";
-import { getLocalDataUser } from "../helpers/returnDataUser";
-import { changeLocalData, clearLocalData } from "../store/reducers/saveDataSlice";
 
 const Stack = createNativeStackNavigator();
 
@@ -30,7 +27,7 @@ export const Navigation = ({ userData }) => {
 
     useEffect(() => {
         if (data.userId) {
-            dispatch(getApartments({ status: 1, codeid_client: data.userId }));
+            dispatch(getApartments({ status: 0, codeid_client: data.userId }));
             dispatch(getMyActiveBooking({ codeid: data.userId }));
         }
     }, [data.userId]);

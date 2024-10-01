@@ -26,6 +26,11 @@ export const styles = StyleSheet.create({
         fontWeight: '500',
     },
 
+    summText: {
+        fontSize: 18,
+        fontWeight: '700',
+    },
+
     counter: {
         display: "flex",
         alignItems: "center",

@@ -93,6 +93,7 @@ export default function HomePage() {
 
     const handleClearSearch = () => {
         clear()
+        dispatch(getApartments({status: 0, codeid_client: data.userId}))
         setSearchQuery("");
         setShowApartments(true)
         setShowRecommendations(false);
@@ -171,7 +172,7 @@ export default function HomePage() {
         setSearchQuery(text)
          searchData(text)
         dispatch(changeSearchData({...search, address: searchQuery}))
-        search?.length === 0 && dispatch(getApartments({status: 1, codeid_client: data.userId}));
+        search?.length === 0 && dispatch(getApartments({status: 0, codeid_client: data.userId}));
     };
 
     const searchData = useCallback(
@@ -187,7 +188,7 @@ export default function HomePage() {
         dispatch(changeSearchData({
             codeid_client: data.userId,
             address: ''}))
-        dispatch(getApartments({status: 1, codeid_client: data.userId}))
+        dispatch(getApartments({status: 0, codeid_client: data.userId}))
     }
 
     const handleCloseBookingModal = () => {

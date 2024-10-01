@@ -2,8 +2,8 @@ import {ScrollView, Text, TouchableOpacity, View} from "react-native";
 import {styles} from './style'
 import {useNavigation} from "@react-navigation/native";
 import {Ionicons} from "@expo/vector-icons";
-import React, {useCallback, useEffect, useRef} from "react";
-import {getMyActiveBooking} from "../../store/reducers/requestSlice";
+import React, {useCallback, useEffect, useRef, useState} from "react";
+import {getApartamentDetails, getMyActiveBooking} from "../../store/reducers/requestSlice";
 import {useDispatch, useSelector} from "react-redux";
 import ExtendTheLease from "../../components/ExtendTheLease/ExtendTheLease";
 
@@ -11,13 +11,23 @@ export default function MyBooking (){
     const navigation = useNavigation();
     const {data} = useSelector((state) => state.saveDataSlice)
     const dispatch = useDispatch();
+    const [showBottomSheet, setShowBottomSheet] = useState(false)
 
     const {activeBooking} = useSelector((state) => state.requestSlice);
+
+    useEffect(() => {
+        dispatch(getApartamentDetails(activeBooking.codeid_apartment))
+    }, []);
 
     console.log(activeBooking, 'activeBooking')
     const handleBack = () => {
         extend.current?.close();
         navigation.navigate('HomePage',)
+    }
+
+    const handleCloseBottomSheet = () => {
+        extend.current?.close();
+        setShowBottomSheet(false)
     }
 
     const extend = useRef(null)
@@ -41,6 +51,7 @@ export default function MyBooking (){
     };
 
     const showBottomSheetExtend = useCallback((index) => {
+        setShowBottomSheet(true)
         extend.current?.snapToIndex(index);
     }, []);
 
@@ -123,7 +134,9 @@ export default function MyBooking (){
                 </View>
             </View>
 
-            <ExtendTheLease extend={extend} formatDate={formatDate}/>
+            {showBottomSheet &&
+            <ExtendTheLease extend={extend} formatDate={formatDate} handleBack={handleCloseBottomSheet}/>
+            }
         </ScrollView>
     )
 }

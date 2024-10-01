@@ -420,6 +420,69 @@ export const applyPayment = createAsyncThunk('applyPayment', async function(prop
     }
 })
 
+
+export const applyExtendPayment = createAsyncThunk('applyExtendPayment', async function(props, {rejectWithValue, dispatch}) {
+    const {navigation, paymentData} = props
+    try {
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/create-payment`,
+            data: {...paymentData}
+        })
+
+        console.log(response.status, response.data, 'response')
+
+        console.log(response.data)
+        if(response.status === 200){
+            await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0]})
+            dispatch(changePaymentStatusData({
+                pg_payment_id: response.data?.data?.response?.pg_payment_id[0],
+                pg_order_id: response.data?.pg_order_id
+            }))
+            dispatch(changeBookingModal(false))
+        }
+    }catch (error){
+        return  rejectWithValue(error.message)
+    }
+})
+
+export const checkExtendPaymentStatus = createAsyncThunk('checkExtendPaymentStatus', async function(props, {rejectWithValue, dispatch}) {
+    try {
+
+        const {pg_payment_id, pg_order_id, bookingData} = props
+
+        const response = await axios({
+            method: 'POST',
+            url: `${API}/get-payment_result`,
+            data: {
+                pg_order_id,
+                pg_payment_id
+            }
+        })
+
+        if (response.status >= 200 && response.status < 300) {
+            console.log(response.data.data.response.pg_status[0], 'response.data.data.response.pg_status[0]')
+            console.log(response.data.data.response.pg_payment_status[0], 'response.data.data.response.pg_payment_status[0]')
+
+            if(response.data.data.response.pg_status[0] == 'ok' && response.data.data.response.pg_payment_status[0] == 'success') {
+                dispatch(changePaymentStatus(true))
+                dispatch(clearPaymentStatusData())
+                dispatch(extendBooking({...bookingData}))
+                dispatch(changePaymentFinished(true))
+            }else{
+                throw Error(`Платеж еще не завершен`);
+            }
+        }else {
+            throw Error(`Error: ${response.status}`);
+        }
+    }catch (error) {
+        console.log(error, 'error')
+        return  rejectWithValue(error.message)
+    }
+})
+
+
+
 export const loginByToken = createAsyncThunk('loginByToken', async function(props, {rejectWithValue,dispatch}) {
     try {
         const {navigation, expoPushToken} = props
@@ -611,6 +674,70 @@ export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  
     }
 })
 
+export const infoNextBooking = createAsyncThunk(
+    'infoNextBooking', async function(props, {rejectWithValue, dispatch}) {
+        try {
+            const {codeid_apartment, date_from, days_amount, setCounts} = props
+            console.log('codeid_apartment, date_from, days_amount,', codeid_apartment, date_from, days_amount,)
+            const response = await axios({
+                method: 'POST',
+                url: `${API}/info_next_booking`,
+                data: {codeid_apartment, date_from, days_amount}
+            })
+            console.log('response.status', response.status)
+            if (response.status >= 200 && response.status < 300) {
+                const {data} = response
+
+                console.log(data, 'data')
+                if(data.status == 2){
+                    Alert.alert(
+                        'Ошибка',
+                        'Квартира уже забронирована на эти даты !',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') }
+                        ]
+                    );
+                    setCounts(days_amount -1)
+                }
+            }else  {
+                throw Error(`Error: ${response.status}`);
+            }
+        }catch (error){
+            return  rejectWithValue(error.message)
+        }
+    }
+)
+
+export const extendBooking = createAsyncThunk(
+    'extendBooking', async function(props, {rejectWithValue, dispatch}) {
+        try {
+            const {codeid_apartment, date_from, days_amount, codeid_client} = props
+            const response = await axios({
+                method: 'POST',
+                url: `${API}/extend_booking`,
+                data: {codeid_apartment, date_from, days_amount, codeid_client}
+            })
+
+            if (response.status >= 200 && response.status < 300) {
+                const {data} = response
+
+                if(data.status == 1) {
+                    Alert.alert(
+                        'Успешно',
+                        'Бронь успешно продлена!',
+                        [
+                            { text: 'OK', onPress: () => console.log('OK Pressed') }
+                        ]
+                    );
+                }
+            }else  {
+                throw Error(`Error: ${response.status}`);
+            }
+        }catch (error){
+            return  rejectWithValue(error.message)
+        }
+    }
+)
 
 
 const requestSlice = createSlice({

@@ -13,11 +13,11 @@ import React, {useEffect, useRef} from "react";
 import { SafeAreaView as SafeAreaViewAndroid } from 'react-native-safe-area-context'
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
-import {checkPaymentStatus} from "../../store/reducers/requestSlice";
+import {checkExtendPaymentStatus, checkPaymentStatus} from "../../store/reducers/requestSlice";
 
 
 export default function AddCardWebView({route}) {
-    const {url} = route.params
+    const {url, state} = route.params
     const dispatch = useDispatch();
 
     const webViewRef = useRef(null);
@@ -30,7 +30,11 @@ export default function AddCardWebView({route}) {
             const interval = setInterval(() => {
                 console.log(!paymentStatus, '!paymentStatus');
                 if (!paymentStatus) {
-                    dispatch(checkPaymentStatus({ ...paymentStatusData, bookingData }));
+                    if(state == 'booking') {
+                        dispatch(checkPaymentStatus({...paymentStatusData, bookingData}));
+                    }else if (state == 'extend') {
+                        dispatch(checkExtendPaymentStatus({...paymentStatusData, bookingData}));
+                    }
                 } else {
                     clearInterval(interval);
                 }
