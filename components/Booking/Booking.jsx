@@ -99,14 +99,6 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                     </TouchableOpacity>
                 </BottomSheetView>
 
-                <BottomSheetView style={styles.selectDateContainer}>
-                    <TouchableOpacity
-                        onPress={handleSelectDatePress}
-                        style={[styles.selectDateBigBtn, activeDate && styles.activeBtn]}>
-                        <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать даты посещения</Text>
-                    </TouchableOpacity>
-                </BottomSheetView>
-
                 {selectedDates.startDate && (
                     <BottomSheetView style={styles.selectedDatesContainer}>
                         <Text style={styles.selectedDateText}>
@@ -124,14 +116,22 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                 <BottomSheetView style={styles.infoBlock}>
                     <Text style={styles.infoText}>Дополнительно: {apartmentDetail?.additional_information}</Text>
                     <Text style={styles.outTimeText}>Выберите дату заезда и дату выезда</Text>
-                    <Text style={styles.outTimeText}> Заезд с 14-00 * Выезд до 12-00 </Text>
+                    <Text style={styles.outTimeText}> Заезд с 16-00 * Выезд до 12-00 </Text>
                 </BottomSheetView>
 
                 <BottomSheetView style={styles.pricesContainer}>
                     <View style={styles.priceTitle}>
-                        <Text style={styles.priceText}>{apartmentDetail?.price}сом</Text>
+                        <Text style={styles.priceText}>{apartmentDetail?.price} сом</Text>
                         <Text style={styles.priceInfoText}>за 1 сутки дней</Text>
                     </View>
+                </BottomSheetView>
+
+                <BottomSheetView style={styles.selectDateContainer}>
+                    <TouchableOpacity
+                        onPress={handleSelectDatePress}
+                        style={[styles.selectDateBigBtn, activeDate && styles.activeBtn]}>
+                        <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать даты посещения</Text>
+                    </TouchableOpacity>
                 </BottomSheetView>
 
                 <TouchableOpacity

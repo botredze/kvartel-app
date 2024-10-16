@@ -14,6 +14,7 @@ import { SafeAreaView as SafeAreaViewAndroid } from 'react-native-safe-area-cont
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {checkExtendPaymentStatus, checkPaymentStatus} from "../../store/reducers/requestSlice";
+import {changePaymentStatus} from "../../store/reducers/stateSlice";
 
 
 export default function AddCardWebView({route}) {
@@ -23,17 +24,17 @@ export default function AddCardWebView({route}) {
     const webViewRef = useRef(null);
     const navigation = useNavigation();
 
-    const {paymentStatusData, paymentStatus, bookingData} = useSelector((state) => state.stateSlice)
+    const {paymentStatusData, paymentStatus, bookingData, extendData} = useSelector((state) => state.stateSlice)
 
     useEffect(() => {
         if (paymentStatusData && Object.keys(paymentStatusData).length > 0){
             const interval = setInterval(() => {
-                console.log(!paymentStatus, '!paymentStatus');
+                console.log(state, 'state')
                 if (!paymentStatus) {
-                    if(state == 'booking') {
+                    if(state == 'booting') {
                         dispatch(checkPaymentStatus({...paymentStatusData, bookingData}));
                     }else if (state == 'extend') {
-                        dispatch(checkExtendPaymentStatus({...paymentStatusData, bookingData}));
+                        dispatch(checkExtendPaymentStatus({...paymentStatusData, extendData}));
                     }
                 } else {
                     clearInterval(interval);
@@ -73,7 +74,13 @@ export default function AddCardWebView({route}) {
     }
 
     const handleGoHomeage = () => {
-        navigation.navigate('HomePage')
+        if(state == 'booting'){
+        navigation.replace('HomePage')
+            dispatch(changePaymentStatus(false))
+        }else if (state == 'extend') {
+            navigation.replace('MyBooking', {paymentFinished: true})
+            dispatch(changePaymentStatus(false))
+        }
     };
     return (
         <View style={styles.container}>

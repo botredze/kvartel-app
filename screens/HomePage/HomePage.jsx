@@ -161,7 +161,7 @@ export default function HomePage() {
     const handleStatus = () => {
         dispatch(checkUserVerify({ codeid: data.userId }));
         setShowStatus(true);
-        if (data.verificated == 'false' && data.rejectRegistration) {
+        if (data.verificated == 'false' && data.rejectRegistration == 'true') {
             setStatusText("Ваша регистрация отклонена")
         } else {
             setShowStatus(true)
@@ -204,14 +204,14 @@ export default function HomePage() {
     };
 
     const handlePressMyBooking = () => {
-        navigation.navigate('MyBooking')
+        navigation.navigate('MyBooking', {paymentFinished:false })
     };
 
     return (
         <SafeAreaView style={styles.container}>
             <Maps previewButton={previewButton}/>
 
-            {data.verificated === 'true' && (
+            {data.verificated == 'true' && (
                 <View style={styles.butgerMenuButtonContainer}>
                     <TouchableOpacity
                         style={styles.burgerMenuButton}

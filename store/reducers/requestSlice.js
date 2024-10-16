@@ -5,7 +5,7 @@ import {
     changeAwaitedCode, changeBookingData, changeBookingModal,
     changeFavorites, changePaymentStatus, changePaymentStatusData,
     changeRegistrationModalVisible,
-    changeShowSuccessBookingModal, clearBookingData, clearFavorites, clearPaymentStatusData
+    changeShowSuccessBookingModal, clearBookingData, clearExtendBookingData, clearFavorites, clearPaymentStatusData
 } from "./stateSlice";
 import {changeLocalData, clearLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -269,7 +269,7 @@ export const createBooking = createAsyncThunk("createBooking",
             if (response.status >= 200 && response.status < 300) {
                 dispatch(changeBookingModal(false))
                 dispatch(changeShowSuccessBookingModal(true))
-                dispatch(getMyActiveBooking({codeid: data.codeid_client}))
+                dispatch(getMyActiveBooking({codeid: codeid_client}))
                 return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
@@ -408,7 +408,7 @@ export const applyPayment = createAsyncThunk('applyPayment', async function(prop
 
         console.log(response.data)
         if(response.status === 200){
-          await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0]})
+          await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0], state: "booting"})
             dispatch(changePaymentStatusData({
                 pg_payment_id: response.data?.data?.response?.pg_payment_id[0],
                 pg_order_id: response.data?.pg_order_id
@@ -423,6 +423,7 @@ export const applyPayment = createAsyncThunk('applyPayment', async function(prop
 
 export const applyExtendPayment = createAsyncThunk('applyExtendPayment', async function(props, {rejectWithValue, dispatch}) {
     const {navigation, paymentData} = props
+    console.log(paymentData, 'paymentData')
     try {
         const response = await axios({
             method: 'POST',
@@ -430,16 +431,12 @@ export const applyExtendPayment = createAsyncThunk('applyExtendPayment', async f
             data: {...paymentData}
         })
 
-        console.log(response.status, response.data, 'response')
-
-        console.log(response.data)
         if(response.status === 200){
-            await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0]})
+            await navigation.navigate('AddCardWebView', {url: response.data?.data?.response?.pg_redirect_url[0], state: 'extend'})
             dispatch(changePaymentStatusData({
                 pg_payment_id: response.data?.data?.response?.pg_payment_id[0],
                 pg_order_id: response.data?.pg_order_id
             }))
-            dispatch(changeBookingModal(false))
         }
     }catch (error){
         return  rejectWithValue(error.message)
@@ -449,7 +446,7 @@ export const applyExtendPayment = createAsyncThunk('applyExtendPayment', async f
 export const checkExtendPaymentStatus = createAsyncThunk('checkExtendPaymentStatus', async function(props, {rejectWithValue, dispatch}) {
     try {
 
-        const {pg_payment_id, pg_order_id, bookingData} = props
+        const {pg_payment_id, pg_order_id, extendData} = props
 
         const response = await axios({
             method: 'POST',
@@ -467,8 +464,9 @@ export const checkExtendPaymentStatus = createAsyncThunk('checkExtendPaymentStat
             if(response.data.data.response.pg_status[0] == 'ok' && response.data.data.response.pg_payment_status[0] == 'success') {
                 dispatch(changePaymentStatus(true))
                 dispatch(clearPaymentStatusData())
-                dispatch(extendBooking({...bookingData}))
+                dispatch(extendBooking({...extendData, dispatch}))
                 dispatch(changePaymentFinished(true))
+                dispatch(clearExtendBookingData())
             }else{
                 throw Error(`Платеж еще не завершен`);
             }
@@ -564,6 +562,7 @@ export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async f
                 dispatch(clearPaymentStatusData())
                 dispatch(createBooking({...bookingData}))
                 dispatch(changePaymentFinished(true))
+                dispatch(clearBookingData())
             }else{
                 throw Error(`Платеж еще не завершен`);
             }
@@ -655,7 +654,7 @@ export const getMyBookingHistory = createAsyncThunk('getMyBookingHistory', async
 
 export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  function(props, {rejectWithValue, dispatch}) {
     try {
-        const {codeid} = props
+        const { codeid } = props
         console.log(codeid, 'codeid')
         const response = await axios({
             method: 'POST',
@@ -684,7 +683,7 @@ export const infoNextBooking = createAsyncThunk(
                 url: `${API}/info_next_booking`,
                 data: {codeid_apartment, date_from, days_amount}
             })
-            console.log('response.status', response.status)
+            console.log('response.status', response)
             if (response.status >= 200 && response.status < 300) {
                 const {data} = response
 
@@ -711,7 +710,8 @@ export const infoNextBooking = createAsyncThunk(
 export const extendBooking = createAsyncThunk(
     'extendBooking', async function(props, {rejectWithValue, dispatch}) {
         try {
-            const {codeid_apartment, date_from, days_amount, codeid_client} = props
+            const {codeid_apartment, date_from, days_amount, codeid_client, dispatch} = props
+            console.log(codeid_apartment, date_from, days_amount, codeid_client, 'codeid_apartment, date_from, days_amount, codeid_client')
             const response = await axios({
                 method: 'POST',
                 url: `${API}/extend_booking`,
@@ -720,7 +720,7 @@ export const extendBooking = createAsyncThunk(
 
             if (response.status >= 200 && response.status < 300) {
                 const {data} = response
-
+                dispatch(getMyActiveBooking({codeid: codeid_client}));
                 if(data.status == 1) {
                     Alert.alert(
                         'Успешно',
@@ -904,6 +904,18 @@ const requestSlice = createSlice({
         });
         builder.addCase(getMyBookingHistory.pending, (state, action) => {
             state.bottomSheetPreloader = true;
+        });
+
+        //bookHistory
+        builder.addCase(applyExtendPayment.fulfilled, (state, action) => {
+            state.preloader = false;
+        });
+        builder.addCase(applyExtendPayment.rejected, (state, action) => {
+            state.error = action.payload;
+            state.preloader = false;
+        });
+        builder.addCase(applyExtendPayment.pending, (state, action) => {
+            state.preloader = true;
         });
     },
 });

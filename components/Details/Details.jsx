@@ -83,6 +83,25 @@ export default function Details({detailsRef, booking}) {
         booking.current?.snapToIndex(index);
     }, []);
 
+    const formatDateToDDMMYYYY = (date) => {
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    };
+
+    const getClosestAvailableDate = (dateToString) => {
+        const dates = dateToString.split(',').map(date => new Date(date.trim()));
+
+        const futureDates = dates.filter(date => date > new Date()).sort((a, b) => a - b);
+
+        return futureDates.length > 0 ? futureDates[0] : null;
+    };
+
+    const closestAvailableDate = apartmentDetail?.date_to ? getClosestAvailableDate(apartmentDetail.date_to) : null;
+
+    const formattedClosestDate = closestAvailableDate ? formatDateToDDMMYYYY(closestAvailableDate) : null;
+
     return (
         <BottomSheet
             ref={detailsRef}
@@ -139,7 +158,9 @@ export default function Details({detailsRef, booking}) {
                 </View>
 
                 <View style={styles.approveTimeContainer}>
-                    <Text style={styles.approveText}>{apartmentDetail?.date_to} - ближайшая доступная дата</Text>
+                    <Text style={styles.approveText}>
+                        {formattedClosestDate ? `${formattedClosestDate} - ближайшая доступная дата` : 'Нет доступных дат'}
+                    </Text>
                     <Text style={styles.outTimeText}> Заезд с 14-00 * Выезд до 12-00 </Text>
 
                     <Text style={styles.infoText}>Дополнительно: {apartmentDetail?.additional_information}</Text>
@@ -228,8 +249,13 @@ export default function Details({detailsRef, booking}) {
             )}
 
             <BottomSheetView style={styles.selectDateContainer}>
-                <TouchableOpacity style={styles.selectDateBtn}
-                                  onPress={() => {handleClickBooking(0)}}
+                <TouchableOpacity
+                    style={[
+                        styles.selectDateBtn,
+                        data.verificated === 'false' && { opacity: 0.5 }, // Меняем стиль для disabled
+                    ]}
+                    onPress={() => {handleClickBooking(0)}}
+                    disabled={data.verificated == 'false'} // Блокируем кнопку
                 >
                     <Text style={styles.selectDateBtnText}>Выбрать дату</Text>
                     <Text style={styles.selectDateBtnText}>{apartmentDetail.price} сутки</Text>
@@ -239,6 +265,7 @@ export default function Details({detailsRef, booking}) {
                     <Entypo name="dots-three-horizontal" size={22} color="#666666" />
                 </TouchableOpacity>
             </BottomSheetView>
+
         </BottomSheet>
     )
 }

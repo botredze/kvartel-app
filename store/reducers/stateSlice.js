@@ -67,6 +67,15 @@ const initialState = {
         summ: 0
     },
 
+    extendData: {
+        date_from: 0,
+        days_amount: 0,
+        codeid_client: 0,
+        codeid_apartment:0,
+        name: '',
+        summ: 0
+    },
+
     paymentData: {
         pg_amount: 0,
         pg_description: '',
@@ -204,6 +213,20 @@ const stateSlice = createSlice({
                 summ: 0
                 }
         },
+
+        changeExtendBookingData: (state, action)=> {
+            state.extendData = action.payload
+        },
+        clearExtendBookingData: (state, action) => {
+            state.extendData = {
+                date_from: 0,
+                days_amount: 0,
+                codeid_client: 0,
+                codeid_apartment:0,
+                name: '',
+                summ: 0
+            }
+        },
         changeBookingModal: (state, action) => {
             state.showBookingModal = action.payload
         },
@@ -278,7 +301,9 @@ export const {
     clearPaymentData,
     changePaymentStatusData,
     clearPaymentStatusData,
-    changePaymentStatus
+    changePaymentStatus,
+    changeExtendBookingData,
+    clearExtendBookingData
 } = stateSlice.actions;
 
 export default stateSlice.reducer;

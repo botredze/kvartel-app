@@ -12,7 +12,7 @@ export const styles  = StyleSheet.create({
     selectDateContainer: {
         paddingVertical: 20,
         height: 80,
-        alignItems: "center"
+        alignItems: "center",
     },
 
     contentContainer: {
@@ -85,7 +85,7 @@ export const styles  = StyleSheet.create({
         height: 60,
         borderRadius: 20,
         backgroundColor: '#5127FF',
-        marginTop: 35,
+        marginTop: 10,
         position: "absolute",
         bottom: 10,
     },
