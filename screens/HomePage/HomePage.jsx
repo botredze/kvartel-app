@@ -44,18 +44,6 @@ export default function HomePage() {
     const filtered = useRef(null)
 
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedDates, setSelectedDates] = useState({
-        startDate: null,
-        endDate: null,
-        displayedDate: moment(),
-    });
-
-    const [isOpenFilters, setIsOpenFilters] = useState(false);
-    const [selectedDatesFilters, setSelectedDatesFilters] = useState({
-        startDate: null,
-        endDate: null,
-        displayedDate: moment(),
-    });
 
     const snapPoints = useMemo(() => ['10%', '94%'], [])
 
@@ -112,7 +100,7 @@ export default function HomePage() {
 
     const {data} = useSelector((state) => state.saveDataSlice)
     const {listApartments, search, activeBooking} = useSelector((state) => state.requestSlice);
-    const {showBookingModal, bookingData, showSuccessBookingModal, paymentData} = useSelector((state) => state.stateSlice)
+    const {showBookingModal, bookingData, showSuccessBookingModal, paymentData, rejectComment} = useSelector((state) => state.stateSlice)
 
     console.log(data, 'data')
 
@@ -130,33 +118,21 @@ export default function HomePage() {
         }
     }, [data])
 
-    const onDatesChange = (dates) => {
-        const newStartDate = dates.startDate ? moment(dates.startDate) : selectedDates.startDate;
-        const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDates.endDate;
-        setSelectedDates({ ...selectedDates, startDate: newStartDate, endDate: newEndDate });
-
-        // if(selectedDates.endDate) {
-        //     setTimeout(() => {
-        //         setIsOpen(false)
-        //     }, 5000)
-        // }
-    };
-
-    const onDatesChangeFilters = (dates) => {
-        const newStartDate = dates.startDate ? moment(dates.startDate) : selectedDatesFilters.startDate;
-        const newEndDate = dates.endDate ? moment(dates.endDate) : selectedDatesFilters.endDate;
-        setSelectedDatesFilters({ ...selectedDatesFilters, startDate: newStartDate, endDate: newEndDate });
-
-        // if(selectedDatesFilters.endDate) {
-        //     setTimeout(() => {
-        //         setIsOpenFilters(false)
-        //     }, 5000)
-        // }
-    };
 
     const handleModalClose = () => {
         setShowStatus(false)
     };
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            if (data.verificated === 'false') {
+                dispatch(checkUserVerify({ codeid: data.userId }));
+            }
+        }, 10000);
+
+        return () => clearInterval(intervalId);
+    }, [data.verificated, data.userId, dispatch]);
+
 
     const handleStatus = () => {
         dispatch(checkUserVerify({ codeid: data.userId }));
@@ -167,6 +143,8 @@ export default function HomePage() {
             setShowStatus(true)
         }
     }
+
+
 
     const handleChangeInputText =  (text) => {
         setSearchQuery(text)
@@ -232,20 +210,48 @@ export default function HomePage() {
                 </View>
             )}
 
-            {data.verificated == 'false' && (
+            {data.verificated === 'false' && (
                 <TouchableOpacity
                     style={{
                         ...styles.registrationStatusContainer,
-                        height: data.verificated === 'false' && data.rejectRegistration ? 50 : 40
+                        height: data.rejectRegistration === 'true' ? 80 : 40
                     }}
                     onPress={handleStatus}
                 >
+                    {data.rejectRegistration === 'true' ? (
+                        <View style={{gap: 5}}>
+                            <Text style={{
+                                ...styles.statusTitle,
+                                color: '#FF3B30'
+                            }}>
+                                Ваши данные для регистрации отклонены, для решения напишите в поддержку
+                            </Text>
+
+                            <Text
+                                style={{
+                                    ...styles.statusTitle,
+                                    color: '#FF3B30'
+                                }}>Комментарий: {rejectComment}</Text>
+
+                            {/*<TouchableOpacity*/}
+                            {/*    style={styles.retryRegistrationButton}*/}
+                            {/*    onPress={() => navigation.navigate('UserSettingScreen')}*/}
+                            {/*>*/}
+                            {/*    <Text style={styles.retryRegistrationText}>Повторная регистрация</Text>*/}
+                            {/*</TouchableOpacity>*/}
+
+                        </View>
+                    ) : (
                     <Text style={{
-                        ...styles.statusTitle,
-                        color: data.verificated === 'false' && data.rejectRegistration ? '#6200EE' : '#FF3B30'
-                    }}>{data.verificated === 'false' && data.rejectRegistration ? ' Ваш запрос на регистрацию находится в обработке' : 'Ваши данные для регистрации отклонены, необходимо заполнить документы заново'}</Text>
+                            ...styles.statusTitle,
+                            color: '#6200EE'
+                        }}>
+                            Ваш запрос на регистрацию находится в обработке
+                        </Text>
+                    )}
                 </TouchableOpacity>
             )}
+
 
             <BottomSheet
                 snapPoints={snapPoints}
@@ -307,27 +313,15 @@ export default function HomePage() {
 
             </BottomSheet>
 
-            <Filters filtered={filtered} filterRef={filterRef} selectedDatesFilters ={selectedDatesFilters} setIsOpenFilters={setIsOpenFilters}/>
+            <Filters filtered={filtered} filterRef={filterRef}/>
 
             <FilteredApartaments filtered={filtered} detailsRef={detailsRef}/>
             <PreviewBottiomSheet previewButton={previewButton} booking={booking}
                                  details={detailsRef}/>
 
             <Details detailsRef={detailsRef} booking={booking}/>
-            <Booking booking={booking} selectedDates={selectedDates} setIsOpen={setIsOpen} setSelectedDates = {setSelectedDates}/>
-            <DateRangePicker
-                onDatesChange={onDatesChangeFilters}
-                selectedDatesFilters={selectedDatesFilters}
-                isOpenFilters={isOpenFilters}
-                setIsOpenFilters={setIsOpenFilters}
-            />
+            <Booking booking={booking}  setIsOpen={setIsOpen} />
 
-            <DateRangePicker
-                onDatesChange={onDatesChange}
-                selectedDatesFilters={selectedDates}
-                isOpenFilters={isOpen}
-                setIsOpenFilters={setIsOpen}
-            />
 
             <Modal
                 animationType="slide"

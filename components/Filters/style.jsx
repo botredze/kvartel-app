@@ -15,6 +15,12 @@ export const styles = StyleSheet.create({
     selectedDateText: {
         fontSize: 16,
     },
+
+    selectDateContainer: {
+        alignItems: "center",
+        marginBottom: 10,
+    },
+
     sectionTitle: {
         marginBottom: 16,
         display: "flex",
@@ -196,10 +202,7 @@ export const styles = StyleSheet.create({
         width: '100%',
     },
 
-    selectDateContainer: {
-        height: 170,
-        marginBottom: 20,
-    },
+
     nameText: {
         fontSize: 18,
         fontWeight: '500',

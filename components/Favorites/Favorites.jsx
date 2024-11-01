@@ -17,6 +17,7 @@ export default function Favorites({favorites,detailsRef }) {
 
     const {favoritesList} = useSelector((state) => state.stateSlice)
 
+    console.log(favoritesList, 'favoritesList')
     const shadowBlock = useCallback(
         (props) => (
             <BottomSheetBackdrop

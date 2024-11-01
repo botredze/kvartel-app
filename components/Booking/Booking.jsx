@@ -6,15 +6,20 @@ import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
 import {API} from "../../env";
-import moment from "moment/moment";
 import {changeBookingData, changeBookingModal, changePaymentData} from "../../store/reducers/stateSlice";
+import Calendar from "../Calendar/Calendar";
 
-export default function Booking({booking, setIsOpen, selectedDates}) {
-    const snapPoints = useMemo(() => ['57%'], []);
+export default function Booking({booking, setIsOpen}) {
+    const snapPoints = useMemo(() => ['60%'], []);
     const navigation = useNavigation();
     const [activeDate, setActiveDate] = useState(false);
     const dispatch = useDispatch();
     const {data} = useSelector((state) => state.saveDataSlice)
+    const [selectedDates, setSelectedDates] = useState({ start: null, end: null });
+
+    const handleDateSelect = (dates) => {
+        setSelectedDates(dates);
+    };
 
     const handleSelectDatePress = () => {
         setIsOpen(true)
@@ -31,8 +36,8 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
         closeBooking()
     }
 
-    const numberOfDays = selectedDates?.endDate && selectedDates?.startDate
-        ? selectedDates.endDate.diff(selectedDates.startDate, 'days')
+    const numberOfDays = selectedDates?.end && selectedDates?.start
+        ? selectedDates.end.diff(selectedDates.start, 'days')
         : null;
 
     const totalAmount = numberOfDays !== null
@@ -54,7 +59,7 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
     const handleStartPayment = () => {
         dispatch(changeBookingModal(true))
         dispatch(changeBookingData({
-            date_from: selectedDates.endDate,
+            date_from: selectedDates.end,
             days_amount:numberOfDays,
             codeid_client: data.userId,
             codeid_apartment: apartmentDetail.codeid,
@@ -99,19 +104,10 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                     </TouchableOpacity>
                 </BottomSheetView>
 
-                {selectedDates.startDate && (
-                    <BottomSheetView style={styles.selectedDatesContainer}>
-                        <Text style={styles.selectedDateText}>
-                            Дата начала: {selectedDates.startDate.format('DD.MM.YYYY')}
-                        </Text>
-                        {selectedDates.endDate && (
-                            <Text style={styles.selectedDateText}>
-                                Дата окончания: {selectedDates.endDate.format('DD.MM.YYYY')}
-                            </Text>
-                        )}
-                    </BottomSheetView>
-                )}
 
+                <BottomSheetView style={styles.selectDateContainer}>
+                    <Calendar onDateSelect={handleDateSelect} />
+                </BottomSheetView>
 
                 <BottomSheetView style={styles.infoBlock}>
                     <Text style={styles.infoText}>Дополнительно: {apartmentDetail?.additional_information}</Text>
@@ -119,19 +115,24 @@ export default function Booking({booking, setIsOpen, selectedDates}) {
                     <Text style={styles.outTimeText}> Заезд с 16-00 * Выезд до 12-00 </Text>
                 </BottomSheetView>
 
+                {selectedDates.start && (
+                    <BottomSheetView style={styles.selectedDatesContainer}>
+                        <Text style={styles.selectedDateText}>
+                            Дата начала: {selectedDates.start.format('DD.MM.YYYY')}
+                        </Text>
+                        {selectedDates.end && (
+                            <Text style={styles.selectedDateText}>
+                                Дата окончания: {selectedDates.end.format('DD.MM.YYYY')}
+                            </Text>
+                        )}
+                    </BottomSheetView>
+                )}
+
                 <BottomSheetView style={styles.pricesContainer}>
                     <View style={styles.priceTitle}>
                         <Text style={styles.priceText}>{apartmentDetail?.price} сом</Text>
-                        <Text style={styles.priceInfoText}>за 1 сутки дней</Text>
+                        <Text style={styles.priceInfoText}>за 1 сутки</Text>
                     </View>
-                </BottomSheetView>
-
-                <BottomSheetView style={styles.selectDateContainer}>
-                    <TouchableOpacity
-                        onPress={handleSelectDatePress}
-                        style={[styles.selectDateBigBtn, activeDate && styles.activeBtn]}>
-                        <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать даты посещения</Text>
-                    </TouchableOpacity>
                 </BottomSheetView>
 
                 <TouchableOpacity

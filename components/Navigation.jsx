@@ -18,6 +18,7 @@ import LoadPassportPhotos from "../screens/LoadPassportPhotos/LoadPassportPhotos
 import MyBooking from "../screens/MyBooking/MyBooking";
 import MapForBooking from "../screens/MapForBooking/MapForBooking";
 import { checkUserVerify, getApartments, getMyActiveBooking } from "../store/reducers/requestSlice";
+import DevView from "../screens/DevView";
 
 const Stack = createNativeStackNavigator();
 
@@ -54,6 +55,7 @@ export const Navigation = ({ userData }) => {
             <Preloader />
             <Stack.Navigator
                 initialRouteName={userData ? 'HomePage' : 'Creeting'}
+               // initialRouteName='DevView'
                 screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}
             >
                 <Stack.Screen name="Creeting" component={Creeting} options={{ headerShown: false }} />
@@ -69,6 +71,8 @@ export const Navigation = ({ userData }) => {
                 <Stack.Screen name="ViewRegistrationDogovor" component={ViewRegistrationDogovor} options={{ headerShown: false }} />
                 <Stack.Screen name="LoadPassportPhotos" component={LoadPassportPhotos} options={{ headerShown: false }} />
                 <Stack.Screen name="MyBooking" component={MyBooking} options={{ headerShown: false }} />
+                <Stack.Screen name="DevView" component={DevView} options={{ headerShown: false }} />
+
             </Stack.Navigator>
             <StatusBar style="auto" backgroundColor="rgba(47, 71, 190, 0.287)" />
         </NavigationContainer>

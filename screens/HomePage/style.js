@@ -13,6 +13,23 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: 10,
     },
+
+    retryRegistrationButton: {
+        marginTop: 10,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        backgroundColor: '#6200EE',
+        borderRadius: 15,
+        alignItems: 'center',
+        width: '70%',
+        alignSelf: "center"
+    },
+    retryRegistrationText: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+
     searchInput: {
         flex: 1,
         borderRadius: 14,
@@ -65,7 +82,7 @@ export const styles = StyleSheet.create({
         ...Platform.select({
             ios: {
                 shadowColor: '#000',
-                shadowOffset: { width: 0, height: 10 },
+                shadowOffset: {width: 0, height: 10},
                 shadowOpacity: 0.25,
                 shadowRadius: 10,
             },
@@ -77,7 +94,7 @@ export const styles = StyleSheet.create({
     registrationStatusContainer: {
         position: "absolute",
         alignItems: "center",
-        top: 32,
+        top: 60,
         alignSelf: "center",
         widthMax: '90%',
         backgroundColor: 'white',

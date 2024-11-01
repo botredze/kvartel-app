@@ -77,6 +77,7 @@ const DateRangePicker = ({ onDatesChange, selectedDatesFilters, isOpenFilters, s
     };
 
     const markedDates = {
+        disableTouchEvent: true,
         ...getDisabledDatesBeforeToday(),
 
         ...(apartmentDetail.date_from && apartmentDetail.date_to
@@ -133,9 +134,9 @@ const DateRangePicker = ({ onDatesChange, selectedDatesFilters, isOpenFilters, s
                 <Calendar
                     markingType={'period'}
                     current={new Date()}
+                    disableAllTouchEventsForInactiveDays={true}
                     onDayPress={onDayPress}
                     markedDates={markedDates}
-                    disableAllTouchEventsForDisabledDays
                 />
                 <TouchableOpacity style={styles.closeButton} onPress={handleClose}>
                     <Text style={styles.closeButtonText}>Закрыть</Text>

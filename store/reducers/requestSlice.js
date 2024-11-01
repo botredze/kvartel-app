@@ -4,7 +4,7 @@ import axios from "axios";
 import {
     changeAwaitedCode, changeBookingData, changeBookingModal,
     changeFavorites, changePaymentStatus, changePaymentStatusData,
-    changeRegistrationModalVisible,
+    changeRegistrationModalVisible, changeRejectComment,
     changeShowSuccessBookingModal, clearBookingData, clearExtendBookingData, clearFavorites, clearPaymentStatusData
 } from "./stateSlice";
 import {changeLocalData, clearLocalData} from "./saveDataSlice";
@@ -52,6 +52,8 @@ const initialState  = {
         photos: [{pathUrl: ''}],
         othersHere: [],
         rules: [],
+        date_from: "",
+        date_to: "",
         floor: "88",                                                     //этаж
         num_rooms: "88",                                                 //количество комнат
         num_bathroom: "88",                                              //количество ванныч
@@ -99,7 +101,7 @@ export const getApartments = createAsyncThunk(
 
             if (response.status >= 200 && response.status < 300) {
                 const newData = response?.data
-                const filteredApartments = newData?.filter(item => item?.favourite === true);
+                const filteredApartments = newData?.filter(item => item?.favourite == 'true');
                 if(filteredApartments.length > 0){
                 dispatch(changeFavorites(filteredApartments));
                     }else {
@@ -178,7 +180,7 @@ export const login_ver = createAsyncThunk(
                     console.log(code)
                     dispatch(changeAwaitedCode({code: code, phone_number: phoneNumber?.phone_number}))
                     if (navigation) {
-                        await navigation.navigate('OTP')
+                        await navigation.replace('OTP')
                     }
                  }
             } else {
@@ -207,16 +209,13 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
             if (response.status >= 200 && response.status < 300) {
                 const {result, codeid, fio, phone, email} = response?.data
 
-                console.log(codeid, fio)
                 if(result == 0) {
                     await navigation.replace('HomePage');
                     dispatch(checkUserVerify({codeid: codeid}));
                     await AsyncStorage.setItem("userId", codeid);
                     await AsyncStorage.setItem("fio", fio);
-                    await AsyncStorage.setItem("verificated", 'true');
                     await AsyncStorage.setItem('phone', phone)
                     await AsyncStorage.setItem('email', email)
-                    await AsyncStorage.setItem("rejectRegistration", "false");
                     await getLocalDataUser({ changeLocalData, dispatch });
                 }else if (result == 1) {
                     await AsyncStorage.setItem("verificated", "false");
@@ -241,6 +240,7 @@ export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
 
 export const apartamentFilters = createAsyncThunk("apartamentFilters",
     async function(data, {dispatch, rejectWithValue}){
+        console.log(data, 'data')
         try {
             const response = await axios({
                 method: 'POST',
@@ -248,7 +248,8 @@ export const apartamentFilters = createAsyncThunk("apartamentFilters",
                 data
             })
             if (response.status >= 200 && response.status < 300) {
-                return response?.data.recordset;
+                console.log('ХУЙХЙХУХЙ')
+                return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
             }
@@ -327,7 +328,7 @@ export const addOrDeleteFavorites = createAsyncThunk('addOrDeleteFavorites' ,
                 data: {status: action, codeid_client: userId, codeid_apartment: apartamentId}
             })
             if (response.status >= 200 && response.status < 300) {
-                dispatch(getApartments({status: 1, codeid_client: userId}))
+                dispatch(getApartments({status: 0, codeid_client: userId}))
                 return response?.data;
             } else {
                 throw Error(`Error: ${response.status}`);
@@ -348,10 +349,13 @@ export const checkUserVerify = createAsyncThunk('checkUserVerify',
                 data: {codeid: data.codeid}
             })
 
-            console.log(response?.data, 'status')
             if (response.status >= 200 && response.status < 300) {
-                const {status, codeid, fio, phone, email} = response?.data
+
+                console.log(response?.data, 'response?.data')
+
+                const {status, codeid, fio, phone, email, comment} = response?.data
                 if(status == 0) {
+                    dispatch(changeRejectComment(comment))
                     await AsyncStorage.setItem("rejectRegistration", 'true');
                     await AsyncStorage.setItem("verificated", 'false');
                 }else if (status == 1) {
@@ -362,6 +366,7 @@ export const checkUserVerify = createAsyncThunk('checkUserVerify',
                     await AsyncStorage.setItem('email', email)
                 }else if (status ==2) {
                     await AsyncStorage.setItem("verificated", 'false');
+                    await AsyncStorage.setItem("rejectRegistration", 'false');
                 }
                 await getLocalDataUser({ changeLocalData, dispatch });
                 return response?.data;
@@ -625,7 +630,7 @@ export const getMyBookingHistory = createAsyncThunk('getMyBookingHistory', async
             method: 'POST',
             url: `${API}/get_history`,
            // data: {codeid_user: codeid}
-            data: {codeid_user: 1}
+            data: {codeid_user: codeid}
         })
         console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
@@ -767,7 +772,9 @@ const requestSlice = createSlice({
                     photos: [{pathUrl: ''}],
                     othersHere: [],
                     rules: [],
-                    floor: "88",                                                     //этаж
+                    floor: "88",
+                    date_from: "",
+                    date_to: "",
                     num_rooms: "88",                                                 //количество комнат
                     num_bathroom: "88",                                              //количество ванныч
                     num_guests: "88",                                                //количество спальных мест

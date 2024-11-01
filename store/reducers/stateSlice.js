@@ -31,6 +31,7 @@ const initialState = {
         endDate: null,
         displayedDate: null,
     },
+    rejectComment: "",
     disabledDates: [],
     selectedItems:[],
     selectedRooms:[],
@@ -271,6 +272,14 @@ const stateSlice = createSlice({
             state.paymentStatus = action.payload
         },
 
+        changeRejectComment: (state, action) => {
+            state.rejectComment = action.payload
+        },
+
+        clearRejectComment: (state, action) => {
+            state.rejectComment = ''
+        }
+
     }
 });
 
@@ -303,7 +312,9 @@ export const {
     clearPaymentStatusData,
     changePaymentStatus,
     changeExtendBookingData,
-    clearExtendBookingData
+    clearExtendBookingData,
+    changeRejectComment,
+    clearRejectComment
 } = stateSlice.actions;
 
 export default stateSlice.reducer;

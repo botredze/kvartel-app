@@ -11,8 +11,8 @@ export const styles  = StyleSheet.create({
 
     selectDateContainer: {
         paddingVertical: 20,
-        height: 80,
         alignItems: "center",
+        marginBottom: 10,
     },
 
     contentContainer: {
@@ -138,7 +138,6 @@ export const styles  = StyleSheet.create({
         paddingVertical: 10,
         gap: 7,
         justifyContent: "center",
-        marginBottom: 15,
     },
     selectedDateText: {
         fontSize: 16,

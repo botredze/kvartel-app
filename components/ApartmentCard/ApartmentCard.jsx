@@ -59,12 +59,12 @@ export default function ApartmentCard({apartment, detailsRef}) {
                 </View>
 
                 <View style={styles.favoriteHeart}>
-                    {!apartment?.favourite ? (
-                        <TouchableOpacity onPress={() => {handlePressFavirites(1)}}>
+                    {apartment &&  apartment?.favourite  == 'true' ? (
+                        <TouchableOpacity onPress={() => {handlePressFavirites(2)}}>
                             <AntDesign name="heart" size={25} color="#FF5244" />
                         </TouchableOpacity>
                     ): (
-                        <TouchableOpacity onPress={() => {handlePressFavirites(2)}}>
+                        <TouchableOpacity onPress={() => {handlePressFavirites(1)}}>
                             <AntDesign name="hearto" size={25} color="white" />
                         </TouchableOpacity>
                     )}

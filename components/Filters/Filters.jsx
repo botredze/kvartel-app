@@ -9,19 +9,22 @@ import ConvenienceItem from "../ConvenienceItem/ConvenienceItem";
 import {changeFilters, changeSelectedItems, changeSelectedRooms} from "../../store/reducers/stateSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {apartamentFilters} from "../../store/reducers/requestSlice";
+import Calendar from "../Calendar/Calendar";
 
 export default function Filters(props) {
-    const {filterRef, setIsOpenFilters, selectedDatesFilters, filtered} = props
+    const {filterRef, filtered} = props
 
     const {selectedItems, selectedRooms, filters} = useSelector((state) => state.stateSlice)
     const {filtredApartaments} = useSelector((state) => state.requestSlice)
     const snapPoints = useMemo(() => ['96%'], []);
+    const [isOpenFilters, setIsOpenFilters] = useState(false);
 
     const [countGuest, setCountGuest] = useState(0);
     const [countBeds, setCountBeds] = useState(0);
     const [countTualete, setCountTualete] = useState(0);
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(14069);
+    const [selectedDates, setSelectedDates] = useState({ start: null, end: null });
 
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -29,30 +32,49 @@ export default function Filters(props) {
     const [activeTomorrow, setActiveTomorrow] = useState(false);
     const [activeDate, setActiveDate] = useState(false);
     const [activeBronType, setActiveBronType] = useState('all');
+    const [debounceTimeout, setDebounceTimeout] = useState(null);
 
     const dispatch = useDispatch()
 
-    const saveFilters = () => {
-        const localFilters = {
-            status: 1,
-            date_from: selectedDatesFilters.startDate || 0,
-            date_to: selectedDatesFilters.endDate || 0,
-            roomsCount: selectedRooms || [],
-            convensions: selectedItems?.map(id => ({codeid: id})) || [],
-            bookingType: activeBronType === 'all' ? 1 : (activeBronType === 'contactless' ? 2 : 3) || 0,
-            priceMin: minPrice || 0,
-            priceMax: maxPrice || 0,
-            max_guest: countGuest || 0,
-            num_bathroom: countTualete || 0,
-            num_guests: countBeds || 0
-        };
-        //dispatch(changeFilters(localFilters));
+    const saveFilters = (localFilters) => {
+        dispatch(changeFilters(localFilters));
+    };
 
-        dispatch(apartamentFilters({filters}))
+    const applyDebouncedFilters = (localFilters) => {
+        if (debounceTimeout) {
+            clearTimeout(debounceTimeout);
+        }
+
+        const newTimeout = setTimeout(() => {
+            dispatch(apartamentFilters({ ...localFilters }));
+        }, 300);
+
+        setDebounceTimeout(newTimeout);
     };
 
     useEffect(() => {
-        saveFilters();
+        const localFilters = {
+            status: 1,
+            date_from: selectedDates.start || 0,
+            date_to: selectedDates.end || 0,
+            roomsCounts: selectedRooms || [],
+            convensions: selectedItems?.map(id => ({ codeid: id })) || [],
+            bookingType: activeBronType === 'all' ? 0 : (activeBronType === 'contactless' ? 2 : 3) || 0,
+            priceMin: minPrice || 20,
+            priceMax: maxPrice || 0,
+            floor: countGuest || 0,
+            num_bathroom: countTualete || 0,
+            num_guests: countBeds || 0
+        };
+
+        saveFilters(localFilters);
+        applyDebouncedFilters(localFilters);
+
+        return () => {
+            if (debounceTimeout) {
+                clearTimeout(debounceTimeout);
+            }
+        };
     }, [
         countGuest,
         countBeds,
@@ -65,7 +87,7 @@ export default function Filters(props) {
         activeTomorrow,
         activeDate,
         activeBronType,
-        selectedDatesFilters
+        selectedDates
     ]);
 
     const handleIncrement = (setter, value) => {
@@ -108,6 +130,10 @@ export default function Filters(props) {
         setActiveNow(false);
         setActiveDate(true);
         setIsOpenFilters(true)
+    };
+
+    const handleDateSelect = (dates) => {
+        setSelectedDates(dates);
     };
 
     const handleRoomPress = (room) => {
@@ -165,7 +191,7 @@ export default function Filters(props) {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.section}>
+                <View style={{...styles.section, marginBottom: 0}}>
                     <Text style={styles.subtitle}>КВАРТИРЫ ДОСТУПНЫЕ</Text>
                     <View style={styles.row}>
                         <TouchableOpacity
@@ -189,16 +215,9 @@ export default function Filters(props) {
                     </View>
                 </View>
 
-                {selectedDatesFilters?.startDate && (
-                    <BottomSheetView style={styles.selectedDatesContainer}>
-                        <Text style={styles.selectedDateText}>
-                            Дата начала: {selectedDatesFilters.startDate.format('DD.MM.YYYY')}
-                        </Text>
-                        {selectedDatesFilters?.endDate && (
-                            <Text style={styles.selectedDateText}>
-                                Дата окончания: {selectedDatesFilters?.endDate?.format('DD.MM.YYYY')}
-                            </Text>
-                        )}
+                {isOpenFilters && (
+                    <BottomSheetView style={styles.selectDateContainer}>
+                        <Calendar onDateSelect={handleDateSelect} />
                     </BottomSheetView>
                 )}
 

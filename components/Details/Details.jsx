@@ -31,22 +31,6 @@ export default function Details({detailsRef, booking}) {
     const [isRulesExpanded, setIsRulesExpanded] = useState(false);
     const { data } = useSelector((state) => state.saveDataSlice)
 
-    function handlePressFavirites(action) {
-        switch (action) {
-            case 1:
-                //добавление
-                dispatch(addOrDeleteFavorites({action: 0, userId: data.userId, apartamentId: apartment.codeid}))
-                console.log({action: 0, userId: data.userId, apartamentId: apartment.codeid})
-                break;
-            case 2:
-                //удаление
-                dispatch(addOrDeleteFavorites({action: 1, userId: data.userId, apartamentId: apartment.codeid}))
-                console.log({action: 1, userId: data.userId, apartamentId: apartment.codeid})
-                break;
-            default:
-                console.log("Action Not FOUND");
-        }
-    }
 
     const toggleConvenience = () => {
         if (isConvenienceExpanded) {
@@ -70,6 +54,24 @@ export default function Details({detailsRef, booking}) {
 
     const { apartmentDetail, bottomSheetPreloader} = useSelector((state) => state.requestSlice);
 
+
+    function handlePressFavirites(action) {
+        console.log(action, 'action')
+        switch (action) {
+            case 1:
+                //добавление
+                dispatch(addOrDeleteFavorites({action: 0, userId: data.userId, apartamentId: apartmentDetail.codeid}))
+                console.log({action: 0, userId: data.userId, apartamentId: apartmentDetail.codeid})
+                break;
+            case 2:
+                //удаление
+                dispatch(addOrDeleteFavorites({action: 1, userId: data.userId, apartamentId: apartmentDetail.codeid}))
+                console.log({action: 1, userId: data.userId, apartamentId: apartmentDetail.codeid})
+                break;
+            default:
+                console.log("Action Not FOUND");
+        }
+    }
     const selectedConvenienceIds = apartmentDetail?.conversions.map(item => item.codeid);
 
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
@@ -145,12 +147,12 @@ export default function Details({detailsRef, booking}) {
                     </Swiper>
 
                     <View style={styles.favoriteHeart}>
-                        {apartmentDetail.favourite ? (
-                            <TouchableOpacity onPress={() => {handlePressFavirites(1)}}>
+                        {apartmentDetail && apartmentDetail?.favourite == 'true' ? (
+                            <TouchableOpacity onPress={() => {handlePressFavirites(2)}}>
                                 <AntDesign name="heart" size={25} color="#FF5244" />
                             </TouchableOpacity>
                         ): (
-                            <TouchableOpacity onPress={() => {handlePressFavirites(2)}}>
+                            <TouchableOpacity onPress={() => {handlePressFavirites(1)}}>
                                 <AntDesign name="hearto" size={25} color="white" />
                             </TouchableOpacity>
                         )}
