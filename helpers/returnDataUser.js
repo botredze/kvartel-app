@@ -28,5 +28,6 @@ export const returnDataUser = async () => {
 }
 export const getLocalDataUser = async ({ changeLocalData, dispatch }) => {
     const data = await returnDataUser();
+    console.log(data, 'data')
     dispatch(changeLocalData(data));
 };

@@ -10,6 +10,8 @@ import {changeFilters, changeSelectedItems, changeSelectedRooms} from "../../sto
 import {useDispatch, useSelector} from "react-redux";
 import {apartamentFilters} from "../../store/reducers/requestSlice";
 import Calendar from "../Calendar/Calendar";
+import dayjs from 'dayjs';
+
 
 export default function Filters(props) {
     const {filterRef, filtered} = props
@@ -114,16 +116,24 @@ export default function Filters(props) {
         setMaxPrice(newMaxPrice);
     };
 
+
     const handleNowPress = () => {
         setActiveNow(true);
         setActiveTomorrow(false);
         setActiveDate(false);
+
+        setSelectedDates({ start: dayjs().startOf('day'), end: dayjs().endOf('day') });
     };
 
     const handleTomorrowPress = () => {
         setActiveNow(false);
         setActiveTomorrow(true);
         setActiveDate(false);
+
+        setSelectedDates({
+            start: dayjs().add(1, 'day').startOf('day'),
+            end: dayjs().add(1, 'day').endOf('day')
+        });
     };
 
     const handleSelectDatePress = () => {
@@ -167,6 +177,19 @@ export default function Filters(props) {
         setActiveBronType('all');
     };
 
+
+    const resetFilters = () => {
+        setCountGuest(0);
+        setCountBeds(0);
+        setCountTualete(0);
+        setMinPrice(0);
+        setMaxPrice(14069);
+        setActiveNow(false);
+        setActiveTomorrow(false);
+        setActiveDate(false);
+        setActiveBronType('all');
+    };
+
     const openFileredData = useCallback((index) => {
         filtered.current?.snapToIndex(index);
     }, []);
@@ -186,6 +209,11 @@ export default function Filters(props) {
 
                 <View style={styles.sectionTitle}>
                     <Text style={styles.title}>Фильтры</Text>
+
+                    <TouchableOpacity onPress={resetFilters} style={styles.resetBtn}>
+                        <Text style={styles.resetTitle}>Сбросить фильтры</Text>
+                    </TouchableOpacity>
+
                     <TouchableOpacity onPress={toggleFilters} style={styles.closeButton}>
                         <Ionicons name="close" size={24} color="white"/>
                     </TouchableOpacity>
@@ -433,10 +461,15 @@ export default function Filters(props) {
                 </Modal>
             </BottomSheetScrollView>
 
-            {filtredApartaments && filtredApartaments.length > 0 &&
+            {filtredApartaments && filtredApartaments.length > 0 ? (
                 <TouchableOpacity style={styles.showResultsButton} onPress={() => {openFileredData(0)}}>
                     <Text style={styles.showResultsButtonText}>Показать ({filtredApartaments.length}) предложений</Text>
                 </TouchableOpacity>
+            ) : (
+                <TouchableOpacity style={styles.showResultsButton}>
+                    <Text style={styles.showResultsButtonText}>Нет предложений</Text>
+                </TouchableOpacity>
+            )
             }
         </BottomSheet>
 

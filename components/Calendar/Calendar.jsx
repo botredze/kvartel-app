@@ -17,10 +17,16 @@ export default function Calendar({ onDateSelect }) {
 
     const { apartmentDetail} = useSelector((state) => state.requestSlice);
 
-    const inactiveRanges = apartmentDetail?.date_from.split(', ').map((fromDate, index) => ({
-        from: dayjs(fromDate.trim()),
-        to: dayjs(apartmentDetail?.date_to.split(', ')[index].trim()),
-    }));
+    const inactiveRanges = apartmentDetail?.date_from && apartmentDetail?.date_to
+        ? apartmentDetail.date_from.split(', ').map((fromDate, index) => ({
+            from: dayjs(fromDate.trim(), "YYYY-MM-DD"),
+            to: dayjs(apartmentDetail.date_to.split(', ')[index].trim(), "YYYY-MM-DD"),
+        }))
+        : [];
+
+
+    console.log(inactiveRanges);
+
 
     function generateDates() {
         const today = dayjs();
@@ -54,6 +60,8 @@ export default function Calendar({ onDateSelect }) {
             onDateSelect(newDates);
         }
     };
+
+
     const hasInactiveDateBetween = (start, end) => {
         let date = start.add(1, 'day');
         while (date.isBefore(end)) {
@@ -66,12 +74,14 @@ export default function Calendar({ onDateSelect }) {
     };
 
     const isDateInactive = (date) => {
+        if (inactiveRanges.length === 0) return false;
         return inactiveRanges.some(range =>
             date.isBetween(range.from, range.to, null, '[]') ||
             date.isSame(range.from, 'day') ||
             date.isSame(range.to, 'day')
         );
     };
+
 
     const isDateSelected = (date) => {
         if (!selectedDates.start) return false;

@@ -15,16 +15,16 @@ export default function Creeting() {
         navigation.navigate('Register')
     }
 
-    const {expoPushToken, notification} = usePushNotifications()
-
-    useEffect(() => {
-        dispatch(loginByToken({navigation, expoPushToken}))
-    }, [expoPushToken])
-
-
-    function handleSwitchRegister() {
-        navigation.navigate('HomePage')
-    }
+    // const {expoPushToken, notification} = usePushNotifications()
+    //
+    // useEffect(() => {
+    //     dispatch(loginByToken({navigation, expoPushToken}))
+    // }, [expoPushToken])
+    //
+    //
+    // function handleSwitchRegister() {
+    //     navigation.navigate('HomePage')
+    // }
 
     return (
         <SafeAreaView style={styles.container}>

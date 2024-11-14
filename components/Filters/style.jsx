@@ -23,10 +23,12 @@ export const styles = StyleSheet.create({
 
     sectionTitle: {
         marginBottom: 16,
+        paddingHorizontal: 10,
         display: "flex",
         flexDirection: 'row',
         justifyContent: "space-between",
     },
+
     closeButton: {
         width: 35,
         height: 35,
@@ -56,6 +58,12 @@ export const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: '600',
+    },
+
+    resetTitle: {
+        fontSize: 17,
+        fontWeight: '700',
+        color: '#7c7b7b'
     },
     subtitle: {
         fontSize: 16,
@@ -324,7 +332,7 @@ export const styles = StyleSheet.create({
         left: 0,
         right: 0,
         backgroundColor: colors.mainPurple,
-        height: 60,
+        height: 65,
         alignItems: "center",
         justifyContent: "center"
     },
@@ -332,6 +340,11 @@ export const styles = StyleSheet.create({
         color: colors.mainWhite,
         fontSize: 17,
         fontWeight: '600'
+    },
+
+    resetBtn: {
+        alignItems: "center",
+        justifyContent: "center"
     }
 
 });

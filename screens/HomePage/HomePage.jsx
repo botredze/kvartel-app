@@ -350,7 +350,7 @@ export default function HomePage() {
                     <View style={styles.modalContainer}>
                         <Text style={styles.modalTextTitle}>Подтверждение действия</Text>
                         {bookingData.date_from && (
-                         <Text style={styles.modalText}>{`Вы действительно хотите забронировать апартаменты: ${bookingData.name} с ${bookingData.date_from.format('DD.MM.YYYY')} на ${bookingData.days_amount} дня ? \n\nСумма к оплате: ${bookingData.summ}`}</Text>)}
+                         <Text style={styles.modalText}>{`Вы действительно хотите забронировать апартаменты: ${bookingData.name} с ${bookingData.date_from.format('DD.MM.YYYY')} на ${bookingData.days_amount} суток ? \n\nСумма к оплате: ${bookingData.summ}`}</Text>)}
                         <TouchableOpacity style={styles.closeButtonModal} onPress={handleActivateBooking}>
                             <Text style={styles.closeButtonText}>Оплатить</Text>
                         </TouchableOpacity>

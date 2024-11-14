@@ -37,12 +37,13 @@ export default function Booking({booking, setIsOpen}) {
     }
 
     const numberOfDays = selectedDates?.end && selectedDates?.start
-        ? selectedDates.end.diff(selectedDates.start, 'days')
+        ? Math.max(selectedDates.end.diff(selectedDates.start, 'days'), 1) // Ensure at least 1 day
         : null;
 
     const totalAmount = numberOfDays !== null
         ? numberOfDays * (apartmentDetail?.price || 0)
         : apartmentDetail?.price || 0;
+
 
     const shadowBlock = useCallback(
         (props) => (
@@ -142,9 +143,10 @@ export default function Booking({booking, setIsOpen}) {
                 >
                     <Text style={{fontSize: 17, fontWeight: '500', color: '#fff'}}>
                         {numberOfDays !== null
-                            ? `Внести оплату ${numberOfDays} дня: ${totalAmount} сом`
+                            ? `Внести оплату за ${numberOfDays === 1 ? 'сутки' : `${numberOfDays} суток`}: ${totalAmount} сом`
                             : `Внести оплату: ${totalAmount} сом`}
                     </Text>
+
                 </TouchableOpacity>
 
             </BottomSheetView>

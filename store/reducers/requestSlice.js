@@ -533,6 +533,12 @@ export const logoutUser = createAsyncThunk('logoutUser', async function(props, {
         })
 
         if (response.status >= 200 && response.status < 300) {
+            await AsyncStorage.setItem("userId", '');
+            await AsyncStorage.setItem("fio", '');
+            await AsyncStorage.setItem('phone', '')
+            await AsyncStorage.setItem('email', '')
+            await AsyncStorage.setItem("verificated", 'false');
+            await AsyncStorage.setItem("rejectRegistration", "false");
             dispatch(clearLocalData())
         }else {
             throw Error(`Error: ${response.status}`);
