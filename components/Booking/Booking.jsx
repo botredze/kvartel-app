@@ -60,7 +60,7 @@ export default function Booking({booking, setIsOpen}) {
     const handleStartPayment = () => {
         dispatch(changeBookingModal(true))
         dispatch(changeBookingData({
-            date_from: selectedDates.end,
+            date_from: selectedDates.start,
             days_amount:numberOfDays,
             codeid_client: data.userId,
             codeid_apartment: apartmentDetail.codeid,

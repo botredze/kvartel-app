@@ -1,6 +1,6 @@
 import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
 import React, {useCallback, useMemo, useState} from "react";
-import {View, Text, TouchableOpacity, Image} from "react-native";
+import {View, Text, TouchableOpacity, Image, Alert} from "react-native";
 import {styles} from './styles'
 import {
     AntDesign,
@@ -54,7 +54,6 @@ export default function Details({detailsRef, booking}) {
 
     const { apartmentDetail, bottomSheetPreloader} = useSelector((state) => state.requestSlice);
 
-
     function handlePressFavirites(action) {
         console.log(action, 'action')
         switch (action) {
@@ -87,22 +86,23 @@ export default function Details({detailsRef, booking}) {
 
     const formatDateToDDMMYYYY = (date) => {
         const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+        const month = String(date.getMonth() + 1).padStart(2, '0');
         const year = date.getFullYear();
         return `${day}.${month}.${year}`;
     };
 
     const getClosestAvailableDate = (dateToString) => {
         const dates = dateToString.split(',').map(date => new Date(date.trim()));
-
         const futureDates = dates.filter(date => date > new Date()).sort((a, b) => a - b);
-
         return futureDates.length > 0 ? futureDates[0] : null;
     };
 
+    console.log(apartmentDetail, 'apartmentDetail')
     const closestAvailableDate = apartmentDetail?.date_to ? getClosestAvailableDate(apartmentDetail.date_to) : null;
+    const formattedClosestDate = closestAvailableDate
+        ? formatDateToDDMMYYYY(closestAvailableDate)
+        : formatDateToDDMMYYYY(new Date());
 
-    const formattedClosestDate = closestAvailableDate ? formatDateToDDMMYYYY(closestAvailableDate) : null;
 
     return (
         <BottomSheet
@@ -171,15 +171,23 @@ export default function Details({detailsRef, booking}) {
                 <View style={styles.infoContainer}>
                     <View style={styles.arendType}>
                         <Text style={styles.buttonInnerText}>{apartmentDetail?.bookingType == 0 ? "Классическая аренда" : "Бесконтактная аренда"}</Text>
-                        <TouchableOpacity onPress={()=>{}}>
-                            <Feather name="info" size={24} color='#7250FF'/>
+                        <TouchableOpacity
+                            onPress={() => {
+                                if (apartmentDetail?.bookingType == 0) {
+                                    Alert.alert("Информация", "При заселении требуется присутствие менеджера для передачи ключей от квартиры");
+                                } else {
+                                    Alert.alert("Информация", "Процесс заселения автоматизирован: вы получите список инструкций по заселению, так же возможность открытия и закрытия дверей через предоставленные специализированные коды");
+                                }
+                            }}
+                        >
+                            <Feather name="info" size={24} color='#7250FF' />
                         </TouchableOpacity>
                     </View>
 
                     <View style={styles.rowContainer}>
                         <View style={styles.functuionsContainer}>
                             <Ionicons name="people-outline" size={22} color={colors.mainGrey} />
-                            <Text style={styles.buttonInnerText}>{apartmentDetail?.max_guest.length <= 0 ? 0 : apartmentDetail?.max_guest } гостей</Text>
+                            <Text style={styles.buttonInnerText}>{apartmentDetail?.max_guest <= 0 ? 0 : apartmentDetail?.max_guest } гостей</Text>
                         </View>
                         <View style={styles.functuionsContainer}>
                             <Ionicons name="bed-outline" size={22} color={colors.mainGrey} />

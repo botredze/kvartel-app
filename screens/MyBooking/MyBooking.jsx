@@ -51,6 +51,8 @@ export default function MyBooking({route}) {
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
+        date.setHours(date.getHours() - 6);
+
         const day = ("0" + date.getDate()).slice(-2);
         const month = ("0" + (date.getMonth() + 1)).slice(-2);
         const year = date.getFullYear();
@@ -76,7 +78,6 @@ export default function MyBooking({route}) {
 
     return (
         <ScrollView style={styles.container}>
-            {/* Conditionally render the Loader */}
             {preloader ? (
                 <Loader />
             ) : (
@@ -89,7 +90,6 @@ export default function MyBooking({route}) {
                 </View>
             )}
 
-            {/* Main content (only if preloader is false) */}
             {!preloader && (
                 <View style={styles.mainContentContainer}>
                     <View>

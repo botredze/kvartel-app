@@ -17,16 +17,13 @@ export default function Calendar({ onDateSelect }) {
 
     const { apartmentDetail} = useSelector((state) => state.requestSlice);
 
-    const inactiveRanges = apartmentDetail?.date_from && apartmentDetail?.date_to
-        ? apartmentDetail.date_from.split(', ').map((fromDate, index) => ({
-            from: dayjs(fromDate.trim(), "YYYY-MM-DD"),
-            to: dayjs(apartmentDetail.date_to.split(', ')[index].trim(), "YYYY-MM-DD"),
-        }))
-        : [];
-
-
-    console.log(inactiveRanges);
-
+    // const inactiveRanges = apartmentDetail?.date_from && apartmentDetail?.date_to
+    //     ? apartmentDetail.date_from.split(', ').map((fromDate, index) => ({
+    //         from: dayjs(fromDate.trim(), "YYYY-MM-DD"),
+    //         to: dayjs(apartmentDetail.date_to.split(', ')[index].trim(), "YYYY-MM-DD"),
+    //     }))
+    //     : [];
+    //
 
     function generateDates() {
         const today = dayjs();
@@ -73,15 +70,30 @@ export default function Calendar({ onDateSelect }) {
         return false;
     };
 
+    // const isDateInactive = (date) => {
+    //     if (inactiveRanges.length === 0) return false;
+    //     return inactiveRanges.some(range =>
+    //         date.isBetween(range.from, range.to, null, '[]') ||
+    //         date.isSame(range.from, 'day') ||
+    //         date.isSame(range.to, 'day')
+    //     );
+    // };
+
+    const inactiveRanges = apartmentDetail?.date_from && apartmentDetail?.date_to
+        ? apartmentDetail.date_from.split(', ').map((fromDate, index) => {
+            const from = dayjs(fromDate.trim(), "YYYY-MM-DD HH:mm:ss");
+            const to = dayjs(apartmentDetail.date_to.split(', ')[index].trim(), "YYYY-MM-DD HH:mm:ss");
+
+            return { from, to };
+        })
+        : [];
+
     const isDateInactive = (date) => {
         if (inactiveRanges.length === 0) return false;
         return inactiveRanges.some(range =>
-            date.isBetween(range.from, range.to, null, '[]') ||
-            date.isSame(range.from, 'day') ||
-            date.isSame(range.to, 'day')
+            date.isBetween(range.from, range.to, null, '[)')
         );
     };
-
 
     const isDateSelected = (date) => {
         if (!selectedDates.start) return false;
