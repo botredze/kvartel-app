@@ -7,7 +7,7 @@ import * as Location from 'expo-location';
 import MapViewDirections from 'react-native-maps-directions';
 
 export default function MapForBooking({ route, navigation}) {
-    const { destinationCoords } = route.params;
+    const { destinationCoords, item } = route.params;
 
     const dispatch = useDispatch();
     const [region, setRegion] = useState({
@@ -44,7 +44,7 @@ export default function MapForBooking({ route, navigation}) {
     };
 
     const handleBack = () => {
-        navigation.navigate('MyBooking',)
+        navigation.navigate('MyBooking', {item})
     }
 
     return (

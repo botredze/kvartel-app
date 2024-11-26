@@ -5,7 +5,8 @@ import {
     changeAwaitedCode, changeBookingData, changeBookingModal,
     changeFavorites, changePaymentStatus, changePaymentStatusData,
     changeRegistrationModalVisible, changeRejectComment,
-    changeShowSuccessBookingModal, clearBookingData, clearExtendBookingData, clearFavorites, clearPaymentStatusData
+    changeShowSuccessBookingModal, clearBookingData, clearExtendBookingData, clearFavorites, clearPaymentStatusData,
+    clearSelectedBookingData
 } from "./stateSlice";
 import {changeLocalData, clearLocalData} from "./saveDataSlice";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -23,6 +24,10 @@ const initialState  = {
             apartament_name: '',
 
         }
+    ],
+
+    myBookingList: [
+        
     ],
 
     favoritesList: [
@@ -66,16 +71,17 @@ const initialState  = {
         address: ''
     },
     paymentFinished: false,
-    activeBooking: {
-        date_to: '',
-        date_from: "",
-        days: '',
-        address: '',
-        fio: '',
-        apartament_name: '',
-        code_lock: "",
-        status: '',
-    },
+    // {
+    //     date_to: '',
+    //     date_from: "",
+    //     days: '',
+    //     address: '',
+    //     fio: '',
+    //     apartament_name: '',
+    //     code_lock: "",
+    //     status: '',
+    // }
+    activeBooking: [],
     bookHistory: [
         {
             dolgota: '',
@@ -639,7 +645,6 @@ export const getMyBookingHistory = createAsyncThunk('getMyBookingHistory', async
 export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  function(props, {rejectWithValue, dispatch}) {
     try {
         const { codeid } = props
-        console.log(codeid, 'codeid')
         const response = await axios({
             method: 'POST',
             url: `${API}/booking_info`,
@@ -656,6 +661,44 @@ export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  
         return  rejectWithValue(error.message)
     }
 })
+
+
+export const finishBooking = createAsyncThunk(
+    'finishBooking',
+    async function (props, { rejectWithValue, dispatch }) {
+      try {
+        const { codeid_client, codeid_apartment } = props;
+  
+        const response = await axios({
+          method: 'POST',
+          url: `${API}/end_booking`,
+          data: { codeid_apartment, codeid_client },
+        });
+  
+        if (response.status >= 200 && response.status < 300) {
+          Alert.alert(
+            "Успешно",
+            "Аренда успешно завершена!",
+            [
+              {
+                text: "OK",
+                onPress: () => {
+                  dispatch(getMyActiveBooking({ codeid: codeid_client }));
+                  dispatch(clearSelectedBookingData());
+                },
+              },
+            ],
+            { cancelable: false }
+          );
+        } else {
+          throw Error(`Error: ${response.status}`);
+        }
+      } catch (error) {
+        return rejectWithValue(error.message);
+      }
+    }
+  );
+  
 
 export const infoNextBooking = createAsyncThunk(
     'infoNextBooking', async function(props, {rejectWithValue, dispatch}) {
@@ -900,6 +943,7 @@ const requestSlice = createSlice({
         builder.addCase(applyExtendPayment.pending, (state, action) => {
             state.preloader = true;
         });
+
     },
 });
 

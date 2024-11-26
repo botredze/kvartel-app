@@ -97,7 +97,6 @@ export default function Details({detailsRef, booking}) {
         return futureDates.length > 0 ? futureDates[0] : null;
     };
 
-    console.log(apartmentDetail, 'apartmentDetail')
     const closestAvailableDate = apartmentDetail?.date_to ? getClosestAvailableDate(apartmentDetail.date_to) : null;
     const formattedClosestDate = closestAvailableDate
         ? formatDateToDDMMYYYY(closestAvailableDate)

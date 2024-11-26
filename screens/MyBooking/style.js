@@ -61,7 +61,26 @@ export const styles = StyleSheet.create({
         justifyContent: "center",
         alignSelf: "center",
         borderRadius: 15,
-        marginBottom: 50,
+    },
+
+    goMapButton2: {
+        width: '90%',
+        height: 50,
+        backgroundColor: '#5127FF',
+        alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
+        borderRadius: 15,
+    },
+
+    finishLeaseButton: {
+        width: '50%',
+        height: 50,
+        backgroundColor: '#ff4e4a',
+        alignItems: "center",
+        justifyContent: "center",
+        alignSelf: "center",
+        borderRadius: 15,
     },
 
     goMapButtonText: {
@@ -69,10 +88,71 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600'
     },
+
     buttonGroups: {
         flexDirection: 'row',
         gap: 10,
         alignSelf: "center",
-        justifyContent: "center"
-    }
+        justifyContent: "center",
+    },
+
+    buttonGroupsContainer: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 15,
+        marginBottom: 50
+    },
+
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContainer: {
+        width: '90%',
+        padding: 20,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
+    },
+    modalText: {
+        fontSize: 16,
+        textAlign: 'center',
+        marginBottom: 15,
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    modalCancelButton: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: '#dcdcdc',
+        borderRadius: 5,
+        alignItems: 'center',
+        marginRight: 10,
+    },
+    modalConfirmButton: {
+        flex: 1,
+        padding: 10,
+        backgroundColor: '#ff4e4a',
+        borderRadius: 5,
+        alignItems: 'center',
+    },
+    modalCancelButtonText: {
+        color: '#333',
+        fontWeight: 'bold',
+    },
+    modalConfirmButtonText: {
+        color: 'white',
+        fontWeight: 'bold',
+    },
+    
 })

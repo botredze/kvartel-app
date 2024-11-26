@@ -18,7 +18,9 @@ export default function ExtendTheLease({extend, formatDate, handleBack}) {
     const [counts, setCounts] = useState(0);
     const [loading, setLoading] = useState(false); // Create loading state
 
-    const {activeBooking, apartmentDetail, preloader} = useSelector((state) => state.requestSlice);
+    const {apartmentDetail, preloader} = useSelector((state) => state.requestSlice);
+    const {selectedBooking: activeBooking} = useSelector((state) => state.stateSlice)
+
     const { paymentData } = useSelector((state) => state.stateSlice);
     const {data} = useSelector((state) => state.saveDataSlice);
 
@@ -40,6 +42,10 @@ export default function ExtendTheLease({extend, formatDate, handleBack}) {
                 pg_user_phone: data.phoneNumber,
                 pg_user_contact_email: data.email,
                 pg_user_id: data.userId
+                // pg_user_contact_email: 'botedze@gmail.com',
+                // pg_user_id: 5,
+                // pg_user_phone: "0504130622"
+
             }));
 
             return newCount;

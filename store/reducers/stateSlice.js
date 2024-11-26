@@ -94,7 +94,17 @@ const initialState = {
         pg_order_id: ''
     },
 
-    paymentStatus: false
+    paymentStatus: false,
+    selectedBooking: {
+            date_to: '',
+            date_from: "",
+            days: '',
+            address: '',
+            fio: '',
+            apartament_name: '',
+            code_lock: "",
+            status: '',
+        }
 };
 
 const stateSlice = createSlice({
@@ -278,12 +288,31 @@ const stateSlice = createSlice({
 
         clearRejectComment: (state, action) => {
             state.rejectComment = ''
+        },
+
+        changeSelectedBooking: (state, action) => {
+            state.selectedBooking = action.payload
+        },
+
+        clearSelectedBookingData: (state, action) => {
+            state.selectedBooking =  {
+                date_to: '',
+                date_from: "",
+                days: '',
+                address: '',
+                fio: '',
+                apartament_name: '',
+                code_lock: "",
+                status: '',
+            }
         }
 
     }
 });
 
 export const {
+    changeSelectedBooking,
+    clearSelectedBookingData,
     clearFavorites,
     changePhoneNumber,
     clearPhone,

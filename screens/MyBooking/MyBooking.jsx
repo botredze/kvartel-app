@@ -1,39 +1,24 @@
-import {ScrollView, Text, TouchableOpacity, View} from "react-native";
-import {styles} from './style';
-import {useNavigation} from "@react-navigation/native";
-import {Ionicons} from "@expo/vector-icons";
-import React, {useCallback, useEffect, useRef, useState} from "react";
-import {getApartamentDetails, getMyActiveBooking} from "../../store/reducers/requestSlice";
-import {useDispatch, useSelector} from "react-redux";
+import { ScrollView, Text, TouchableOpacity, View, Modal } from "react-native";
+import { styles } from './style';
+import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import ExtendTheLease from "../../components/ExtendTheLease/ExtendTheLease";
-import Loader from "../../components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { finishBooking, getApartamentDetails } from "../../store/reducers/requestSlice";
 
-export default function MyBooking({route}) {
-    const {paymentFinished} = route.params;
+export default function MyBooking({ route }) {
+    const { selectedBooking: item } = useSelector((state) => state.stateSlice);
+
+    const { paymentFinished } = route.params; // Получение переданного item
     const navigation = useNavigation();
     const dispatch = useDispatch();
-
-    const {data} = useSelector((state) => state.saveDataSlice);
-    const {activeBooking, preloader} = useSelector((state) => state.requestSlice); // Fetch preloader state
-
     const [showBottomSheet, setShowBottomSheet] = useState(false);
+    const [showModal, setShowModal] = useState(false); // Состояние модального окна
     const extend = useRef(null);
+    const {data} = useSelector((state) => state.saveDataSlice)
+    const { activeBooking } = useSelector((state) => state.requestSlice); // Здесь мы получаем актуальные данные о бронированиях
 
-    useEffect(() => {
-        if (activeBooking?.codeid_apartment) {
-            dispatch(getApartamentDetails(activeBooking.codeid_apartment));
-        }
-    }, [activeBooking]);
-
-    const handleBack = () => {
-        extend.current?.close();
-        navigation.navigate('HomePage');
-    };
-
-    const handleCloseBottomSheet = () => {
-        extend.current?.close();
-        setShowBottomSheet(false);
-    };
 
     useEffect(() => {
         if (paymentFinished) {
@@ -43,11 +28,20 @@ export default function MyBooking({route}) {
     }, [paymentFinished]);
 
     useEffect(() => {
-        if (data.userId) {
-            dispatch(getMyActiveBooking({codeid: data.codeid}));
+        if (item?.codeid_apartment) {
+            dispatch(getApartamentDetails(item.codeid_apartment));
         }
+    }, [item]);
+
+    const handleBack = () => {
         extend.current?.close();
-    }, [data]);
+        navigation.navigate('MyBookingList');
+    };
+
+    const handleCloseBottomSheet = () => {
+        extend.current?.close();
+        setShowBottomSheet(false);
+    };
 
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -67,6 +61,29 @@ export default function MyBooking({route}) {
         extend.current?.snapToIndex(index);
     }, []);
 
+    const handleFinish = () => {
+        setShowModal(true); 
+    };
+
+    const closeModal = () => {
+        setShowModal(false); 
+    };
+
+
+    const handleConfirmFinish = () => {
+        dispatch(finishBooking({codeid_client: data.userId, codeid_apartment: item.codeid_apartment, navigation}))
+        .then(() => {
+            if (activeBooking.length > 0) {
+              navigation.replace('MyBookingList');
+            } else {
+              navigation.replace('HomePage');
+            }
+          })
+
+        setShowModal(false);
+    }
+    
+    
     const handlePressViewOnMap = () => {
         navigation.navigate('MapForBooking', {
             destinationCoords: {
@@ -78,43 +95,38 @@ export default function MyBooking({route}) {
 
     return (
         <ScrollView style={styles.container}>
-            {preloader ? (
-                <Loader />
-            ) : (
-                <View style={styles.sidebarContainer}>
-                    <Text style={styles.sidebarTitle}>Моя активная бронь</Text>
+            <View style={styles.sidebarContainer}>
+                <Text style={styles.sidebarTitle}>Моя активная бронь</Text>
 
-                    <TouchableOpacity onPress={handleBack} style={styles.closeButton}>
-                        <Ionicons name="close" size={24} color="white"/>
-                    </TouchableOpacity>
+                <TouchableOpacity onPress={handleBack} style={styles.closeButton}>
+                    <Ionicons name="close" size={24} color="white" />
+                </TouchableOpacity>
+            </View>
+
+            <View style={styles.mainContentContainer}>
+                <View>
+                    <Text style={styles.titleText}>Название: {item?.apartament_name}</Text>
+                    <Text style={styles.titleText}>Адрес: {item?.address}</Text>
                 </View>
-            )}
 
-            {!preloader && (
-                <View style={styles.mainContentContainer}>
-                    <View>
-                        <Text style={styles.titleText}>Название: {activeBooking?.apartament_name}</Text>
-                        <Text style={styles.titleText}>Адрес: {activeBooking?.address}</Text>
-                    </View>
+                <View>
+                    <Text style={styles.titleText}>Дата начала: {item?.date_from ? formatDate(item.date_from) : ''}</Text>
+                    <Text style={styles.titleText}>Дата окончания: {item?.date_to ? formatDate(item.date_to) : ''}</Text>
+                </View>
 
-                    <View>
-                        <Text style={styles.titleText}>Дата начало: {activeBooking?.date_from ? formatDate(activeBooking.date_from) : ''}</Text>
-                        <Text style={styles.titleText}>Дата окончания: {activeBooking?.date_to ? formatDate(activeBooking.date_to) : ''}</Text>
-                    </View>
+                <View>
+                    <Text style={styles.titleText}>Оплачено: {item?.amount} сом</Text>
+                </View>
 
-                    <View>
-                        <Text style={styles.titleText}>Оплачено: {activeBooking?.amount} сом</Text>
-                    </View>
+                <View>
+                    <Text style={styles.titleText}>Код от замка:</Text>
+                    <Text style={styles.activeLookCode}>{item?.code_lock}#</Text>
+                </View>
 
-                    <View>
-                        <Text style={styles.titleText}>Код от замка: </Text>
-                        <Text style={styles.activeLookCode}>{activeBooking?.code_lock}#</Text>
-                    </View>
-
-                    <View style={{gap: 10}}>
-                        <Text style={styles.titleText}>Инструкция</Text>
-                        <Text style={styles.instrunctionText}>
-                            {`Инструкция по входу в квартиру через кодовый замок
+                <View style={{ gap: 10 }}>
+                    <Text style={styles.titleText}>Инструкция</Text>
+                    <Text style={styles.instrunctionText}>
+                    {`Инструкция по входу в квартиру через кодовый замок
 1. Получите код доступа После подтверждения бронирования, вы получите уникальный 6-значный код, который действует в течение всего срока вашего проживания. Этот код будет отправлен вам на электронную почту или в SMS-сообщении. Так же вы сможете его увидеть в приложении в разделе моя Активная бронь
 
 2. Прибытие в квартиру
@@ -135,9 +147,10 @@ export default function MyBooking({route}) {
 
 5. Доступ к квартире во время проживания
 Вы можете использовать тот же код для повторного входа в квартиру в течение всего срока аренды. Если у вас возникли проблемы с доступом, обратитесь в нашу службу поддержки.`}
-                        </Text>
-                    </View>
+                    </Text>
+                </View>
 
+                <View style={styles.buttonGroupsContainer}>
                     <View style={styles.buttonGroups}>
                         <TouchableOpacity
                             style={styles.goMapButton}
@@ -147,18 +160,64 @@ export default function MyBooking({route}) {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={styles.goMapButton}
+                            style={styles.finishLeaseButton}
+                            onPress={handleFinish} // Открыть модальное окно
+                        >
+                            <Text style={styles.goMapButtonText}>Завершить аренду</Text>
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.buttonGroups}>
+                        <TouchableOpacity
+                            style={styles.goMapButton2}
                             onPress={handlePressViewOnMap}
                         >
                             <Text style={styles.goMapButtonText}>Посмотреть на карте</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
-            )}
+            </View>
 
             {showBottomSheet && (
-                <ExtendTheLease extend={extend} formatDate={formatDate} handleBack={handleCloseBottomSheet}/>
+                <ExtendTheLease extend={extend} formatDate={formatDate} handleBack={handleCloseBottomSheet} />
             )}
+
+            <Modal
+                transparent={true}
+                visible={showModal}
+                animationType="slide"
+                onRequestClose={closeModal}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalTitle}>Подтверждение завершения аренды</Text>
+                        <Text style={styles.modalText}>
+                            Вы уверены, что хотите завершить аренду?
+                        </Text>
+
+                        <Text style={styles.modalText}>
+                        Это действие необратимо! Средства не будут возвращены.
+                        </Text>
+
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={styles.modalCancelButton}
+                                onPress={closeModal}
+                            >
+                                <Text style={styles.modalCancelButtonText}>Отмена</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={styles.modalConfirmButton}
+                                onPress={() => {
+                                    handleConfirmFinish(); 
+                                }}
+                            >
+                                <Text style={styles.modalConfirmButtonText}>Завершить</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
     );
 }

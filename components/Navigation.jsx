@@ -21,6 +21,7 @@ import { checkUserVerify, getApartments, getMyActiveBooking } from "../store/red
 import DevView from "../screens/DevView";
 import {getLocalDataUser} from "../helpers/returnDataUser";
 import {changeLocalData} from "../store/reducers/saveDataSlice";
+import MyBookingList from '../screens/MyBookingList/MyBookingList';
 
 const Stack = createNativeStackNavigator();
 
@@ -53,30 +54,33 @@ export const Navigation = ({ userData }) => {
             <Preloader />
             <Stack.Navigator
                // initialRouteName={checkLogin ? 'HomePage' : 'Creeting'}
-               // initialRouteName='DevView'
+               // initialRouteName='MyBookingList'
                 screenOptions={{ headerStyle: { backgroundColor: "#fff" } }}
             >
-                {!checkLogin ? <>
-                    <Stack.Screen name="Creeting" component={Creeting} options={{ headerShown: false }} />
+
+             {!checkLogin ? <>
+                     <Stack.Screen name="Creeting" component={Creeting} options={{ headerShown: false }} />
                     <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
                     <Stack.Screen name="OTP" component={OTPInputScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="ViewRegistrationDogovor" component={ViewRegistrationDogovor} options={{ headerShown: false }} />
+                     <Stack.Screen name="ViewRegistrationDogovor" component={ViewRegistrationDogovor} options={{ headerShown: false }} />
                     <Stack.Screen name="LoadPassportPhotos" component={LoadPassportPhotos} options={{ headerShown: false }} />
                     <Stack.Screen name="UserSettingScreen" component={UserSettingScreen} options={{ headerShown: false }} />
 
-                </> : <>
+                 </> : <>
                     <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }} />
-                    <Stack.Screen name="MapForBooking" component={MapForBooking} options={{ headerShown: false }} />
+                   <Stack.Screen name="MapForBooking" component={MapForBooking} options={{ headerShown: false }} />
                     <Stack.Screen name="BurgerMenu" component={BurgerMenu} options={{ headerShown: false }} />
                     <Stack.Screen name="PaymentMethods" component={PaymentMethods} options={{ headerShown: false }} />
-                    <Stack.Screen name="DocsView" component={DocsView} options={{ headerShown: false }} />
+                   <Stack.Screen name="DocsView" component={DocsView} options={{ headerShown: false }} />
                     <Stack.Screen name="AddCardWebView" component={AddCardWebView} options={{ headerShown: false }} />
+                    <Stack.Screen name="MyBookingList"  component={MyBookingList} options={{ headerShown: false }} />
                     <Stack.Screen name="MyBooking" component={MyBooking} options={{ headerShown: false }} />
                     <Stack.Screen name="DevView" component={DevView} options={{ headerShown: false }} />
-                </>}
-
+                 </>}
+                
             </Stack.Navigator>
             <StatusBar style="auto" backgroundColor="rgba(47, 71, 190, 0.287)" />
         </NavigationContainer>
     );
 };
+

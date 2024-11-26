@@ -182,7 +182,7 @@ export default function HomePage() {
     };
 
     const handlePressMyBooking = () => {
-        navigation.navigate('MyBooking', {paymentFinished:false })
+        navigation.navigate('MyBookingList')
     };
 
     return (
@@ -199,7 +199,7 @@ export default function HomePage() {
                     >
                         <FontAwesome6 name="grip-lines" size={28} color="#613DDC"/>
                     </TouchableOpacity>
-                    {activeBooking?.address?.length > 0  && (
+                    {activeBooking?.length > 0  && (
                     <TouchableOpacity
                         style={styles.burgerMenuButton}
                         onPress={() => {
