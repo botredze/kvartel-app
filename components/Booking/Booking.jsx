@@ -1,5 +1,5 @@
 import {Image, Text, TouchableOpacity, View} from "react-native";
-import BottomSheet, {BottomSheetBackdrop, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
+import BottomSheet, {BottomSheetBackdrop, BottomSheetView} from "@gorhom/bottom-sheet";
 import {styles} from './styles'
 import React, {useCallback, useMemo, useState} from "react";
 import {Ionicons} from "@expo/vector-icons";
@@ -8,11 +8,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {API} from "../../env";
 import {changeBookingData, changeBookingModal, changePaymentData} from "../../store/reducers/stateSlice";
 import Calendar from "../Calendar/Calendar";
+import { toggleBookingVisibility } from "../../store/reducers/visibilitySlice";
 
-export default function Booking({booking, setIsOpen}) {
+export default function Booking({booking}) {
     const snapPoints = useMemo(() => ['60%'], []);
-    const navigation = useNavigation();
-    const [activeDate, setActiveDate] = useState(false);
     const dispatch = useDispatch();
     const {data} = useSelector((state) => state.saveDataSlice)
     const [selectedDates, setSelectedDates] = useState({ start: null, end: null });
@@ -20,15 +19,10 @@ export default function Booking({booking, setIsOpen}) {
     const handleDateSelect = (dates) => {
         setSelectedDates(dates);
     };
-
-    const handleSelectDatePress = () => {
-        setIsOpen(true)
-        setActiveDate(true);
-    };
-
     const { apartmentDetail, bottomSheetPreloader, paymentFinished} = useSelector((state) => state.requestSlice);
 
     const closeBooking = () => {
+        dispatch(toggleBookingVisibility(false))
         booking.current?.close()
     };
 

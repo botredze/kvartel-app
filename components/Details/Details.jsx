@@ -20,6 +20,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {API} from "../../env";
 import Loader from "../Loader";
 import {addOrDeleteFavorites, clearApartmentDetail} from "../../store/reducers/requestSlice";
+import { toggleBookingVisibility, toggleDetailsVisibility } from "../../store/reducers/visibilitySlice";
 
 export default function Details({detailsRef, booking}) {
 
@@ -55,17 +56,14 @@ export default function Details({detailsRef, booking}) {
     const { apartmentDetail, bottomSheetPreloader} = useSelector((state) => state.requestSlice);
 
     function handlePressFavirites(action) {
-        console.log(action, 'action')
         switch (action) {
             case 1:
                 //добавление
                 dispatch(addOrDeleteFavorites({action: 0, userId: data.userId, apartamentId: apartmentDetail.codeid}))
-                console.log({action: 0, userId: data.userId, apartamentId: apartmentDetail.codeid})
                 break;
             case 2:
                 //удаление
                 dispatch(addOrDeleteFavorites({action: 1, userId: data.userId, apartamentId: apartmentDetail.codeid}))
-                console.log({action: 1, userId: data.userId, apartamentId: apartmentDetail.codeid})
                 break;
             default:
                 console.log("Action Not FOUND");
@@ -81,6 +79,7 @@ export default function Details({detailsRef, booking}) {
     }
 
     const handleClickBooking = useCallback((index) => {
+        dispatch(toggleBookingVisibility(true))
         booking.current?.snapToIndex(index);
     }, []);
 

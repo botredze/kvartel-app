@@ -6,6 +6,7 @@ import {AntDesign, FontAwesome5} from "@expo/vector-icons";
 import {API} from "../../env";
 import {useDispatch, useSelector} from "react-redux";
 import {addOrDeleteFavorites, getApartamentDetails} from "../../store/reducers/requestSlice";
+import { toggleDetailsVisibility } from "../../store/reducers/visibilitySlice";
 
 export default function ApartmentCard({apartment, detailsRef}) {
     const dispatch = useDispatch();
@@ -26,6 +27,7 @@ export default function ApartmentCard({apartment, detailsRef}) {
     }
 
     const handleSelectApartment = useCallback((index) => {
+        dispatch(toggleDetailsVisibility(true) )
         dispatch(getApartamentDetails(apartment.codeid))
         detailsRef.current?.snapToIndex(index);
     }, [dispatch, apartment.codeid, detailsRef]);

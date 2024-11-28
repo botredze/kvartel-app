@@ -26,7 +26,6 @@ export default function MyBookingList() {
   };
 
   const handleClickItem = (item) => {
-    console.log(item, 'handleClickItem');
     dispatch(changeSelectedBooking(item))
     navigation.navigate("MyBooking", { item, paymentFinished: false });
   };

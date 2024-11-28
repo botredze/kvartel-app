@@ -25,7 +25,6 @@ export default function LoadPassportPhotos() {
     const cameraRef = useRef(null);
     const { passportVerifyData, registrationModalVisible } = useSelector((state) => state.stateSlice);
     const { data } = useSelector((state) => state.saveDataSlice);
-    console.log(data)
 
     const handleModalClose = () => {
         dispatch(changeRegistrationModalVisible(false));

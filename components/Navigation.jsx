@@ -47,8 +47,11 @@ export const Navigation = ({ userData }) => {
         return () => clearInterval(interval);
     }, [data]);
 
+    console.log(data, 'data');
+    
     const checkLogin = !!data?.userId
-
+    console.log(checkLogin, 'checkLogin');
+    
     return (
         <NavigationContainer>
             <Preloader />
@@ -62,12 +65,11 @@ export const Navigation = ({ userData }) => {
                      <Stack.Screen name="Creeting" component={Creeting} options={{ headerShown: false }} />
                     <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
                     <Stack.Screen name="OTP" component={OTPInputScreen} options={{ headerShown: false }} />
-                     <Stack.Screen name="ViewRegistrationDogovor" component={ViewRegistrationDogovor} options={{ headerShown: false }} />
-                    <Stack.Screen name="LoadPassportPhotos" component={LoadPassportPhotos} options={{ headerShown: false }} />
-                    <Stack.Screen name="UserSettingScreen" component={UserSettingScreen} options={{ headerShown: false }} />
-
                  </> : <>
-                    <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }} />
+                 <Stack.Screen name="HomePage" component={HomePage} options={{ headerShown: false }} />
+                 <Stack.Screen name="UserSettingScreen" component={UserSettingScreen} options={{ headerShown: false }} />
+                 <Stack.Screen name="ViewRegistrationDogovor" component={ViewRegistrationDogovor} options={{ headerShown: false }} />
+                    <Stack.Screen name="LoadPassportPhotos" component={LoadPassportPhotos} options={{ headerShown: false }} />
                    <Stack.Screen name="MapForBooking" component={MapForBooking} options={{ headerShown: false }} />
                     <Stack.Screen name="BurgerMenu" component={BurgerMenu} options={{ headerShown: false }} />
                     <Stack.Screen name="PaymentMethods" component={PaymentMethods} options={{ headerShown: false }} />

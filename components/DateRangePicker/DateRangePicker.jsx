@@ -151,7 +151,6 @@ const getDatesInRange = (startDate, endDate) => {
     const end = new Date(endDate);
     const dates = [];
 
-    console.log(start, end)
     while (start <= end) {
         dates.push(start.toISOString().slice(0, 10));
         start.setDate(start.getDate() + 1);

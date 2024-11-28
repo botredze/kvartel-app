@@ -13,7 +13,6 @@ import Booking from "../../components/Booking/Booking";
 import {Entypo, FontAwesome6, Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
-import moment from "moment";
 import FilteredApartaments from "../../components/FilteredApartaments/FilteredApartaments";
 import {
     applyPayment,
@@ -24,7 +23,7 @@ import {
 } from "../../store/reducers/requestSlice";
 import { debounce } from "lodash"
 import {changeBookingModal, changeShowSuccessBookingModal} from "../../store/reducers/stateSlice";
-import DateRangePicker from "../../components/DateRangePicker/DateRangePicker";
+import { toggleFiltersVisibility } from "../../store/reducers/visibilitySlice";
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -43,11 +42,25 @@ export default function HomePage() {
     const booking = useRef(null)
     const filtered = useRef(null)
 
-    const [isOpen, setIsOpen] = useState(false);
+
+    const {data} = useSelector((state) => state.saveDataSlice)
+    const {listApartments, search, activeBooking} = useSelector((state) => state.requestSlice);
+   const {showBookingModal, bookingData, showSuccessBookingModal, paymentData, rejectComment} = useSelector((state) => state.stateSlice)
+   const {filtersVisible,filteredApartamentsVisible, previewBottomSheetVisible, detailsVisible, bookingVisible } = useSelector((state) => state.visibilitySlice)
 
     const snapPoints = useMemo(() => ['10%', '94%'], [])
 
+
+    // console.log(
+    //     filtersVisible,
+    //     filteredApartamentsVisible,
+    //      previewBottomSheetVisible,
+    //       detailsVisible,
+    //        bookingVisible
+    // );
+    
     const toggleFilters = useCallback((index) => {
+        dispatch(toggleFiltersVisibility(true))
         filterRef.current?.snapToIndex(index);
     }, []);
 
@@ -98,11 +111,6 @@ export default function HomePage() {
         navigation.navigate('BurgerMenu', { detailsRef, booking });
     };
 
-    const {data} = useSelector((state) => state.saveDataSlice)
-    const {listApartments, search, activeBooking} = useSelector((state) => state.requestSlice);
-    const {showBookingModal, bookingData, showSuccessBookingModal, paymentData, rejectComment} = useSelector((state) => state.stateSlice)
-
-    console.log(data, 'data')
 
     useEffect(() => {
         const searchData = {
@@ -313,15 +321,25 @@ export default function HomePage() {
 
             </BottomSheet>
 
+             {/* {filtersVisible && <Filters filtered={filtered} filterRef={filterRef} />}
+
+            {filteredApartamentsVisible && <FilteredApartaments filtered={filtered} detailsRef={detailsRef} />}
+
+            {previewBottomSheetVisible && <PreviewBottiomSheet previewButton={previewButton} booking={booking} details={detailsRef} />}
+
+            {detailsVisible && <Details detailsRef={detailsRef} booking={booking} />}
+
+            {bookingVisible && <Booking booking={booking} />} */}
+
+
             <Filters filtered={filtered} filterRef={filterRef}/>
 
             <FilteredApartaments filtered={filtered} detailsRef={detailsRef}/>
             <PreviewBottiomSheet previewButton={previewButton} booking={booking}
-                                 details={detailsRef}/>
+                                details={detailsRef}/>
 
             <Details detailsRef={detailsRef} booking={booking}/>
-            <Booking booking={booking}  setIsOpen={setIsOpen} />
-
+            <Booking booking={booking}  />
 
             <Modal
                 animationType="slide"

@@ -6,7 +6,6 @@ import React from "react";
 export const Preloader = () => {
     const { preloader } = useSelector((state) => state.requestSlice);
 
-    console.log(preloader)
     if (preloader) {
         return (
             <View

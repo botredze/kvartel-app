@@ -11,6 +11,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {apartamentFilters} from "../../store/reducers/requestSlice";
 import Calendar from "../Calendar/Calendar";
 import dayjs from 'dayjs';
+import { toggleFilteredApartamentsVisibility } from "../../store/reducers/visibilitySlice";
 
 
 export default function Filters(props) {
@@ -18,7 +19,7 @@ export default function Filters(props) {
 
     const {selectedItems, selectedRooms, filters} = useSelector((state) => state.stateSlice)
     const {filtredApartaments} = useSelector((state) => state.requestSlice)
-    const snapPoints = useMemo(() => ['96%'], []);
+    const snapPoints = useMemo(() => ['95%'], []);
     const [isOpenFilters, setIsOpenFilters] = useState(false);
 
     const [countGuest, setCountGuest] = useState(0);
@@ -121,26 +122,31 @@ export default function Filters(props) {
         setActiveNow(true);
         setActiveTomorrow(false);
         setActiveDate(false);
-
+    
         setSelectedDates({ start: dayjs().startOf('day'), end: dayjs().endOf('day') });
+        setIsOpenFilters(false); 
     };
-
+    
     const handleTomorrowPress = () => {
         setActiveNow(false);
         setActiveTomorrow(true);
         setActiveDate(false);
-
+    
         setSelectedDates({
             start: dayjs().add(1, 'day').startOf('day'),
             end: dayjs().add(1, 'day').endOf('day')
         });
+        setIsOpenFilters(false); 
     };
-
+    
     const handleSelectDatePress = () => {
         setActiveNow(false);
+        setActiveTomorrow(false);
         setActiveDate(true);
-        setIsOpenFilters(true)
+    
+        setIsOpenFilters(true);
     };
+    
 
     const handleDateSelect = (dates) => {
         setSelectedDates(dates);
@@ -175,6 +181,7 @@ export default function Filters(props) {
         setActiveTomorrow(false);
         setActiveDate(false);
         setActiveBronType('all');
+        setSelectedDates({start: null, end: null});
     };
 
 
@@ -187,22 +194,25 @@ export default function Filters(props) {
         setActiveNow(false);
         setActiveTomorrow(false);
         setActiveDate(false);
+        setIsOpenFilters(false)
         setActiveBronType('all');
+        setSelectedDates({start: null, end: null});
     };
 
     const openFileredData = useCallback((index) => {
+        dispatch(toggleFilteredApartamentsVisibility(false))
         filtered.current?.snapToIndex(index);
     }, []);
 
     return (
-        <BottomSheet
+            <BottomSheet
             snapPoints={snapPoints}
             index={-1}
             ref={filterRef}
             enableContentPanningGesture={false}
             enablePanDownToClose={true}
             enableHandlePanningGesture={true}
-            onClose={toggleFilters}
+            //onClose={toggleFilters}
             style={{position: "relative"}}
         >
             <BottomSheetScrollView style={styles.sheetContent}>
@@ -281,10 +291,10 @@ export default function Filters(props) {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            onPress={() => handleRoomPress('4+')}
-                            style={[styles.selectDateSmallBtn, selectedRooms?.includes('4+') && styles.activeBtnCountState]}>
+                            onPress={() => handleRoomPress('4')}
+                            style={[styles.selectDateSmallBtn, selectedRooms?.includes('4') && styles.activeBtnCountState]}>
                             <Text
-                                style={[styles.bigBtnTitle, selectedRooms?.includes('4+') && styles.activeBtnTitleCountState]}>4+</Text>
+                                style={[styles.bigBtnTitle, selectedRooms?.includes('4') && styles.activeBtnTitleCountState]}>4+</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

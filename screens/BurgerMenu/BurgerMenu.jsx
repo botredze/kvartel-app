@@ -107,7 +107,6 @@ export default function BurgerMenu({ route, navigation }) {
     }
 
     const handleShowDogovor = (item) => {
-        console.log(item)
         navigation.navigate("DocsView", { item, detailsRef ,booking });
     };
 

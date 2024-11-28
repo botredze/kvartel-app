@@ -3,24 +3,30 @@ import React, { useCallback, useMemo } from "react";
 import { Text, TouchableOpacity, StyleSheet, Image, View } from "react-native";
 import { Entypo, Ionicons } from "@expo/vector-icons";
 import { colors } from "../../constants/constants";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { API } from "../../env";
 import Skeleton from "./Skeleton";
+import { toggleBookingVisibility, toggleDetailsVisibility, togglePreviewBottomSheetVisibility } from "../../store/reducers/visibilitySlice";
 
 export default function PreviewBottomSheet({ previewButton, booking, details }) {
     const snapPoints = useMemo(() => ['20%'], []);
 
     const handleClosePreview = () => {
+        dispatch(togglePreviewBottomSheetVisibility(false))
         previewButton.current?.close();
     };
 
     const { apartmentDetail, bottomSheetPreloader } = useSelector((state) => state.requestSlice);
 
+    const dispatch = useDispatch()
+
     const handleClickBooking = useCallback((index) => {
+        dispatch(toggleBookingVisibility(true))
         booking.current?.snapToIndex(index);
     }, []);
 
     const handleClickDetailsClick = useCallback((index) => {
+        dispatch(toggleDetailsVisibility(true))
         details.current?.snapToIndex(index);
     }, []);
 

@@ -50,7 +50,10 @@ const initialState  = {
         apartament_name: '',
     }],
     preloader: false,
+
     bottomSheetPreloader: false,
+    otherPreloader: false,
+
     session: null,
     apartmentDetail: {
         conversions: [],
@@ -177,7 +180,6 @@ export const login_ver = createAsyncThunk(
             })
             if (response.status >= 200 && response.status < 300) {
                 const {code} = response?.data
-                console.log(code, 'code')
                 if(code) {
                     dispatch(changeAwaitedCode({code: code, phone_number: phoneNumber?.phone_number}))
                     if (navigation) {
@@ -193,50 +195,65 @@ export const login_ver = createAsyncThunk(
         }
     })
 
-export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
-    async function(props, {dispatch, rejectWithValue}){
-        const {navigation, loginData, data, expoPushToken} = props
-
-        try {
-            const response = await axios({
-                method: 'POST',
-                url: `${API}/confirm_reg`,
-                data: {
-                    ...loginData,
-                    expoPushToken
+    export const verifyOtpCode = createAsyncThunk("verifyOtpCode",
+        async function (props, { dispatch, rejectWithValue }) {
+            const { navigation, loginData, data, expoPushToken } = props;
+    
+            try {
+                const response = await axios({
+                    method: 'POST',
+                    url: `${API}/confirm_reg`,
+                    data: {
+                        ...loginData,
+                        expoPushToken
+                    }
+                });
+    
+                if (response.status >= 200 && response.status < 300) {
+                    console.log(response?.data, 'response?.data;');
+                    
+                    const { result, codeid, fio, phone, email } = response?.data;
+    
+                    if (result == 0) {
+                        dispatch(checkUserVerify({codeid: codeid}));
+                        await AsyncStorage.setItem("userId", codeid);
+                        await AsyncStorage.setItem("fio", fio);
+                        await AsyncStorage.setItem('phone', phone)
+                        await AsyncStorage.setItem('email', email)
+                        await getLocalDataUser({ changeLocalData, dispatch });
+                        await navigation.replace('HomePage');
+                    } else if (result == 1) {
+                        await AsyncStorage.multiSet([
+                            ["verificated", "false"],
+                            ["rejectRegistration", "false"],
+                            ["userId", codeid],
+                        ]);
+                        await getLocalDataUser({ changeLocalData, dispatch });
+                        navigation.replace('UserSettingScreen');
+                    } else if (result === 3) {
+                        // Код устарел
+                        dispatch(login_ver({ phoneNumber: loginData, expoPushToken }));
+                        Alert.alert(
+                            'Ваш код устарел',
+                            'Мы отправили вам код еще раз, пожалуйста дождитесь и введите код еще раз'
+                        );
+                    } else if (result === 4) {
+                        // Неверный номер телефона
+                        Alert.alert(
+                            'Неверный номер',
+                            'Пожалуйста, проверьте номер и попробуйте ещё раз'
+                        );
+                    }
+                    dispatch(checkUserVerify({ codeid }));
+                } else {
+                    throw new Error(`Error: ${response.status}`);
                 }
-            })
-            if (response.status >= 200 && response.status < 300) {
-                const {result, codeid, fio, phone, email} = response?.data
-
-                if(result == 0) {
-                    await navigation.replace('HomePage');
-                    dispatch(checkUserVerify({codeid: codeid}));
-                    await AsyncStorage.setItem("userId", codeid);
-                    await AsyncStorage.setItem("fio", fio);
-                    await AsyncStorage.setItem('phone', phone)
-                    await AsyncStorage.setItem('email', email)
-                    await getLocalDataUser({ changeLocalData, dispatch });
-                }else if (result == 1) {
-                    await AsyncStorage.setItem("verificated", "false");
-                    await AsyncStorage.setItem("rejectRegistration", "false");
-                    await AsyncStorage.setItem("userId", codeid);
-                    await navigation.replace('UserSettingScreen');
-                    await getLocalDataUser({ changeLocalData, dispatch });
-                }else if(result == 3) {
-                    dispatch(login_ver({phoneNumber: loginData, expoPushToken}))
-                    Alert.alert('Ваш код устарел, мы отправили вам код еще раз, пожалуйста дождитесь и введите код еще раз')
-                }else if (result == 4) {
-                    Alert.alert('Номер телефона не верный, пожалуйста проверьте номер и попробуйте еще раз')
-                }
-                dispatch(checkUserVerify({codeid: codeid}))
-            }else {
-                throw Error(`Error: ${response.status}`);
+            } catch (error) {
+                return rejectWithValue(error.message);
             }
-        }catch (error){
-            return rejectWithValue(error.message)
         }
-    })
+    );
+    
 
 export const apartamentFilters = createAsyncThunk("apartamentFilters",
     async function(data, {dispatch, rejectWithValue}){
@@ -468,7 +485,6 @@ export const checkExtendPaymentStatus = createAsyncThunk('checkExtendPaymentStat
 export const loginByToken = createAsyncThunk('loginByToken', async function(props, {rejectWithValue,dispatch}) {
     try {
         const {navigation, expoPushToken} = props
-        console.log(expoPushToken, 'expoPushToken')
         const response = await axios({
             method: 'POST',
             url: `${API}/register_by_token`,
@@ -477,11 +493,9 @@ export const loginByToken = createAsyncThunk('loginByToken', async function(prop
             }
         })
 
-        console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
             const {codeid, fio, phone, email} = response.data
             await navigation.replace('HomePage')
-            console.log(codeid, fio, phone, email)
             await AsyncStorage.setItem("userId", codeid);
             await AsyncStorage.setItem("fio", fio);
             await AsyncStorage.setItem('phone', phone)
@@ -502,7 +516,6 @@ export const loginByToken = createAsyncThunk('loginByToken', async function(prop
 export const logoutUser = createAsyncThunk('logoutUser', async function(props, {rejectWithValue,dispatch}) {
     try {
         const {codeid} = props
-        console.log(codeid, 'codeid')
         const response = await axios({
             method: 'POST',
             url: `${API}/logout_app`,
@@ -544,8 +557,6 @@ export const checkPaymentStatus = createAsyncThunk('checkPaymentStatus', async f
         })
 
         if (response.status >= 200 && response.status < 300) {
-            console.log(response.data.data.response.pg_status[0], 'response.data.data.response.pg_status[0]')
-            console.log(response.data.data.response.pg_payment_status[0], 'response.data.data.response.pg_payment_status[0]')
 
             if(response.data.data.response.pg_status[0] == 'ok' && response.data.data.response.pg_payment_status[0] == 'success') {
                 dispatch(changePaymentStatus(true))
@@ -575,7 +586,6 @@ export const saveMyCard = createAsyncThunk(
                 data: {
                 }
             })
-            console.log('response.statu', response.status)
             if (response.status >= 200 && response.status < 300) {
 
             }else  {
@@ -596,7 +606,6 @@ export const getMyCardList = createAsyncThunk('getMyCardList', async  function(p
             data: {
             }
         })
-        console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
 
         }else  {
@@ -610,16 +619,13 @@ export const getMyCardList = createAsyncThunk('getMyCardList', async  function(p
 export const getMyBookingHistory = createAsyncThunk('getMyBookingHistory', async  function(props, {rejectWithValue, dispatch}) {
     try {
         const {codeid} = props
-        console.log(codeid, 'codeid')
         const response = await axios({
             method: 'POST',
             url: `${API}/get_history`,
            // data: {codeid_user: codeid}
             data: {codeid_user: codeid}
         })
-        console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
-            console.log(response?.data, 'response?.data')
             if(response?.data.length> 0) {
             return  response?.data
             }else {
@@ -650,7 +656,6 @@ export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  
             url: `${API}/booking_info`,
             data: {codeid_client: codeid}
         })
-        console.log('response.statu', response.status)
         if (response.status >= 200 && response.status < 300) {
             console.log(response?.data)
             return response?.data;
@@ -704,7 +709,6 @@ export const infoNextBooking = createAsyncThunk(
     'infoNextBooking', async function(props, {rejectWithValue, dispatch}) {
         try {
             const {codeid_apartment, date_from, days_amount, setCounts} = props
-            console.log('codeid_apartment, date_from, days_amount,', codeid_apartment, date_from, days_amount,)
             const response = await axios({
                 method: 'POST',
                 url: `${API}/info_next_booking`,
@@ -713,7 +717,6 @@ export const infoNextBooking = createAsyncThunk(
             if (response.status >= 200 && response.status < 300) {
                 const {data} = response
 
-                console.log(data, 'data')
                 if(data.status == 2){
                     Alert.alert(
                         'Ошибка',
@@ -869,67 +872,67 @@ const requestSlice = createSlice({
 
         //userFavoritesApartments
         builder.addCase(userFavoritesApartments.fulfilled, (state, action) => {
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
             state.favoritesList = action.payload;
         });
         builder.addCase(userFavoritesApartments.rejected, (state, action) => {
             state.error = action.payload;
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
         });
         builder.addCase(userFavoritesApartments.pending, (state, action) => {
-            state.bottomSheetPreloader = true;
+            state.otherPreloader = true;
         });
 
         //apartamentFilters
         builder.addCase(apartamentFilters.fulfilled, (state, action) => {
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
             state.filtredApartaments = action.payload;
         });
         builder.addCase(apartamentFilters.rejected, (state, action) => {
             state.error = action.payload;
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
         });
         builder.addCase(apartamentFilters.pending, (state, action) => {
-            state.bottomSheetPreloader = true;
+            state.otherPreloader = true;
         });
 
         //getMyActiveBooking
         builder.addCase(getMyActiveBooking.fulfilled, (state, action) => {
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
             state.activeBooking = action.payload;
         });
         builder.addCase(getMyActiveBooking.rejected, (state, action) => {
             state.error = action.payload;
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
         });
         builder.addCase(getMyActiveBooking.pending, (state, action) => {
-            state.bottomSheetPreloader = true;
+            state.otherPreloader = true;
         });
 
         //searchByAddress
         builder.addCase(searchByAddress.fulfilled, (state, action) => {
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
             state.listApartments = action.payload;
         });
         builder.addCase(searchByAddress.rejected, (state, action) => {
             state.error = action.payload;
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
         });
         builder.addCase(searchByAddress.pending, (state, action) => {
-            state.bottomSheetPreloader = true;
+            state.otherPreloader = true;
         });
 
         //bookHistory
         builder.addCase(getMyBookingHistory.fulfilled, (state, action) => {
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
             state.bookHistory = action.payload;
         });
         builder.addCase(getMyBookingHistory.rejected, (state, action) => {
             state.error = action.payload;
-            state.bottomSheetPreloader = false;
+            state.otherPreloader = false;
         });
         builder.addCase(getMyBookingHistory.pending, (state, action) => {
-            state.bottomSheetPreloader = true;
+            state.otherPreloader = true;
         });
 
         //bookHistory

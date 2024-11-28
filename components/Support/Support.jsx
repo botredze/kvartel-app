@@ -34,7 +34,6 @@ export default function Support({support}) {
     const handleLinkPress = async (url) => {
         const supported = await Linking.canOpenURL(url);
 
-        console.log(supported, 'supported')
         if (supported) {
             await Linking.openURL(url);
         } else {

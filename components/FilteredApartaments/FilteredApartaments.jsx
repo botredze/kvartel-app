@@ -1,12 +1,16 @@
 import React, {useCallback, useMemo} from "react";
 import BottomSheet, {BottomSheetBackdrop, BottomSheetFlatList} from "@gorhom/bottom-sheet";
 import ApartmentCard from "../ApartmentCard/ApartmentCard";
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import { toggleFilteredApartamentsVisibility } from "../../store/reducers/visibilitySlice";
 
 export default function FilteredApartaments({filtered, detailsRef}) {
     const snapPoints = useMemo(() => ['80%'], []);
 
+    const dispatch = useDispatch()
+
     const handleBack = () => {
+        dispatch(toggleFilteredApartamentsVisibility(false))
         filtered.current?.close()
     }
 

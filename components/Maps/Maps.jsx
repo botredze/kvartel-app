@@ -6,6 +6,7 @@ import { Fontisto } from "@expo/vector-icons";
 import { styles } from './styles';
 import {useDispatch, useSelector} from "react-redux";
 import {getApartamentDetails} from "../../store/reducers/requestSlice";
+import { togglePreviewBottomSheetVisibility } from '../../store/reducers/visibilitySlice';
 
 export default function Maps({ previewButton }) {
     const [markers, setMarkers] = useState([]);
@@ -22,6 +23,7 @@ export default function Maps({ previewButton }) {
     });
 
     const previewButtonHandle = useCallback((index) => {
+        dispatch(togglePreviewBottomSheetVisibility(true))
         previewButton.current?.snapToIndex(index);
     }, []);
 
@@ -56,12 +58,6 @@ export default function Maps({ previewButton }) {
         setMarkers(clusters);
     }, [region]);
 
-    console.log(clusteredApartments, 'clusteredApartments')
-
-
-    useEffect(() => {
-            console.log('Clustered apartments:', clusteredApartments);
-    }, [clusteredApartments]);
 
 
     const createClusters = (data, region) => {
@@ -93,7 +89,6 @@ export default function Maps({ previewButton }) {
     };
 
     const handleMarkerPress = (marker) => {
-        console.log(marker, 'cluster')
         if (marker.properties.point_count) {
             // const clusterApartments = listApartments.filter((item) =>
             //     cluster.getLeaves(marker.id, Infinity).some(leaf => leaf.properties.id === item.codeid)
