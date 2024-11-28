@@ -6,7 +6,7 @@ import {AntDesign, Feather, Ionicons} from "@expo/vector-icons";
 import {convenience} from "../../constants/constants";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import ConvenienceItem from "../ConvenienceItem/ConvenienceItem";
-import {changeFilters, changeSelectedItems, changeSelectedRooms} from "../../store/reducers/stateSlice";
+import {changeFilters, changeSelectedItems, changeSelectedRooms, clearFilters, clearSelectedItems} from "../../store/reducers/stateSlice";
 import {useDispatch, useSelector} from "react-redux";
 import {apartamentFilters} from "../../store/reducers/requestSlice";
 import Calendar from "../Calendar/Calendar";
@@ -37,6 +37,7 @@ export default function Filters(props) {
     const [activeBronType, setActiveBronType] = useState('all');
     const [debounceTimeout, setDebounceTimeout] = useState(null);
 
+    const [localFilt, setLocalFilt] = useState(false);
     const dispatch = useDispatch()
 
     const saveFilters = (localFilters) => {
@@ -48,12 +49,20 @@ export default function Filters(props) {
             clearTimeout(debounceTimeout);
         }
 
+        setLocalFilt(localFilters)
         const newTimeout = setTimeout(() => {
             dispatch(apartamentFilters({ ...localFilters }));
         }, 300);
 
         setDebounceTimeout(newTimeout);
     };
+
+
+    useEffect( () => {
+        resetFilters()
+        dispatch(apartamentFilters({ ...localFilt }));
+    }, [])
+
 
     useEffect(() => {
         const localFilters = {
@@ -171,6 +180,8 @@ export default function Filters(props) {
     };
 
     const toggleFilters = () => {
+        // setSelectedDates({start: null, end: null});
+        // dispatch(clearFilters())
         filterRef?.current?.close();
         setCountGuest(0);
         setCountBeds(0);
@@ -181,7 +192,7 @@ export default function Filters(props) {
         setActiveTomorrow(false);
         setActiveDate(false);
         setActiveBronType('all');
-        setSelectedDates({start: null, end: null});
+        setIsOpenFilters(false)
     };
 
 
@@ -197,6 +208,9 @@ export default function Filters(props) {
         setIsOpenFilters(false)
         setActiveBronType('all');
         setSelectedDates({start: null, end: null});
+        dispatch(clearFilters())
+        dispatch(clearSelectedItems())
+        dispatch(changeSelectedRooms([]));
     };
 
     const openFileredData = useCallback((index) => {
@@ -212,7 +226,7 @@ export default function Filters(props) {
             enableContentPanningGesture={false}
             enablePanDownToClose={true}
             enableHandlePanningGesture={true}
-            //onClose={toggleFilters}
+            onClose={() => toggleFilters()}
             style={{position: "relative"}}
         >
             <BottomSheetScrollView style={styles.sheetContent}>
@@ -230,7 +244,9 @@ export default function Filters(props) {
                 </View>
 
                 <View style={{...styles.section, marginBottom: 0}}>
-                    <Text style={styles.subtitle}>КВАРТИРЫ ДОСТУПНЫЕ</Text>
+                    <Text style={styles.subtitle}>
+                        КВАРТИРЫ ДОСТУПНЫЕ {activeNow ? 'сегодня' : activeTomorrow ? 'завтра' : activeDate && selectedDates.start && selectedDates.end ? `${dayjs(selectedDates.start).format('D MMMM')} - ${dayjs(selectedDates.end).format('D MMMM')}` : ''}
+                    </Text>
                     <View style={styles.row}>
                         <TouchableOpacity
                             onPress={handleNowPress}
@@ -249,9 +265,9 @@ export default function Filters(props) {
                             style={[styles.selectDateBigBtn, activeDate && styles.activeBtn]}>
                             <Text style={[styles.bigBtnTitle, activeDate && styles.activeBtnTitle]}>Выбрать дату</Text>
                         </TouchableOpacity>
-
                     </View>
-                </View>
+              </View>
+
 
                 {isOpenFilters && (
                     <BottomSheetView style={styles.selectDateContainer}>

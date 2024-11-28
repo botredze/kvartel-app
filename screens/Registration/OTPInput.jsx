@@ -27,9 +27,7 @@ export default function OTPInputScreen() {
     const {expoPushToken, notification} = usePushNotifications()
     useEffect(() => {
         if (otp.length === 6) {
-            console.log(loginData, 'loginData')
             if (otp == loginData?.code) {
-                console.log(otp === loginData?.code)
                 dispatch(verifyOtpCode({navigation, loginData, data, expoPushToken}))
             } else {
                 setOtpValid(true);

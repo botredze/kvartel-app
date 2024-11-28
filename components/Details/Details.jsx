@@ -1,5 +1,5 @@
 import BottomSheet, {BottomSheetFlatList, BottomSheetScrollView, BottomSheetView} from "@gorhom/bottom-sheet";
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {View, Text, TouchableOpacity, Image, Alert} from "react-native";
 import {styles} from './styles'
 import {
@@ -19,12 +19,12 @@ import RecomendationsCard from "../RecomendationsCard/RecomendationsCard";
 import {useDispatch, useSelector} from "react-redux";
 import {API} from "../../env";
 import Loader from "../Loader";
-import {addOrDeleteFavorites, clearApartmentDetail} from "../../store/reducers/requestSlice";
+import {addOrDeleteFavorites, clearApartmentDetail, getApartments, getMyActiveBooking} from "../../store/reducers/requestSlice";
 import { toggleBookingVisibility, toggleDetailsVisibility } from "../../store/reducers/visibilitySlice";
 
-export default function Details({detailsRef, booking}) {
+export default function Details({detailsRef, booking, previewButton}) {
 
-    const snapPoints = useMemo(() => ['98%'], []);
+    const snapPoints = useMemo(() => ['95%'], []);
 
     const [visibleConvenienceCount, setVisibleConvenienceCount] = useState(3);
     const [visibleRulesCount, setVisibleRulesCount] = useState(3);
@@ -74,7 +74,7 @@ export default function Details({detailsRef, booking}) {
     const filteredConvenience = convenience.filter(item => selectedConvenienceIds.includes(item.id));
 
     const closeDetailButtomSheet = () => {
-        dispatch(clearApartmentDetail())
+        previewButton?.current?.close();
         detailsRef?.current?.close();
     }
 

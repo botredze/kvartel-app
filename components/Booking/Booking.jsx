@@ -1,7 +1,7 @@
 import {Image, Text, TouchableOpacity, View} from "react-native";
 import BottomSheet, {BottomSheetBackdrop, BottomSheetView} from "@gorhom/bottom-sheet";
 import {styles} from './styles'
-import React, {useCallback, useMemo, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {Ionicons} from "@expo/vector-icons";
 import {useNavigation} from "@react-navigation/native";
 import {useDispatch, useSelector} from "react-redux";
@@ -22,9 +22,12 @@ export default function Booking({booking}) {
     const { apartmentDetail, bottomSheetPreloader, paymentFinished} = useSelector((state) => state.requestSlice);
 
     const closeBooking = () => {
-        dispatch(toggleBookingVisibility(false))
         booking.current?.close()
     };
+
+    useEffect(() => {
+        setSelectedDates({ start: null, end: null })
+    }, [])
 
     if(paymentFinished){
         closeBooking()
@@ -89,7 +92,7 @@ export default function Booking({booking}) {
                             source={{ uri: `${API}/${apartmentDetail?.photos[0]?.pathUrl}` }}
                             style={styles.image}
                         />
-                        <View>
+                        <View style = {styles.apartamentNameContainer} >
                             <Text style={styles.nameText}>{apartmentDetail.apartament_name}</Text>
                             <Text style={styles.adressText}>{apartmentDetail.address}</Text>
                         </View>

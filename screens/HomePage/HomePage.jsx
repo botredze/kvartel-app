@@ -18,12 +18,16 @@ import {
     applyPayment,
     changeSearchData,
     checkUserVerify,
+    clearApartmentDetail,
     getApartments, getMyActiveBooking,
     searchByAddress
 } from "../../store/reducers/requestSlice";
 import { debounce } from "lodash"
-import {changeBookingModal, changeShowSuccessBookingModal} from "../../store/reducers/stateSlice";
+import {changeBookingModal, changeShowSuccessBookingModal, clearFilters} from "../../store/reducers/stateSlice";
 import { toggleFiltersVisibility } from "../../store/reducers/visibilitySlice";
+import { getLocalDataUser } from "../../helpers/returnDataUser";
+import { changeLocalData } from "../../store/reducers/saveDataSlice";
+
 
 export default function HomePage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -34,6 +38,16 @@ export default function HomePage() {
 
     const [showStatus, setShowStatus] = useState(false)
     const [statusText, setStatusText] = useState('')
+
+    useEffect(() => {
+        getLocalDataUser({changeLocalData, dispatch})
+        if (data?.userId) {
+            dispatch(getApartments({ status: 0, codeid_client: data?.userId }));
+            dispatch(getMyActiveBooking({ codeid: data?.userId }));
+        }
+    }, [data?.userId, dispatch]);
+
+
 
     const navigation = useNavigation();
     const filterRef = useRef(null)
@@ -49,17 +63,10 @@ export default function HomePage() {
    const {filtersVisible,filteredApartamentsVisible, previewBottomSheetVisible, detailsVisible, bookingVisible } = useSelector((state) => state.visibilitySlice)
 
     const snapPoints = useMemo(() => ['10%', '94%'], [])
-
-
-    // console.log(
-    //     filtersVisible,
-    //     filteredApartamentsVisible,
-    //      previewBottomSheetVisible,
-    //       detailsVisible,
-    //        bookingVisible
-    // );
     
     const toggleFilters = useCallback((index) => {
+        dispatch(clearApartmentDetail())
+        dispatch(clearFilters())
         dispatch(toggleFiltersVisibility(true))
         filterRef.current?.snapToIndex(index);
     }, []);
@@ -321,24 +328,10 @@ export default function HomePage() {
 
             </BottomSheet>
 
-             {/* {filtersVisible && <Filters filtered={filtered} filterRef={filterRef} />}
-
-            {filteredApartamentsVisible && <FilteredApartaments filtered={filtered} detailsRef={detailsRef} />}
-
-            {previewBottomSheetVisible && <PreviewBottiomSheet previewButton={previewButton} booking={booking} details={detailsRef} />}
-
-            {detailsVisible && <Details detailsRef={detailsRef} booking={booking} />}
-
-            {bookingVisible && <Booking booking={booking} />} */}
-
-
             <Filters filtered={filtered} filterRef={filterRef}/>
-
             <FilteredApartaments filtered={filtered} detailsRef={detailsRef}/>
-            <PreviewBottiomSheet previewButton={previewButton} booking={booking}
-                                details={detailsRef}/>
-
-            <Details detailsRef={detailsRef} booking={booking}/>
+            <PreviewBottiomSheet previewButton={previewButton} booking={booking} details={detailsRef}/> 
+            <Details detailsRef={detailsRef} booking={booking} previewButton={previewButton}/> 
             <Booking booking={booking}  />
 
             <Modal

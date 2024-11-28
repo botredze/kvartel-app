@@ -177,6 +177,9 @@ const stateSlice = createSlice({
             state.selectedItems = action.payload
         },
 
+        clearSelectedItems: (state, action) => {
+            state.selectedItems = []
+        },
         changeSelectedRooms: (state, action) => {
             state.selectedRooms = action.payload
         },
@@ -343,7 +346,8 @@ export const {
     changeExtendBookingData,
     clearExtendBookingData,
     changeRejectComment,
-    clearRejectComment
+    clearRejectComment,
+    clearSelectedItems
 } = stateSlice.actions;
 
 export default stateSlice.reducer;

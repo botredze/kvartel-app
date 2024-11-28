@@ -21,10 +21,12 @@ export const styles = StyleSheet.create({
     },
     mainTitleText: {
         fontSize: 24,
+        width: '90%',
         fontWeight: "600",
     },
     sidebar: {
         display:"flex",
+        maxWidth: '100%',
         flexDirection: "row",
         justifyContent: "space-between",
     },

@@ -47,10 +47,7 @@ export const Navigation = ({ userData }) => {
         return () => clearInterval(interval);
     }, [data]);
 
-    console.log(data, 'data');
-    
     const checkLogin = !!data?.userId
-    console.log(checkLogin, 'checkLogin');
     
     return (
         <NavigationContainer>

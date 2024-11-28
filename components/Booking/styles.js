@@ -20,7 +20,7 @@ export const styles  = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: "center",
-        gap: 10
+        gap: 5,
     },
 
     infoText: {
@@ -48,11 +48,13 @@ export const styles  = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         flexDirection: 'row',
-        gap: 15
+        gap: 10,
+        width: '90%'
     },
     nameText: {
         fontSize: 18,
         fontWeight: '500',
+        width: '90%'
     },
     adressText: {
         fontSize: 15,
@@ -141,6 +143,10 @@ export const styles  = StyleSheet.create({
     },
     selectedDateText: {
         fontSize: 16,
+    },
+
+    apartamentNameContainer: {
+        width: '90%',
     }
 
 })

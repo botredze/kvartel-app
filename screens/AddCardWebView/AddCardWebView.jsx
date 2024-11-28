@@ -29,7 +29,6 @@ export default function AddCardWebView({route}) {
     useEffect(() => {
         if (paymentStatusData && Object.keys(paymentStatusData).length > 0){
             const interval = setInterval(() => {
-                console.log(state, 'state')
                 if (!paymentStatus) {
                     if(state == 'booting') {
                         dispatch(checkPaymentStatus({...paymentStatusData, bookingData}));

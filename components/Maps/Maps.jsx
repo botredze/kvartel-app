@@ -23,8 +23,8 @@ export default function Maps({ previewButton }) {
     });
 
     const previewButtonHandle = useCallback((index) => {
-        dispatch(togglePreviewBottomSheetVisibility(true))
         previewButton.current?.snapToIndex(index);
+        dispatch(togglePreviewBottomSheetVisibility(true))
     }, []);
 
     useEffect(() => {

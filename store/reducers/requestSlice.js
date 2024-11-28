@@ -210,8 +210,6 @@ export const login_ver = createAsyncThunk(
                 });
     
                 if (response.status >= 200 && response.status < 300) {
-                    console.log(response?.data, 'response?.data;');
-                    
                     const { result, codeid, fio, phone, email } = response?.data;
     
                     if (result == 0) {
@@ -657,7 +655,6 @@ export const getMyActiveBooking = createAsyncThunk('getMyActiveBooking', async  
             data: {codeid_client: codeid}
         })
         if (response.status >= 200 && response.status < 300) {
-            console.log(response?.data)
             return response?.data;
         }else  {
             throw Error(`Error: ${response.status}`);
