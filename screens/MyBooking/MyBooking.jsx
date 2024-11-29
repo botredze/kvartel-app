@@ -85,10 +85,11 @@ export default function MyBooking({ route }) {
     
     
     const handlePressViewOnMap = () => {
+        console.log('ХУЙХЙУХ');
         navigation.navigate('MapForBooking', {
             destinationCoords: {
-                latitude: activeBooking.dolgota,
-                longitude: activeBooking.shirota
+                latitude: item.dolgota,
+                longitude: item.shirota
             }
         });
     };

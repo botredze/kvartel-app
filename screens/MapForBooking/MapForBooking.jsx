@@ -9,6 +9,8 @@ import MapViewDirections from 'react-native-maps-directions';
 export default function MapForBooking({ route, navigation}) {
     const { destinationCoords, item } = route.params;
 
+    console.log(destinationCoords, 'destinationCoords');
+    
     const dispatch = useDispatch();
     const [region, setRegion] = useState({
         latitude: 42.880103935651995,

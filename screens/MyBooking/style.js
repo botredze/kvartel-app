@@ -135,7 +135,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         backgroundColor: '#dcdcdc',
-        borderRadius: 5,
+        borderRadius: 12,
         alignItems: 'center',
         marginRight: 10,
     },
@@ -143,7 +143,7 @@ export const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         backgroundColor: '#ff4e4a',
-        borderRadius: 5,
+        borderRadius: 12,
         alignItems: 'center',
     },
     modalCancelButtonText: {
