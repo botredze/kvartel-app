@@ -23,7 +23,7 @@ import {
     searchByAddress
 } from "../../store/reducers/requestSlice";
 import { debounce } from "lodash"
-import {changeBookingModal, changeShowSuccessBookingModal, clearFilters} from "../../store/reducers/stateSlice";
+import {changeBookingModal, changeShowSuccessBookingModal, clearFilters, clearPaymentData} from "../../store/reducers/stateSlice";
 import { toggleFiltersVisibility } from "../../store/reducers/visibilitySlice";
 import { getLocalDataUser } from "../../helpers/returnDataUser";
 import { changeLocalData } from "../../store/reducers/saveDataSlice";
@@ -58,7 +58,7 @@ export default function HomePage() {
 
 
     const {data} = useSelector((state) => state.saveDataSlice)
-    const {listApartments, search, activeBooking} = useSelector((state) => state.requestSlice);
+    const {listApartments, search, activeBooking, searchPreloade} = useSelector((state) => state.requestSlice);
    const {showBookingModal, bookingData, showSuccessBookingModal, paymentData, rejectComment} = useSelector((state) => state.stateSlice)
    const {filtersVisible,filteredApartamentsVisible, previewBottomSheetVisible, detailsVisible, bookingVisible } = useSelector((state) => state.visibilitySlice)
 
@@ -90,7 +90,7 @@ export default function HomePage() {
                     'Восток 5',
                 ]);
             }
-        }, 200);
+        }, 100);
         return () => clearTimeout(timeoutId);
     }, [searchQuery]);
 
@@ -113,6 +113,15 @@ export default function HomePage() {
         setShowRecommendations(true)
         setShowApartments(false)
     };
+
+
+    useEffect ( () => {
+        if(searchPreloade) {
+            setShowRecommendations(false)
+            setShowApartments(true)
+        }
+    }, [searchPreloade])
+
 
     const handlePressBurgerButton = () => {
         navigation.navigate('BurgerMenu', { detailsRef, booking });
@@ -162,6 +171,8 @@ export default function HomePage() {
 
 
     const handleChangeInputText =  (text) => {
+        console.log(text, 'text');
+        
         setSearchQuery(text)
          searchData(text)
         dispatch(changeSearchData({...search, address: searchQuery}))
@@ -191,6 +202,12 @@ export default function HomePage() {
     const handleActivateBooking = () => {
        dispatch(applyPayment({paymentData,navigation}))
     };
+
+
+    const cancelBooking = () => {
+        dispatch(changeBookingModal(false))
+        dispatch(clearPaymentData())
+    }
 
     const handleCloseBookingModal2 = () => {
         dispatch(changeShowSuccessBookingModal(false))
@@ -362,9 +379,16 @@ export default function HomePage() {
                         <Text style={styles.modalTextTitle}>Подтверждение действия</Text>
                         {bookingData.date_from && (
                          <Text style={styles.modalText}>{`Вы действительно хотите забронировать апартаменты: ${bookingData.name} с ${bookingData.date_from.format('DD.MM.YYYY')} на ${bookingData.days_amount} суток ? \n\nСумма к оплате: ${bookingData.summ}`}</Text>)}
-                        <TouchableOpacity style={styles.closeButtonModal} onPress={handleActivateBooking}>
-                            <Text style={styles.closeButtonText}>Оплатить</Text>
-                        </TouchableOpacity>
+                        
+                       <View style = {styles.modalButtonGroup}>
+                            <TouchableOpacity style={styles.closeButtonModal} onPress={cancelBooking}>
+                                <Text style={{...styles.closeButtonText, color: '#ff4e4a'}}>Отменить </Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.closeButtonModal} onPress={handleActivateBooking}>
+                                <Text style={styles.closeButtonText}>Оплатить</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </Modal>

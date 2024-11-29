@@ -9,7 +9,7 @@ import Skeleton from "./Skeleton";
 import { toggleBookingVisibility, toggleDetailsVisibility, togglePreviewBottomSheetVisibility } from "../../store/reducers/visibilitySlice";
 
 export default function PreviewBottomSheet({ previewButton, booking, details }) {
-    const snapPoints = useMemo(() => ['20%'], []);
+    const snapPoints = useMemo(() => ['22%'], []);
 
     const handleClosePreview = () => {
         dispatch(togglePreviewBottomSheetVisibility(false))
@@ -51,7 +51,7 @@ export default function PreviewBottomSheet({ previewButton, booking, details }) 
                                 style={styles.image}
                             />
 
-                            <View>
+                            <View style={styles.apartamentNameContainer}>
                                 <Text style={styles.nameText}>{apartmentDetail.apartament_name}</Text>
                                 <Text style={styles.adressText}>{apartmentDetail.address}</Text>
                             </View>
@@ -88,12 +88,12 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: "center",
-        gap: 10
+        gap: 5,
     },
 
     image: {
-        width: 52,
-        height: 52,
+        width: 54,
+        height: 54,
         borderRadius: 13,
     },
 
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
         height: 90,
         paddingHorizontal: 18,
         justifyContent: "space-between",
-        gap: 5
+        gap: 8
     },
 
     selectDateBtn: {
@@ -139,15 +139,22 @@ const styles = StyleSheet.create({
         display: "flex",
         alignItems: "center",
         flexDirection: 'row',
-        gap: 15
+        gap: 10
     },
     nameText: {
+        width: '95%',
         fontSize: 18,
         fontWeight: '500',
     },
     adressText: {
+        width: '95%',
         fontSize: 15,
         color: '#66666',
         fontWeight: '400',
+    },
+
+    apartamentNameContainer: {
+        width: '76%',
+        gap: 5
     }
 });

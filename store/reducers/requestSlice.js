@@ -95,6 +95,8 @@ const initialState  = {
 
         }
     ],
+
+    searchPreloade: false
 }
 
 export const getApartments = createAsyncThunk(
@@ -908,15 +910,15 @@ const requestSlice = createSlice({
 
         //searchByAddress
         builder.addCase(searchByAddress.fulfilled, (state, action) => {
-            state.otherPreloader = false;
+            state.searchPreloade = false;
             state.listApartments = action.payload;
         });
         builder.addCase(searchByAddress.rejected, (state, action) => {
             state.error = action.payload;
-            state.otherPreloader = false;
+            state.searchPreloade = false;
         });
         builder.addCase(searchByAddress.pending, (state, action) => {
-            state.otherPreloader = true;
+            state.searchPreloade = true;
         });
 
         //bookHistory

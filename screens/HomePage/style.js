@@ -131,6 +131,13 @@ export const styles = StyleSheet.create({
         marginBottom: 20,
     },
 
+    modalButtonGroup:{
+        display:'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%'
+    },
+
     modalTextTitle: {
         fontSize: 18,
         fontWeight: '600',

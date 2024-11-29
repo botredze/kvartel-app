@@ -147,7 +147,7 @@ export default function BurgerMenu({ route, navigation }) {
             <View style={styles.bottomButtonsGroup}>
                 <View style={styles.appVersionContainer}>
                     <Text style={styles.appVersionText}>MIG Apartment</Text>
-                    <Text style={styles.versionTitle}> * Версия (1.0.0)</Text>
+                    <Text style={styles.versionTitle}> * Версия (1.1.3)</Text>
                 </View>
 
                 <View style={styles.documentsContainer}>
